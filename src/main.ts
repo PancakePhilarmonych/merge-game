@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import './assets/main.scss'
+import './assets/main.sass'
 import App from './App.vue'
 
 const pinia = createPinia()
