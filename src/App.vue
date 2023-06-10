@@ -1,17 +1,19 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
-import SidebarComponent from './components/Sidebar/index.vue'
-import GameComponent from './components/Game/index.vue'
+<script setup lang="ts">
+import { onMounted } from "vue";
+import SidebarComponent from "./components/Sidebar/index.vue";
 
-export default defineComponent({
-  components: {
-    SidebarComponent,
-    GameComponent
-  },
-})
+onMounted(() => {
+  const canvas = document.getElementById("view") as HTMLCanvasElement;
+  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+  console.log(ctx);
+});
 </script>
 
 <template>
-  <sidebar-component/>
-  <game-component/>
+  <sidebar-component />
+  <div class="container">
+    <div class="game-wrapper">
+      <canvas id="view"></canvas>
+    </div>
+  </div>
 </template>
