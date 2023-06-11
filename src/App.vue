@@ -1,19 +1,41 @@
 <script setup lang="ts">
+import * as PIXI from 'pixi.js';
+import empty from './assets/sprites/blocks/empty.png';
 import { onMounted } from "vue";
-import SidebarComponent from "./components/Sidebar/index.vue";
+import { app } from './modules/App'
+
+const gameField = Array.from({ length: 16 }, () => PIXI.Sprite.from(empty));
 
 onMounted(() => {
-  const canvas = document.getElementById("view") as HTMLCanvasElement;
-  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-  console.log(ctx);
+  const wrapper = document.getElementById("game-wrapper")! as HTMLDivElement;
+  const gameWidth = app.screen.width;
+  const gameHeight = app.screen.height;
+
+  wrapper.appendChild(app.view);
+
+  gameField.forEach((block, index) => {
+    block.interactive = true;
+    block.cursor = 'pointer';
+    block.roundPixels = true;
+    block._height = 4000;
+
+    block.width = gameWidth / 4;
+    block.height = gameHeight / 4;
+
+    block.x = (index % 4) * block.width;
+    block.y = Math.floor(index / 4) * block.height;
+
+    block.onclick = () => {
+      console.log('BLOCK INFO', { block, index });
+    }
+
+    app.stage.addChild(block);
+  });
 });
 </script>
 
 <template>
-  <sidebar-component />
-  <div class="container">
-    <div class="game-wrapper">
-      <canvas id="view"></canvas>
-    </div>
+ <div class="container">
+    <div id="game-wrapper" />
   </div>
 </template>
