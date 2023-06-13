@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import * as PIXI from 'pixi.js';
 import empty from './assets/sprites/blocks/empty.png';
-import { onMounted } from "vue";
+import { Ref, onMounted, ref } from "vue";
 import { app } from './modules/App'
+import { Field } from './modules/Field';
 
-const gameField = Array.from({ length: 16 }, () => PIXI.Sprite.from(empty));
+
+const active: Ref<number | null> = ref(null);
 
 onMounted(() => {
   const wrapper = document.getElementById("game-wrapper")! as HTMLDivElement;
@@ -13,23 +15,17 @@ onMounted(() => {
 
   wrapper.appendChild(app.view);
 
-  gameField.forEach((block, index) => {
-    block.interactive = true;
-    block.cursor = 'pointer';
-    block.roundPixels = true;
+  const gameField = Array.from({ length: 16 }, (q, index) => {
+    return new Field(
+      (index % 4) * gameWidth / 4,
+      Math.floor(index / 4) * gameHeight / 4,
+      gameWidth / 4,
+      gameHeight / 4,
+      index,
+    );
+});
 
-    block.width = gameWidth / 4;
-    block.height = gameHeight / 4;
-
-    block.x = (index % 4) * block.width;
-    block.y = Math.floor(index / 4) * block.height;
-
-    block.onclick = () => {
-      console.log('BLOCK INFO', { block, index });
-    }
-
-    app.stage.addChild(block);
-  });
+  gameField.forEach((field, index) => app.stage.addChild(field.sprite));
 });
 </script>
 
