@@ -17,7 +17,6 @@ onMounted(() => {
     block.interactive = true;
     block.cursor = 'pointer';
     block.roundPixels = true;
-    block._height = 4000;
 
     block.width = gameWidth / 4;
     block.height = gameHeight / 4;
