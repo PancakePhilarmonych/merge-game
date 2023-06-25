@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
 
-export const app = new PIXI.Application<HTMLCanvasElement>({
+export const App = new PIXI.Application<HTMLCanvasElement>({
   width: 450,
   height: 450,
   antialias: true,
