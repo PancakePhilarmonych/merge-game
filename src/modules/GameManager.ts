@@ -1,15 +1,10 @@
 import { App } from "./App";
-import Board from "./Board";
+import Grid from "./Grid";
 
 export default class GameManager {
-  public static gameSize: number = 450;
+  private grid: Grid;
 
-  public static init(parent: HTMLElement) {
-    parent.appendChild(App.view);
-
-    const board = new Board();
-    board.init(6, this.gameSize, App.stage);
-
-    console.log(board.getTiles())
+  constructor() {
+    this.grid = new Grid(4, App.view.width, App.stage);
   }
 }
