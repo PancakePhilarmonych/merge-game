@@ -5,6 +5,7 @@ import EmptyField from '../assets/sprites/blocks/empty.png';
 export default class Tile {
   private container: PIXI.Container;
   private sprite: PIXI.Sprite;
+  private gameObject: any = null;
   public position: { x: number, y: number };
 
   constructor(x: number, y: number, tileSize: number, type: ETileType) {
@@ -16,16 +17,15 @@ export default class Tile {
     this.container.x = tileSize * x;
     this.container.y = tileSize * y;
 
-    this.container.width = tileSize;
-    this.container.height = tileSize;
-
     this.sprite.width = tileSize;
     this.sprite.height = tileSize;
 
-    this.sprite.x = this.container.x;
-    this.sprite.y = this.container.y;
-
     this.container.addChild(this.sprite);
+
+    const text = new PIXI.Text(`${x}, ${y}`, { fontSize: 18, fill: 0xffffff });
+    text.x = this.container.width / 2 - text.width / 2;
+    text.y = this.container.height / 2 - text.height / 2;
+    this.container.addChild(text);
   }
 
   select() {
@@ -42,5 +42,9 @@ export default class Tile {
 
   getSpite() {
     return this.sprite;
+  }
+
+  getContainer() {
+    return this.container;
   }
 }
