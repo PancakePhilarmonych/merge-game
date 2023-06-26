@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
+import { App } from "./modules/App"
 import GameManager  from './modules/GameManager';
 
 onMounted(() => {
   const wrapper = document.getElementById("game-wrapper")! as HTMLDivElement;
-  GameManager.init(wrapper)
+  const gameManager = new GameManager();
+
+  wrapper.appendChild(App.view);
 });
 </script>
 
