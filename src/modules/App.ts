@@ -1,9 +1,11 @@
 import * as PIXI from "pixi.js";
+export default class App {
+  private root: HTMLDivElement;
+  public instance: PIXI.Application<HTMLCanvasElement>;
 
-export const App = new PIXI.Application<HTMLCanvasElement>({
-  width: 450,
-  height: 450,
-  antialias: true,
-  resolution: 1,
-  backgroundColor: 0x6f432d,
-});
+  constructor() {
+    this.root = document.getElementById("root")! as HTMLDivElement;
+    this.instance = new PIXI.Application<HTMLCanvasElement>({ resizeTo: this.root });
+    this.root.appendChild(this.instance.view);
+  }
+}
