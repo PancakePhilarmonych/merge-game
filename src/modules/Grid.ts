@@ -1,31 +1,46 @@
-import Row from "./Row";
 import * as PIXI from "pixi.js";
 import Tile from "./Tile";
 
 export default class Grid {
-  private rows: Row[];
+  private cells: Tile[][];
   private container: PIXI.Container;
+  private selectedTile: Tile | null = null;
+  public tileSize: number;
 
-  constructor(rowsCount: number, boardSize: number, parent: PIXI.Container) {
-    const tileSize = boardSize / rowsCount;
+  constructor(rowsCount: number, boardSize: number) {
+    this.cells = [];
+
+    this.tileSize = boardSize / rowsCount;
 
     this.container = new PIXI.Container();
-    this.rows = [];
-    this._initRows(rowsCount, tileSize);
-    parent.addChild(this.container);
+    this.container.sortableChildren = true;
+    this.container.interactiveChildren = true;
+
+    this.initRows(rowsCount, this.tileSize);
+    this.createGrid();
   }
 
-  private _initRows(rowsCount: number, tileSize: number) {
-    for (let rowIndex = 0; rowIndex < rowsCount; rowIndex++) {
-      let newRow = new Row(rowIndex);
-      newRow.init(rowsCount, tileSize);
-      this.rows.push(newRow);
-      this.container.addChild(this.rows[rowIndex].getContainer());
+  private initRows(rowsCount: number, tileSize: number): void {
+    for (let row = 0; row < rowsCount; row++) {
+      this.cells[row] = [];
+
+      for (let col = 0; col < rowsCount; col++) {
+        const tile = new Tile(col, row, tileSize);
+        this.cells[row][col] = tile;
+      }
     }
   }
 
-  getRows(): Row[] {
-    return this.rows
+  private createGrid() {
+    this.container.addChild(...this.getSprites());
+  }
+
+  getSprites(): PIXI.Sprite[] {
+    return this.cells.map((row: Tile[]) => row.map((tile: Tile) => tile.sprite)).flat();
+  }
+
+  getTiles(): Tile[] {
+    return this.cells.flat();
   }
 
   getContainer(): PIXI.Container {
@@ -33,31 +48,29 @@ export default class Grid {
   }
 
   public getTile(x: number, y: number): Tile | null {
-    if (x >= 0 && x < this.rows.length && y >= 0 && y < this.rows[x].getTiles().length) {
-      return this.rows[x].getTiles()[y];
+    return this.cells[y] && this.cells[y][x] ? this.cells[y][x] : null;
+  }
+
+  public selectTile(tile: Tile): void {
+    if (this.selectedTile) {
+      this.deselect();
     }
 
-    return null;
+    this.selectedTile = tile;
+    // this.selectedTile.select();
   }
 
-  selectTile(x: number, y: number) {
-    const tile = this.getTile(x, y);
-    if(!tile) throw new Error(`Tile at position ${x}, ${y} does not exist`);
-
-    this.rows[x].getTiles()[y].select();
+  public deselect(): void {
+    if (this.selectedTile) {
+      // this.selectedTile.deselect();
+      this.selectedTile = null;
+    }
   }
 
-  unselectTile(x: number, y: number) {
-    const tile = this.getTile(x, y);
-    if(!tile) throw new Error(`Tile at position ${x}, ${y} does not exist`);
-
-    this.rows[x].getTiles()[y].unselect();
-  }
-
-  hoverTile(x: number, y: number) {
-    const tile = this.getTile(x, y);
-    if(!tile) throw new Error(`Tile at position ${x}, ${y} does not exist`);
-
-    this.rows[x].getTiles()[y].hover();
+  getSelectedTilePosition(x: number, y: number): { x: number; y: number } {
+    return {
+      x: Math.floor(x / this.cells[x][y].position.x) as number,
+      y: Math.floor(y / this.cells[x][y].position.y) as number,
+    };
   }
 }
