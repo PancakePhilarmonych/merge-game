@@ -1,50 +1,32 @@
-import { ETileType } from 'models.ts/common';
 import * as PIXI from 'pixi.js'
 import EmptyField from '../assets/sprites/blocks/empty.png';
+import { GameObject } from './GameObject';
 
 export default class Tile {
-  private container: PIXI.Container;
-  private sprite: PIXI.Sprite;
-  private gameObject: any = null;
-  public position: { x: number, y: number };
+  public sprite: PIXI.Sprite;
+  private row: number;
+  private column: number;
 
-  constructor(x: number, y: number, tileSize: number, type: ETileType) {
-    this.position = { x, y };
+  constructor(x: number, y: number, size: number) {
+    const fontSize = 64;
+    this.column = x;
+    this.row = y;
 
-    this.container = new PIXI.Container();
     this.sprite = PIXI.Sprite.from(EmptyField)
+    this.sprite.width = size;
+    this.sprite.height = size;
+    this.sprite.x = size * x;
+    this.sprite.y = size * y;
 
-    this.container.x = tileSize * x;
-    this.container.y = tileSize * y;
 
-    this.sprite.width = tileSize;
-    this.sprite.height = tileSize;
-
-    this.container.addChild(this.sprite);
-
-    const text = new PIXI.Text(`${x}, ${y}`, { fontSize: 18, fill: 0xffffff });
-    text.x = this.container.width / 2 - text.width / 2;
-    text.y = this.container.height / 2 - text.height / 2;
-    this.container.addChild(text);
+    const text = new PIXI.Text(`${x}, ${y}`, { fontSize, fill: 0xffffff40 });
+    text.x = size + (fontSize / 2)
+    text.y = size + (fontSize / 2)
+    text.anchor.set(0.5);
+    this.sprite.addChild(text);
   }
 
-  select() {
-    this.sprite.alpha = 0.4;
-  }
-
-  unselect() {
-    this.sprite.alpha = 1;
-  }
-
-  hover() {
-    this.sprite.alpha = 0.8;
-  }
-
-  getSpite() {
-    return this.sprite;
-  }
-
-  getContainer() {
-    return this.container;
+  get position() {
+    return { x: this.column, y: this.row };
   }
 }
