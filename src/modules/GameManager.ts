@@ -18,6 +18,7 @@ const getRandomSprite = () => {
 export default class GameManager {
   private grid: Grid;
   private gameObjects: GameObject[] = [];
+  private hoveredTile: Tile | null = null;
   private selectedObject: GameObject | null = null;
 
   constructor(app: PIXI.Application) {
@@ -25,15 +26,17 @@ export default class GameManager {
     const gridContainer = this.grid.getContainer();
     gridContainer.interactive = true;
     gridContainer.on<any>('select', (go: GameObject) => {
-      console.log('selected', go);
       this.selectedObject = go;
       this.selectedObject.sprite.alpha = 0.5;
     });
     gridContainer.on<any>('deselect', (go: GameObject) => {
-      console.log('deselected', go);
       if(!this.selectedObject) return;
       this.selectedObject.sprite.alpha = 1;
       this.selectedObject = null;
+    });
+    gridContainer.on<any>('check-tile', (gameObject: GameObject) => {
+      if(!this.hoveredTile) return;
+      this.setObjectToTile(gameObject, this.hoveredTile);
     });
     this.generateGameObjects();
     app.stage.addChild(gridContainer);
@@ -57,6 +60,7 @@ export default class GameManager {
 
         if(isHovered) {
           this.selectedObject!.setText(`${tile.position.x}, ${tile.position.y}`);
+          this.hoveredTile = tile;
           tile.sprite.alpha = 0.8;
           return;
         }
@@ -76,13 +80,29 @@ export default class GameManager {
 
       if(randomSprite === C) return;
       const gameObject = new GameObject(tile.position.x, tile.position.y, tile.sprite.width, randomSprite);
+      gameObject.setTile(tile);
+      tile.setGameObject(gameObject);
       this.gameObjects.push(gameObject);
       gridContainer.addChild(gameObject.sprite)
     });
   }
 
   private setObjectToTile(object: GameObject, tile: Tile): void {
-    object.sprite.x = tile.position.x;
-    object.sprite.y = tile.position.y;
+    if(tile.getGameObject()) {
+      const objectTile = object.getTile();
+      console.log('objectTile', objectTile?.position.x, objectTile?.position.y);
+      object.sprite.x = this.grid.tileSize * objectTile!.position.x + (this.grid.tileSize / 2)
+      object.sprite.y = this.grid.tileSize * objectTile!.position.y + (this.grid.tileSize / 2)
+      object.setText(`${objectTile!.position.x}, ${objectTile!.position.y}`);
+      return;
+    };
+
+    object.getTile()!.removeGameObject();
+    tile.setGameObject(object);
+
+    object.sprite.x = this.grid.tileSize * tile.position.x + (this.grid.tileSize / 2)
+    object.sprite.y = this.grid.tileSize * tile.position.y + (this.grid.tileSize / 2)
+
+    object.setTile(tile);
   }
 }
