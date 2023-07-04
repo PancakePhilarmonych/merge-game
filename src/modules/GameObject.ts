@@ -1,10 +1,11 @@
 import { Sprite } from 'pixi.js';
 import * as PIXI from 'pixi.js';
 import Tile from './Tile';
+import { Colors, getSpriteByColor } from './garbage';
 
 export class GameObject {
   public sprite: Sprite;
-  public text: PIXI.Text;
+  private color: Colors;
   public initialPosition: { x: number; y: number; };
   private tile: Tile | null = null;
   private mousePosition: { x: number; y: number; } = { x: 0, y: 0 };
@@ -16,9 +17,10 @@ export class GameObject {
     x: number,
     y: number,
     size: number,
-    sprite: string,
+    color: Colors,
   ) {
-    this.sprite = PIXI.Sprite.from(sprite);
+    this.color = color;
+    this.sprite = PIXI.Sprite.from(getSpriteByColor(color))
     this.initialPosition = { x, y };
     this.size = size;
 
@@ -32,12 +34,6 @@ export class GameObject {
     this.sprite.interactive = true;
     this.sprite.cursor = "pointer";
     this.sprite.zIndex = 1;
-
-    this.text = new PIXI.Text(`${x}, ${y}`, { fontSize: 32, fill: 0x0000020 });
-    this.text.x = size / 32
-    this.text.y = size / 32
-    this.text.anchor.set(0.5);
-    this.sprite.addChild(this.text);
 
     this.sprite.on("mousedown", this.onDragging, this)
       .on("touchstart", this.onDragStart, this)
@@ -63,16 +59,6 @@ export class GameObject {
     } else {
       this.onDragStart(event);
     }
-  }
-
-  setText(text: string) {
-    this.text.destroy();
-    this.text = new PIXI.Text(text, { fontSize: 32, fill: 0x0000020 });
-    this.text.x = this.size / 32
-    this.text.y = this.size / 32
-    this.text.anchor.set(0.5);
-    this.sprite.addChild(this.text);
-
   }
 
   onDragStart(event: PIXI.FederatedPointerEvent) {
@@ -106,7 +92,7 @@ export class GameObject {
     }
   }
 
-  setTile(tile: Tile) {
+  setTile(tile: Tile | null) {
     this.tile = tile;
   }
 
@@ -116,5 +102,15 @@ export class GameObject {
 
   getTile() {
     return this.tile;
+  }
+
+  getColor() {
+    return this.color;
+  }
+
+  setColor(color: Colors) {
+    console.log('setColor', color)
+    this.color = color;
+    this.sprite.texture = getSpriteByColor(color);
   }
 }

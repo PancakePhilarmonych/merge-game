@@ -2,17 +2,18 @@ import { GameObject } from "./GameObject";
 import Grid from "./Grid";
 import * as PIXI from "pixi.js";
 import Tile from "./Tile";
-import A from '../assets/sprites/blocks/blue.png';
-import B from '../assets/sprites/blocks/green.png';
-import C from '../assets/sprites/blocks/transparent.png';
-import D from '../assets/sprites/blocks/red.png';
-import E from '../assets/sprites/blocks/yellow.png';
+import { Colors } from './garbage'
 
-const sprites = [A, B, C, E, C, D, C]; // C is transparent
+const colors = [
+  Colors.RED,
+  Colors.YELLOW,
+  Colors.BLUE,
+  Colors.EMPTY,
+];
 
-const getRandomSprite = () => {
-  const index = Math.floor(Math.random() * sprites.length);
-  return sprites[index];
+const getRandomColor = () => {
+  const index = Math.floor(Math.random() * colors.length);
+  return colors[index];
 }
 
 export default class GameManager {
@@ -22,7 +23,7 @@ export default class GameManager {
   private selectedObject: GameObject | null = null;
 
   constructor(app: PIXI.Application) {
-    this.grid = new Grid(4, app.view.width);
+    this.grid = new Grid(5, app.view.width);
     const gridContainer = this.grid.getContainer();
     gridContainer.interactive = true;
     gridContainer.on<any>('select', (go: GameObject) => {
@@ -59,7 +60,6 @@ export default class GameManager {
         && Math.floor(spriteSizeHeightAnchor / this.grid.tileSize) === tile.position.y;
 
         if(isHovered) {
-          this.selectedObject!.setText(`${tile.position.x}, ${tile.position.y}`);
           this.hoveredTile = tile;
           tile.sprite.alpha = 0.8;
           return;
@@ -76,10 +76,10 @@ export default class GameManager {
     const gridContainer = this.grid.getContainer();
 
     gridTiles.forEach((tile: Tile) => {
-      const randomSprite = getRandomSprite();
+      const randomColor = getRandomColor();
 
-      if(randomSprite === C) return;
-      const gameObject = new GameObject(tile.position.x, tile.position.y, tile.sprite.width, randomSprite);
+      if(randomColor === Colors.EMPTY) return;
+      const gameObject = new GameObject(tile.position.x, tile.position.y, tile.sprite.width, randomColor );
       gameObject.setTile(tile);
       tile.setGameObject(gameObject);
       this.gameObjects.push(gameObject);
@@ -88,12 +88,32 @@ export default class GameManager {
   }
 
   private setObjectToTile(object: GameObject, tile: Tile): void {
-    if(tile.getGameObject()) {
+    const tileGameObject = tile.getGameObject();
+
+    if(tileGameObject) {
+
+      if(tileGameObject?.getColor() === object.getColor()) {
+
+        if(tileGameObject === object) {
+          const objectTile = object.getTile();
+          object.sprite.x = this.grid.tileSize * objectTile!.position.x + (this.grid.tileSize / 2)
+          object.sprite.y = this.grid.tileSize * objectTile!.position.y + (this.grid.tileSize / 2)
+          return;
+        };
+
+        object.sprite.destroy();
+        const gameObjectIndex = this.gameObjects.indexOf(object);
+        this.gameObjects.splice(gameObjectIndex, 1);
+        object.getTile()!.removeGameObject();
+
+        this.setNewColorToObject(tileGameObject);
+        return;
+      };
+
       const objectTile = object.getTile();
-      console.log('objectTile', objectTile?.position.x, objectTile?.position.y);
+
       object.sprite.x = this.grid.tileSize * objectTile!.position.x + (this.grid.tileSize / 2)
       object.sprite.y = this.grid.tileSize * objectTile!.position.y + (this.grid.tileSize / 2)
-      object.setText(`${objectTile!.position.x}, ${objectTile!.position.y}`);
       return;
     };
 
@@ -104,5 +124,40 @@ export default class GameManager {
     object.sprite.y = this.grid.tileSize * tile.position.y + (this.grid.tileSize / 2)
 
     object.setTile(tile);
+  }
+
+  private setNewColorToObject(object: GameObject): void {
+    switch(object.getColor()) {
+      case Colors.RED:
+        object.setColor(Colors.RED_TWO);
+        break;
+      case Colors.RED_TWO:
+        object.setColor(Colors.RED_THREE);
+        break;
+      case Colors.RED_THREE:
+        console.log('Alredy max color');
+        break;
+      case Colors.YELLOW:
+        object.setColor(Colors.YELLOW_TWO);
+        break;
+      case Colors.YELLOW_TWO:
+        object.setColor(Colors.YELLOW_THREE);
+        break;
+      case Colors.YELLOW_THREE:
+        console.log('Alredy max color');
+        break;
+      case Colors.BLUE:
+        object.setColor(Colors.BLUE_TWO);
+        break;
+      case Colors.BLUE_TWO:
+        object.setColor(Colors.BLUE_THREE);
+        break;
+      case Colors.BLUE_THREE:
+        console.log('Alredy max color');
+        break;
+      default:
+        console.log('No color');
+        break;
+    }
   }
 }
