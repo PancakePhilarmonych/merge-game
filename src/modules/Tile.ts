@@ -5,6 +5,7 @@ import { GameObject } from './GameObject';
 export default class Tile {
   public sprite: PIXI.Sprite;
   private row: number;
+  private gameObject: GameObject | null = null;
   private column: number;
 
   constructor(x: number, y: number, size: number) {
@@ -28,5 +29,17 @@ export default class Tile {
 
   get position() {
     return { x: this.column, y: this.row };
+  }
+
+  getGameObject() {
+    return this.gameObject;
+  }
+
+  setGameObject(gameObject: GameObject) {
+    this.gameObject = gameObject;
+  }
+
+  removeGameObject() {
+    this.gameObject = null;
   }
 }
