@@ -1,10 +1,12 @@
 import { Sprite } from 'pixi.js';
 import * as PIXI from 'pixi.js';
+import Tile from './Tile';
 
 export class GameObject {
   public sprite: Sprite;
   public text: PIXI.Text;
   public initialPosition: { x: number; y: number; };
+  private tile: Tile | null = null;
   private mousePosition: { x: number; y: number; } = { x: 0, y: 0 };
   private size = 0;
 
@@ -88,6 +90,8 @@ export class GameObject {
     this.isDragging = false;
     this.sprite.zIndex = 1;
     this.sprite.parent.emit<any>('deselect', this)
+
+    this.sprite.parent.emit<any>('check-tile', this)
   }
 
   onDragMove(event: PIXI.FederatedPointerEvent) {
@@ -100,5 +104,17 @@ export class GameObject {
       this.sprite.x = this.initialPosition.x + dx;
       this.sprite.y = this.initialPosition.y + dy;
     }
+  }
+
+  setTile(tile: Tile) {
+    this.tile = tile;
+  }
+
+  deleteTile() {
+    this.tile = null;
+  }
+
+  getTile() {
+    return this.tile;
   }
 }
