@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import EmptyField from '../assets/sprites/blocks/empty.png';
+import EmptyField from '../assets/sprites/blocks/levels/ev-empty.png';
 import { GameObject } from './GameObject';
 
 export default class Tile {
@@ -18,13 +18,6 @@ export default class Tile {
     this.sprite.height = size;
     this.sprite.x = size * x;
     this.sprite.y = size * y;
-
-
-    const text = new PIXI.Text(`${x}, ${y}`, { fontSize, fill: 0xffffff40 });
-    text.x = size + (fontSize / 2)
-    text.y = size + (fontSize / 2)
-    text.anchor.set(0.5);
-    this.sprite.addChild(text);
   }
 
   get position() {
