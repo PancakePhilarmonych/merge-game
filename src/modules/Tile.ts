@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import EmptyField from '../assets/sprites/blocks/levels/ev-empty.png';
+import EmptyField from '../assets/sprites/blocks/levels/ev-empty-2.png';
 import { GameObject } from './GameObject';
 
 export default class Tile {

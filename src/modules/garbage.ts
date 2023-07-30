@@ -9,7 +9,7 @@ import yellowThree from '../assets/sprites/blocks/levels/yellow_three.png';
 import blueOne from '../assets/sprites/blocks/levels/blue_one.png';
 import blueTwo from '../assets/sprites/blocks/levels/blue_two.png';
 import blueThree from '../assets/sprites/blocks/levels/blue_three.png';
-import empty from '../assets/sprites/blocks/levels/ev-empty.png';
+import empty from '../assets/sprites/blocks/levels/ev-empty-2.png';
 
 
 export enum Colors {
