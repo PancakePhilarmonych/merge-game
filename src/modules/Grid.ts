@@ -69,8 +69,8 @@ export default class Grid {
 
   getSelectedTilePosition(x: number, y: number): { x: number; y: number } {
     return {
-      x: Math.floor(x / this.cells[x][y].position.x) as number,
-      y: Math.floor(y / this.cells[x][y].position.y) as number,
+      x: Math.floor(x / this.cells[x][y].position.x),
+      y: Math.floor(y / this.cells[x][y].position.y),
     };
   }
 }
