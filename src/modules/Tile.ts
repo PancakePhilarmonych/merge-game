@@ -5,11 +5,10 @@ import { GameObject } from './GameObject';
 export default class Tile {
   public sprite: PIXI.Sprite;
   private row: number;
-  private gameObject: GameObject | null = null;
   private column: number;
+  private gameObject: GameObject | null = null;
 
   constructor(x: number, y: number, size: number) {
-    const fontSize = 64;
     this.column = x;
     this.row = y;
 

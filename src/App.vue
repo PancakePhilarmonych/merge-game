@@ -3,9 +3,11 @@ import { onMounted } from "vue";
 import App from "./modules/App"
 import GameManager  from './modules/GameManager';
 
+let gameManager: GameManager = {} as GameManager;
+
 onMounted(() => {
   const app = new App();
-  const gameManager = new GameManager(app.instance);
+  gameManager = new GameManager(app.instance);
 });
 </script>
 
