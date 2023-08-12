@@ -1,13 +1,13 @@
 import { Sprite } from 'pixi.js';
 import * as PIXI from 'pixi.js';
 import Tile from './Tile';
-import { Colors, getSpriteByColor } from './garbage';
+import { Colors, getSpriteByColor } from '../utils';
 
 export class GameObject {
   public sprite: Sprite;
   private color: Colors;
   public initialPosition: { x: number; y: number; };
-  private tile: Tile | null = null;
+  private cell: Tile | null = null;
   private mousePosition: { x: number; y: number; } = { x: 0, y: 0 };
   private size = 0;
 
@@ -31,7 +31,7 @@ export class GameObject {
     this.sprite.width = size;
     this.sprite.height = size;
 
-    this.sprite.interactive = true;
+    this.sprite.eventMode = 'dynamic'
     this.sprite.cursor = "pointer";
     this.sprite.zIndex = 1;
 
@@ -54,11 +54,7 @@ export class GameObject {
   onDragging(event: PIXI.FederatedPointerEvent) {
     this.sprite.parent.emit<any>('select', this)
 
-    if(this.isDragging) {
-      this.onDragEnd();
-    } else {
-      this.onDragStart(event);
-    }
+    this.isDragging ? this.onDragEnd() : this.onDragStart(event)
   }
 
   onDragStart(event: PIXI.FederatedPointerEvent) {
@@ -77,7 +73,7 @@ export class GameObject {
     this.sprite.zIndex = 1;
     this.sprite.parent.emit<any>('deselect', this)
 
-    this.sprite.parent.emit<any>('check-tile', this)
+    this.sprite.parent.emit<any>('check-cell', this)
   }
 
   onDragMove(event: PIXI.FederatedPointerEvent) {
@@ -92,16 +88,16 @@ export class GameObject {
     }
   }
 
-  setTile(tile: Tile | null) {
-    this.tile = tile;
+  setCell(cell: Tile | null) {
+    this.cell = cell;
   }
 
-  deleteTile() {
-    this.tile = null;
+  deleteCell() {
+    this.cell = null;
   }
 
-  getTile() {
-    return this.tile;
+  getCell() {
+    return this.cell;
   }
 
   getColor() {

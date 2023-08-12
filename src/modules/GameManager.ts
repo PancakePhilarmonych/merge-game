@@ -2,7 +2,7 @@ import { GameObject } from "./GameObject";
 import Grid from "./Grid";
 import * as PIXI from "pixi.js";
 import Tile from "./Tile";
-import { Colors } from './garbage'
+import { Colors } from '../utils'
 
 const colors = [
   Colors.RED,
@@ -19,33 +19,44 @@ const getRandomColor = () => {
 export default class GameManager {
   private grid: Grid;
   private gameObjects: GameObject[] = [];
-  private hoveredTile: Tile | null = null;
+  private hoveredCell: Tile | null = null;
   private selectedObject: GameObject | null = null;
+  private container: PIXI.Container = new PIXI.Container();
 
   constructor(app: PIXI.Application) {
-    this.grid = new Grid(5, app.view.width);
-    const gridContainer = this.grid.getContainer();
-    gridContainer.interactive = true;
-    gridContainer.on<any>('select', (go: GameObject) => {
+    this.container.eventMode = 'dynamic';
+    this.container.sortableChildren = true;
+    this.container.interactiveChildren = true;
+    this.grid = new Grid(6, app.view.width);
+    const cellSprites = this.grid.getSprites();
+    this.container.addChild(...cellSprites);
+
+    this.container.on<any>('select', (go: GameObject) => {
       this.selectedObject = go;
-      this.selectedObject.sprite.alpha = 0.5;
+      // this.selectedObject.sprite.alpha = 0.5;
     });
-    gridContainer.on<any>('deselect', (go: GameObject) => {
+
+    this.container.on<any>('deselect', (go: GameObject) => {
       if(!this.selectedObject) return;
-      this.selectedObject.sprite.alpha = 1;
+      // this.selectedObject.sprite.alpha = 1;
       this.selectedObject = null;
     });
-    gridContainer.on<any>('check-tile', (gameObject: GameObject) => {
-      if(!this.hoveredTile) return;
-      this.setObjectToTile(gameObject, this.hoveredTile);
+
+    this.container.on<any>('check-cell', (gameObject: GameObject) => {
+      if(!this.hoveredCell) return;
+      this.setObjectToCell(gameObject, this.hoveredCell);
     });
+
     this.generateGameObjects();
-    app.stage.addChild(gridContainer);
+    app.stage.addChild(this.container);
 
     app.ticker.add(() => {
+      const cellSize = this.grid.getCellSize();
+      const cells = this.grid.getCells();
+
       if(!this.selectedObject) {
-        this.grid.getTiles().forEach((tile: Tile) => {
-          tile.sprite.alpha = 1;
+        cells.forEach((cell: Tile) => {
+          cell.sprite.alpha = 1;
         });
         return;
       };
@@ -53,77 +64,77 @@ export default class GameManager {
       const spriteSizeWidthAnchor = this.selectedObject.sprite.x;
       const spriteSizeHeightAnchor = this.selectedObject.sprite.y;
 
-      this.grid.getTiles().forEach((tile: Tile) => {
+      cells.forEach((cell: Tile) => {
 
         const isHovered = this.selectedObject
-        && Math.floor(spriteSizeWidthAnchor / this.grid.tileSize) === tile.position.x
-        && Math.floor(spriteSizeHeightAnchor / this.grid.tileSize) === tile.position.y;
+        && Math.floor(spriteSizeWidthAnchor / cellSize) === cell.position.x
+        && Math.floor(spriteSizeHeightAnchor / cellSize) === cell.position.y;
 
         if(isHovered) {
-          this.hoveredTile = tile;
-          tile.sprite.alpha = 0.8;
+          this.hoveredCell = cell;
+          cell.sprite.alpha = 0.8;
           return;
         }
 
-        tile.sprite.alpha = 1;
+        cell.sprite.alpha = 1;
       }
       );
     });
   }
 
   private generateGameObjects(): void {
-    const gridTiles = this.grid.getTiles()
-    const gridContainer = this.grid.getContainer();
+    const cells = this.grid.getCells()
 
-    gridTiles.forEach((tile: Tile) => {
+    cells.forEach((cell: Tile) => {
       const randomColor = getRandomColor();
 
       if(randomColor === Colors.EMPTY) return;
-      const gameObject = new GameObject(tile.position.x, tile.position.y, tile.sprite.width, randomColor );
-      gameObject.setTile(tile);
-      tile.setGameObject(gameObject);
+      const gameObject = new GameObject(cell.position.x, cell.position.y, cell.sprite.width, randomColor );
+      gameObject.setCell(cell);
+      cell.setGameObject(gameObject);
       this.gameObjects.push(gameObject);
-      gridContainer.addChild(gameObject.sprite)
+      this.container.addChild(gameObject.sprite)
     });
   }
 
-  private setObjectToTile(object: GameObject, tile: Tile): void {
-    const tileGameObject = tile.getGameObject();
+  private setObjectToCell(object: GameObject, cell: Tile): void {
+    const cellGameObject = cell.getGameObject();
+    const cellSize = this.grid.getCellSize();
 
-    if(tileGameObject) {
+    if(cellGameObject) {
 
-      if(tileGameObject?.getColor() === object.getColor()) {
+      if(cellGameObject?.getColor() === object.getColor()) {
 
-        if(tileGameObject === object) {
-          const objectTile = object.getTile();
-          object.sprite.x = this.grid.tileSize * objectTile!.position.x + (this.grid.tileSize / 2)
-          object.sprite.y = this.grid.tileSize * objectTile!.position.y + (this.grid.tileSize / 2)
+        if(cellGameObject === object) {
+          const objectCell = object.getCell();
+          object.sprite.x = cellSize * objectCell!.position.x + (cellSize / 2)
+          object.sprite.y = cellSize * objectCell!.position.y + (cellSize / 2)
           return;
         };
 
         object.sprite.destroy();
         const gameObjectIndex = this.gameObjects.indexOf(object);
         this.gameObjects.splice(gameObjectIndex, 1);
-        object.getTile()!.removeGameObject();
+        object.getCell()!.removeGameObject();
 
-        this.setNewColorToObject(tileGameObject);
+        this.setNewColorToObject(cellGameObject);
         return;
       };
 
-      const objectTile = object.getTile();
+      const objectCell = object.getCell();
 
-      object.sprite.x = this.grid.tileSize * objectTile!.position.x + (this.grid.tileSize / 2)
-      object.sprite.y = this.grid.tileSize * objectTile!.position.y + (this.grid.tileSize / 2)
+      object.sprite.x = cellSize * objectCell!.position.x + (cellSize / 2)
+      object.sprite.y = cellSize * objectCell!.position.y + (cellSize / 2)
       return;
     };
 
-    object.getTile()!.removeGameObject();
-    tile.setGameObject(object);
+    object.getCell()!.removeGameObject();
+    cell.setGameObject(object);
 
-    object.sprite.x = this.grid.tileSize * tile.position.x + (this.grid.tileSize / 2)
-    object.sprite.y = this.grid.tileSize * tile.position.y + (this.grid.tileSize / 2)
+    object.sprite.x = cellSize * cell.position.x + (cellSize / 2)
+    object.sprite.y = cellSize * cell.position.y + (cellSize / 2)
 
-    object.setTile(tile);
+    object.setCell(cell);
   }
 
   private setNewColorToObject(object: GameObject): void {
