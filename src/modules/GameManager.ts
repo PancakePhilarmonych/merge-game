@@ -137,6 +137,22 @@ export default class GameManager {
     object.setCell(cell);
   }
 
+  public restartGame(): void {
+    this.gameObjects.forEach((gameObject: GameObject) => {
+      gameObject.sprite.destroy();
+    });
+
+    this.gameObjects = [];
+    this.grid.getCells().forEach((cell: Tile) => {
+      cell.removeGameObject();
+    });
+
+    this.hoveredCell = null;
+    this.selectedObject = null;
+
+    this.generateGameObjects();
+  }
+
   private setNewColorToObject(object: GameObject): void {
     switch(object.getColor()) {
       case Colors.RED:
