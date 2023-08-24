@@ -5,6 +5,10 @@ import GameManager  from './modules/GameManager';
 
 let gameManager: GameManager = {} as GameManager;
 
+const restart = () => {
+  gameManager.restartGame();
+};
+
 onMounted(() => {
   const app = new App();
   gameManager = new GameManager(app.instance);
@@ -13,6 +17,7 @@ onMounted(() => {
 
 <template>
  <div class="container">
-    <div id="root" />
+   <div id="root" />
+   <button @click="restart" class="restart-button"> Restart </button>
   </div>
 </template>
