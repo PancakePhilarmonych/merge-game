@@ -35,14 +35,14 @@ export class GameObject {
     this.sprite.cursor = "pointer";
     this.sprite.zIndex = 1;
 
-    this.sprite.on("mousedown", this.onDragging, this)
-      .on("touchstart", this.onDragStart, this)
-      .on("mouseup", this.onDragEnd, this)
-      .on("mouseupoutside", this.onDragEnd, this)
+    this.sprite.on("touchstart", this.onDragStart, this)
       .on("touchend", this.onDragEnd, this)
       .on("touchendoutside", this.onDragEnd, this)
-      .on("mousemove", this.onDragMove, this)
-      .on("touchmove", this.onDragMove, this);
+      .on("touchmove", this.onDragMove, this)
+      .on("pointerdown", this.onDragging, this)
+      .on("pointerup", this.onDragEnd, this)
+      .on("pointerupoutside", this.onDragEnd, this)
+      .on("pointermove", this.onDragMove, this);
   }
 
   setPosition(x: number, y: number) {
