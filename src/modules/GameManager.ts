@@ -106,6 +106,16 @@ export default class GameManager {
     if(cellGameObject) {
 
       if(cellGameObject?.getColor() === object.getColor()) {
+        if(
+          cellGameObject.getColor() === Colors.BLUE_THREE ||
+          cellGameObject.getColor() === Colors.RED_THREE ||
+          cellGameObject.getColor() === Colors.YELLOW_THREE
+          ) {
+            const objectCell = object.getCell();
+            object.sprite.x = cellSize * objectCell!.position.x + (cellSize / 2)
+            object.sprite.y = cellSize * objectCell!.position.y + (cellSize / 2)
+            return;
+          }
 
         if(cellGameObject === object) {
           const objectCell = object.getCell();
