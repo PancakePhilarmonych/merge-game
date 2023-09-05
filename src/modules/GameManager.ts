@@ -17,13 +17,15 @@ const getRandomColor = () => {
 }
 
 export default class GameManager {
+  private store: any;
   private grid: Grid;
   private gameObjects: GameObject[] = [];
   private hoveredCell: Tile | null = null;
   private selectedObject: GameObject | null = null;
   private container: PIXI.Container = new PIXI.Container();
 
-  constructor(app: PIXI.Application) {
+  constructor(app: PIXI.Application, counterStore: any) {
+    this.store = counterStore
     this.container.eventMode = 'dynamic';
     this.container.sortableChildren = true;
     this.container.interactiveChildren = true;
@@ -150,6 +152,7 @@ export default class GameManager {
     this.hoveredCell = null;
     this.selectedObject = null;
 
+    this.store.reset()
     this.generateGameObjects();
   }
 
@@ -157,27 +160,33 @@ export default class GameManager {
     switch(object.getColor()) {
       case Colors.RED:
         object.setColor(Colors.RED_TWO);
+        this.store.increment()
         break;
       case Colors.RED_TWO:
         object.setColor(Colors.RED_THREE);
+        this.store.increment()
         break;
       case Colors.RED_THREE:
         console.log('Alredy max color');
         break;
       case Colors.YELLOW:
         object.setColor(Colors.YELLOW_TWO);
+        this.store.increment()
         break;
       case Colors.YELLOW_TWO:
         object.setColor(Colors.YELLOW_THREE);
+        this.store.increment()
         break;
       case Colors.YELLOW_THREE:
         console.log('Alredy max color');
         break;
       case Colors.BLUE:
         object.setColor(Colors.BLUE_TWO);
+        this.store.increment()
         break;
       case Colors.BLUE_TWO:
         object.setColor(Colors.BLUE_THREE);
+        this.store.increment()
         break;
       case Colors.BLUE_THREE:
         console.log('Alredy max color');
