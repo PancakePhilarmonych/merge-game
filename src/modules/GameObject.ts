@@ -20,7 +20,7 @@ export class GameObject {
     color: Colors,
   ) {
     this.color = color;
-    this.sprite = PIXI.Sprite.from(getSpriteByColor(color))
+    this.sprite = PIXI.Sprite.from(getSpriteByColor[color])
     this.initialPosition = { x, y };
     this.size = size;
 
@@ -107,6 +107,6 @@ export class GameObject {
   setColor(color: Colors) {
     console.log('setColor', color)
     this.color = color;
-    this.sprite.texture = getSpriteByColor(color);
+    this.sprite.texture = getSpriteByColor[color];
   }
 }

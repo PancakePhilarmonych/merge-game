@@ -13,41 +13,27 @@ import empty from '../assets/sprites/blocks/levels/ev-empty-2.png';
 
 
 export enum Colors {
-  RED = 0,
-  RED_TWO = 1,
-  RED_THREE = 2,
-  YELLOW = 3,
-  YELLOW_TWO = 4,
-  YELLOW_THREE = 5,
-  BLUE = 6,
-  BLUE_TWO = 7,
-  BLUE_THREE = 8,
-  EMPTY = 9,
+  RED,
+  RED_TWO,
+  RED_THREE,
+  YELLOW,
+  YELLOW_TWO,
+  YELLOW_THREE,
+  BLUE,
+  BLUE_TWO,
+  BLUE_THREE,
+  EMPTY,
 }
 
-export const getSpriteByColor = (color?: Colors) => {
-  switch (color) {
-    case Colors.RED:
-      return PIXI.Texture.from(redOne);
-    case Colors.RED_TWO:
-      return PIXI.Texture.from(redTwo);
-    case Colors.RED_THREE:
-      return PIXI.Texture.from(redThree);
-    case Colors.YELLOW:
-      return PIXI.Texture.from(yellowOne);
-    case Colors.YELLOW_TWO:
-      return PIXI.Texture.from(yellowTwo);
-    case Colors.YELLOW_THREE:
-      return PIXI.Texture.from(yellowThree);
-    case Colors.BLUE:
-      return PIXI.Texture.from(blueOne);
-    case Colors.BLUE_TWO:
-      return PIXI.Texture.from(blueTwo);
-    case Colors.BLUE_THREE:
-      return PIXI.Texture.from(blueThree);
-    case Colors.EMPTY:
-      return PIXI.Texture.from(empty);
-    default:
-      return PIXI.Texture.from(empty);
-  }
+export const getSpriteByColor: Record<Colors, PIXI.Texture> = {
+  [Colors.RED]: PIXI.Texture.from(redOne),
+  [Colors.RED_TWO]: PIXI.Texture.from(redTwo),
+  [Colors.RED_THREE]: PIXI.Texture.from(redThree),
+  [Colors.YELLOW]: PIXI.Texture.from(yellowOne),
+  [Colors.YELLOW_TWO]: PIXI.Texture.from(yellowTwo),
+  [Colors.YELLOW_THREE]: PIXI.Texture.from(yellowThree),
+  [Colors.BLUE]: PIXI.Texture.from(blueOne),
+  [Colors.BLUE_TWO]: PIXI.Texture.from(blueTwo),
+  [Colors.BLUE_THREE]: PIXI.Texture.from(blueThree),
+  [Colors.EMPTY]: PIXI.Texture.from(empty),
 }
