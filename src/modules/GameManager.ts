@@ -51,6 +51,7 @@ export default class GameManager {
 
     this.generateGameObjects();
     app.stage.addChild(this.container);
+    app.stage.hitArea = app.screen;
 
     app.ticker.add(() => {
       const cellSize = this.grid.getCellSize();

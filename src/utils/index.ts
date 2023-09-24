@@ -1,15 +1,15 @@
 import * as PIXI from 'pixi.js';
 
-import redOne from '../assets/sprites/blocks/levels/red_one.png';
-import redTwo from '../assets/sprites/blocks/levels/red_two.png';
-import redThree from '../assets/sprites/blocks/levels/red_three.png';
-import yellowOne from '../assets/sprites/blocks/levels/yellow_one.png';
-import yellowTwo from '../assets/sprites/blocks/levels/yellow_two.png';
-import yellowThree from '../assets/sprites/blocks/levels/yellow_three.png';
-import blueOne from '../assets/sprites/blocks/levels/blue_one.png';
-import blueTwo from '../assets/sprites/blocks/levels/blue_two.png';
-import blueThree from '../assets/sprites/blocks/levels/blue_three.png';
-import empty from '../assets/sprites/blocks/levels/ev-empty-2.png';
+import redOne from '../assets/sprites/blocks/red_one.png';
+import redTwo from '../assets/sprites/blocks/red_two.png';
+import redThree from '../assets/sprites/blocks/red_three.png';
+import yellowOne from '../assets/sprites/blocks/yellow_one.png';
+import yellowTwo from '../assets/sprites/blocks/yellow_two.png';
+import yellowThree from '../assets/sprites/blocks/yellow_three.png';
+import blueOne from '../assets/sprites/blocks/blue_one.png';
+import blueTwo from '../assets/sprites/blocks/blue_two.png';
+import blueThree from '../assets/sprites/blocks/blue_three.png';
+import empty from '../assets/sprites/blocks/empty.png';
 
 
 export enum Colors {

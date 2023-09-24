@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
-import EmptyField from '../assets/sprites/blocks/levels/ev-empty-2.png';
+import EmptyField from '../assets/sprites/blocks/grass-tile.png';
+import EmptyFieldSecond from '../assets/sprites/blocks/grass-tile-second.png';
 import { GameObject } from './GameObject';
 
 export default class Tile {
@@ -12,7 +13,13 @@ export default class Tile {
     this.column = x;
     this.row = y;
 
-    this.sprite = PIXI.Sprite.from(EmptyField)
+    const tileeCount = x + y;
+    if (tileeCount % 2 === 0) {
+      this.sprite = PIXI.Sprite.from(EmptyField)
+    } else {
+      this.sprite = PIXI.Sprite.from(EmptyFieldSecond)
+    }
+
     this.sprite.width = size;
     this.sprite.height = size;
     this.sprite.x = size * x;
