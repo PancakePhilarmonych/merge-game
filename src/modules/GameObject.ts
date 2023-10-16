@@ -4,14 +4,21 @@ import Tile from './Tile';
 import { Colors, getSpriteByColor } from '../utils';
 
 export class GameObject {
-  public sprite: Sprite;
+  // Only for game object
+  private maxLevel: boolean = false;
+  private level: number = 0;
+  private type: string = '';
+  private canBeSell: boolean = false;
+  private cost: number = 0;
+  // Only for game object
   private color: Colors;
+  // Position
   public initialPosition: { x: number; y: number; };
-  private cell: Tile | null = null;
   private mousePosition: { x: number; y: number; } = { x: 0, y: 0 };
-  private size = 0;
-
+  // Additional info
+  public sprite: Sprite;
   private isDragging: boolean = false;
+  private cell: Tile | null = null;
 
   constructor(
     x: number,
@@ -22,7 +29,6 @@ export class GameObject {
     this.color = color;
     this.sprite = PIXI.Sprite.from(getSpriteByColor[color])
     this.initialPosition = { x, y };
-    this.size = size;
 
     this.sprite.x = size * x + size / 2;
     this.sprite.y = size * y + size / 2;
@@ -108,5 +114,9 @@ export class GameObject {
     console.log('setColor', color)
     this.color = color;
     this.sprite.texture = getSpriteByColor[color];
+  }
+
+  delete() {
+    this.sprite.parent.removeChild(this.sprite);
   }
 }
