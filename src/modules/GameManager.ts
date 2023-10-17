@@ -33,6 +33,10 @@ export default class GameManager {
     const cellSprites = this.grid.getSprites();
     this.container.addChild(...cellSprites);
 
+    this.container.on("pointermove", this.moveOverContainer, this)
+      .on("pointerdown", this.moveOverContainer, this)
+
+
     this.container.on<any>('select', (go: GameObject) => {
       this.selectedObject = go;
       // this.selectedObject.sprite.alpha = 0.5;
@@ -83,6 +87,12 @@ export default class GameManager {
       }
       );
     });
+  }
+
+  moveOverContainer(event: PIXI.FederatedPointerEvent) {
+    if(!this.selectedObject) return;
+    this.selectedObject.sprite.x = event.globalX
+    this.selectedObject.sprite.y = event.globalY
   }
 
   private generateGameObjects(): void {
