@@ -16,6 +16,7 @@ jobs:
 
       - name: Check npm version
         run: npm --version
+        run: nvm use 18 && npm --version
 
       - name: Checkout code
         uses: actions/checkout@v2
