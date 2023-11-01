@@ -18,6 +18,6 @@ jobs:
         run: |
           git config user.name "${{ github.event.pull_request.user.login }}"
           git config user.email "${{ github.event.pull_request.user.email }}"
-      - run: git add dist && git commit -m "build"
-      - run: git subtree push --prefix dist origin gh-pages
+          git add dist && git commit -m "build"
+          git subtree push --prefix dist origin gh-pages
 
