@@ -15,5 +15,7 @@ jobs:
           - npm run build
       - name: deploy
         run: |
+          - export NVM_DIR=~/.nvm
+          - source ~/.nvm/nvm.sh
           - git add dist && git commit -m "build"
           - git subtree push --prefix dist origin gh-pages
