@@ -9,10 +9,10 @@ jobs:
   push_to_gh_pages:
     runs-on: ubuntu-latest
     steps:
-      # - name: Uses
-      #   run: |
-      #     - export NVM_DIR=~/.nvm
-      #     - source ~/.nvm/nvm.sh
+      - name: Uses
+        run: |
+          - export NVM_DIR=~/.nvm
+          - source ~/.nvm/nvm.sh
       - name: Use Node.js v14.17.6
         uses: actions/setup-node@v2
         with:
