@@ -9,13 +9,19 @@ jobs:
   push_to_gh_pages:
     runs-on: ubuntu-latest
     steps:
+      # - name: Uses
+      #   run: |
+      #     - export NVM_DIR=~/.nvm
+      #     - source ~/.nvm/nvm.sh
+      - name: Use Node.js v14.17.6
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.17.6'
       - name: build
         run: |
           - npm install
           - npm run build
       - name: deploy
         run: |
-          - export NVM_DIR=~/.nvm
-          - source ~/.nvm/nvm.sh
           - git add dist && git commit -m "build"
           - git subtree push --prefix dist origin gh-pages
