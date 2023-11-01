@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    container: node:18
 
     steps:
       - name: Check Node.js version
