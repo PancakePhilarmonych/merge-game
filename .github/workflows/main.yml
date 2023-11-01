@@ -15,7 +15,6 @@ jobs:
         run: node --version
 
       - name: Check npm version
-        run: npm --version
         run: nvm use 18 && npm --version
 
       - name: Checkout code
