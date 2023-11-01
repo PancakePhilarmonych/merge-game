@@ -9,17 +9,11 @@ jobs:
   push_to_gh_pages:
     runs-on: ubuntu-latest
     steps:
-      - name: Use Node.js v14.17.6
-        uses: actions/checkout@v2
-        with:
-          node-version: '14.17.6'
-      - name: build
-        run: |
-          - export NVM_DIR=~/.nvm
-          - source ~/.nvm/nvm.sh
-          - npm install
-          - npm run build
-      - name: deploy
-        run: |
-          - git add dist && git commit -m "build"
-          - git subtree push --prefix dist origin gh-pages
+      - run: node --version
+      - run: npm --version
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run build
+      - run: git add dist && git commit -m "build"
+      - run: git subtree push --prefix dist origin gh-pages
+
