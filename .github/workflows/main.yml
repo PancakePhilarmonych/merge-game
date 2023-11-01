@@ -1,25 +1,34 @@
-name: Deploy
+name: Build and Deploy
 
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
-  push_to_gh_pages:
+  deploy:
     runs-on: ubuntu-latest
-    steps:
-      - run: node --version
-      - run: npm --version
-      - uses: actions/checkout@v3
-      - run: npm install
-      - run: npm run build
-      - name: Login to GH Packages
-      - uses: fregante/setup-git-user@v2
-      - name: Configure Git user
-      - run: |
-          git config user.name "${{ github.user.login }}"
-          git config user.email "${{ github.user.email }}"
-          git add dist && git commit -m "build"
-          git subtree push --prefix dist origin gh-pages
 
+    steps:
+      - name: Check Node.js version
+        run: node --version
+
+      - name: Check npm version
+        run: npm --version
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Configure Git user
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git add dist
+          git commit -m "Build"
+          git subtree push --prefix dist origin gh-pages
