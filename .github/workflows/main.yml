@@ -15,6 +15,7 @@ jobs:
       - run: npm install
       - run: npm run build
       - name: Configure Git user
+      - uses: fregante/setup-git-user@v2
         run: |
           git config user.name "${{ github.user.login }}"
           git config user.email "${{ github.user.email }}"
