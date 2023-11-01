@@ -1,8 +1,10 @@
+name: Deploy
+
 on:
   push:
     branches:
-    - main
-    
+      - main
+
 jobs:
   push_to_gh_pages:
     runs-on: ubuntu-latest
