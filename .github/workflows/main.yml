@@ -16,8 +16,8 @@ jobs:
       - run: npm run build
       - name: Configure Git user
         run: |
-          git config user.name "${{ github.event.pull_request.user.login }}"
-          git config user.email "${{ github.event.pull_request.user.email }}"
+          git config user.name "${{ github.user.login }}"
+          git config user.email "${{ github.user.email }}"
           git add dist && git commit -m "build"
           git subtree push --prefix dist origin gh-pages
 
