@@ -32,3 +32,5 @@ jobs:
           git add dist
           git commit -m "Build"
           git subtree push --prefix dist origin gh-pages
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
