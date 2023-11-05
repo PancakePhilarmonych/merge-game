@@ -43,14 +43,9 @@ export class GameObject {
 
     this.sprite
       // Click to move
-      .on("touchstart", this.onDragging, this)
       .on("pointerdown", this.onDragging, this)
-      // Drag to move
-      .on("touchmove", this.onDragMove, this)
       .on("pointermove", this.onDragMove, this)
-      .on("touchend", this.onDragEnd, this)
       .on("pointerup", this.onDragEnd, this)
-      .on("touchendoutside", this.onDragEnd, this)
       .on("pointerupoutside", this.onDragEnd, this)
   }
 
