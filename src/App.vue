@@ -4,16 +4,16 @@ import App from "./modules/App";
 import GameManager from "./modules/GameManager";
 import { useCounterStore } from "./store/counter";
 
-let gameManager: GameManager = {} as GameManager;
-const counter = useCounterStore();
+let gm: GameManager = {} as GameManager;
+const counterStore = useCounterStore();
 
 const restart = () => {
-  gameManager.restartGame();
+  gm.restartGame();
 };
 
 onMounted(() => {
   const app = new App();
-  gameManager = new GameManager(app.instance, counter);
+  gm = new GameManager(app.instance, counterStore);
 });
 </script>
 
@@ -21,6 +21,6 @@ onMounted(() => {
   <div class="container">
     <div id="root" />
     <button @click="restart" class="restart-button">Restart</button>
-    <div class="counter">{{ counter.count }}</div>
+    <div class="counter">{{ counterStore.count }}</div>
   </div>
 </template>
