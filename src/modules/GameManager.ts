@@ -38,8 +38,8 @@ export default class GameManager {
 
 
     this.container.on<any>('select', (go: GameObject) => {
+      if(this.selectedObject === go) return;
       this.selectedObject = go;
-      // this.selectedObject.sprite.alpha = 0.5;
     });
 
     this.container.on<any>('deselect', (go: GameObject) => {
@@ -91,6 +91,7 @@ export default class GameManager {
 
   moveOverContainer(event: PIXI.FederatedPointerEvent) {
     if(!this.selectedObject) return;
+    if(!this.selectedObject.isUnblocked) return;
     this.selectedObject.sprite.x = event.globalX
     this.selectedObject.sprite.y = event.globalY
   }

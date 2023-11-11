@@ -14,11 +14,15 @@ export class GameObject {
   private color: Colors;
   // Position
   public initialPosition: { x: number; y: number; };
+  private lastMousePosition: { x: number; y: number; } = { x: 0, y: 0 };
   private mousePosition: { x: number; y: number; } = { x: 0, y: 0 };
   // Additional info
   public sprite: Sprite;
   private isDragging: boolean = false;
   private cell: Tile | null = null;
+  public isUnblocked: boolean = false;
+  private pointerDownTime: number = 0;
+  private ponterDownTimeOut: any = null;
 
   constructor(
     x: number,
@@ -42,11 +46,9 @@ export class GameObject {
     this.sprite.zIndex = 1;
 
     this.sprite
-      // Click to move
-      .on("pointerdown", this.onDragging, this)
+      .on("pointerdown", this.onDragStart, this)
       .on("pointermove", this.onDragMove, this)
       .on("pointerup", this.onDragEnd, this)
-      .on("pointerupoutside", this.onDragEnd, this)
   }
 
   setPosition(x: number, y: number) {
@@ -55,40 +57,37 @@ export class GameObject {
     this.sprite.y = y;
   }
 
-  onDragging(event: PIXI.FederatedPointerEvent) {
-    this.sprite.parent.emit<any>('select', this)
+  onDragStart() {
+    this.sprite.parent.emit<any>('select', this);
+    this.pointerDownTime = Date.now();
 
-    this.isDragging ? this.onDragEnd() : this.onDragStart(event)
+    this.ponterDownTimeOut = setTimeout(() => {
+      const timeElapsed = Date.now() - this.pointerDownTime;
+      if (timeElapsed > 100) this.isDragging = true;
+    }, 100);
   }
 
-  onDragStart(event: PIXI.FederatedPointerEvent) {
-    this.isDragging = true;
-    this.sprite.zIndex = 2;
-
-    this.initialPosition.x = this.sprite.x;
-    this.initialPosition.y = this.sprite.y;
-
-    this.mousePosition.x = event.globalX
-    this.mousePosition.y = event.globalY
+  onDragMove() {
+    if (this.isDragging) {
+      this.isUnblocked = true;
+      this.sprite.zIndex = 2;
+    }
   }
 
-  onDragEnd() {
+  onDragEnd(event: PIXI.FederatedPointerEvent) {
+    clearTimeout(this.ponterDownTimeOut);
+
     this.isDragging = false;
     this.sprite.zIndex = 1;
-    this.sprite.parent.emit<any>('deselect', this)
-    this.sprite.parent.emit<any>('check-cell', this)
-  }
 
-  onDragMove(event: PIXI.FederatedPointerEvent) {
-    if (this.isDragging) {
-
-      const { x, y } = event.global;
-      const dx = x - this.mousePosition.x;
-      const dy = y - this.mousePosition.y;
-
-      this.sprite.x = this.initialPosition.x + dx;
-      this.sprite.y = this.initialPosition.y + dy;
+    if (this.isUnblocked) {
+      this.isUnblocked = false;
+      this.sprite.parent.emit<any>('deselect', this);
+      this.sprite.parent.emit<any>('check-cell', this);
     }
+
+    this.lastMousePosition.x = event.data.global.x;
+    this.lastMousePosition.y = event.data.global.y;
   }
 
   setCell(cell: Tile | null) {
