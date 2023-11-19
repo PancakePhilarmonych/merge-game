@@ -109,17 +109,24 @@ export default class GameManager {
   }
 
   private generateGameObjects(): void {
-    const cells = this.grid.getCells()
-
-    cells.forEach((cell: Tile) => {
+    const gridCells = this.grid.getCells()
+    gridCells.forEach((cell: Tile) => {
       const randomColor = getRandomColor();
 
       if(randomColor === Colors.EMPTY) return;
-      const gameObject = new GameObject(cell.position.x, cell.position.y, cell.sprite.width, randomColor );
-      gameObject.setCell(cell);
-      cell.setGameObject(gameObject);
-      this.gameObjects.push(gameObject);
-      this.container.addChild(gameObject.sprite)
+
+      const newGameObject = new GameObject(
+        cell.position.x,
+        cell.position.y,
+        cell.sprite.width,
+        randomColor
+      );
+
+      newGameObject.setCell(cell);
+      cell.setGameObject(newGameObject);
+
+      this.gameObjects.push(newGameObject);
+      this.container.addChild(newGameObject.sprite)
     });
   }
 
