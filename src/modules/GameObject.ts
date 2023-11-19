@@ -46,9 +46,9 @@ export class GameObject {
     this.sprite.zIndex = 1;
 
     this.sprite
-      .on("pointerdown", this.onDragStart, this)
-      .on("pointermove", this.onDragMove, this)
-      .on("pointerup", this.onDragEnd, this)
+      .on("pointerdown", this.onPointedDown, this)
+      .on("pointermove", this.onPointerMove, this)
+      .on("pointerup", this.onPointedUp, this)
   }
 
   setPosition(x: number, y: number) {
@@ -57,7 +57,7 @@ export class GameObject {
     this.sprite.y = y;
   }
 
-  onDragStart() {
+  onPointedDown() {
     this.sprite.parent.emit<any>('select', this);
     this.pointerDownTime = Date.now();
 
@@ -67,14 +67,14 @@ export class GameObject {
     }, 100);
   }
 
-  onDragMove() {
+  onPointerMove() {
     if (this.isDragging) {
       this.isUnblocked = true;
       this.sprite.zIndex = 2;
     }
   }
 
-  onDragEnd(event: PIXI.FederatedPointerEvent) {
+  onPointedUp(event: PIXI.FederatedPointerEvent) {
     clearTimeout(this.ponterDownTimeOut);
 
     this.isDragging = false;
@@ -107,7 +107,6 @@ export class GameObject {
   }
 
   setColor(color: Colors) {
-    console.log('setColor', color)
     this.color = color;
     this.sprite.texture = getSpriteByColor[color];
   }
