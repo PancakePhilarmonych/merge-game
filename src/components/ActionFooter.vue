@@ -29,7 +29,7 @@ const actualColor = computed(() => {
     <div class="action-footer__item selected-color">
     {{ actualColor }}
     <div v-if="showSellButton" @click="$emit('sell')" class="delete-button">
-      Продать
+      Sell
     </div>
     </div>
     <div style="flex: 1;"/>
