@@ -49,6 +49,7 @@ export class GameObject {
       .on("pointerdown", this.onPointedDown, this)
       .on("pointermove", this.onPointerMove, this)
       .on("pointerup", this.onPointedUp, this)
+      .on("pointerupoutside", this.onPointedUp, this)
   }
 
   setPosition(x: number, y: number) {
@@ -62,9 +63,8 @@ export class GameObject {
     this.pointerDownTime = Date.now();
 
     this.ponterDownTimeOut = setTimeout(() => {
-      const timeElapsed = Date.now() - this.pointerDownTime;
-      if (timeElapsed > 100) this.isDragging = true;
-    }, 100);
+      this.isDragging = true;
+    }, 20);
   }
 
   onPointerMove() {
