@@ -40,12 +40,14 @@ export default class GameManager {
     this.container.on<any>('select', (go: GameObject) => {
       if(this.selectedObject === go) return;
       this.selectedObject = go;
+      this.store.select(go);
     });
 
     this.container.on<any>('deselect', (go: GameObject) => {
       if(!this.selectedObject) return;
       // this.selectedObject.sprite.alpha = 1;
       this.selectedObject = null;
+      this.store.select(null);
     });
 
     this.container.on<any>('check-cell', (gameObject: GameObject) => {
@@ -87,6 +89,16 @@ export default class GameManager {
       }
       );
     });
+  }
+
+  public deleteSelectedObject(): void {
+    if(!this.selectedObject) return;
+    this.selectedObject.sprite.destroy();
+    const gameObjectIndex = this.gameObjects.indexOf(this.selectedObject);
+    this.gameObjects.splice(gameObjectIndex, 1);
+    this.selectedObject.getCell()!.removeGameObject();
+    this.selectedObject = null;
+    this.store.select(null);
   }
 
   moveOverContainer(event: PIXI.FederatedPointerEvent) {
