@@ -39,16 +39,16 @@ export const getRandomColor = () => {
 
 
 export const ColorsTextMap: Record<Colors, string> = {
-  [Colors.RED]: 'Красный I',
-  [Colors.RED_TWO]: 'Красный II',
-  [Colors.RED_THREE]: 'Красный III',
-  [Colors.YELLOW]: 'Желтый I',
-  [Colors.YELLOW_TWO]: 'Желтый II',
-  [Colors.YELLOW_THREE]: 'Желтый III',
-  [Colors.BLUE]: 'Синий I',
-  [Colors.BLUE_TWO]: 'Синий II',
-  [Colors.BLUE_THREE]: 'Синий III',
-  [Colors.EMPTY]: 'Пусто',
+  [Colors.RED]: 'Red I',
+  [Colors.RED_TWO]: 'Red II',
+  [Colors.RED_THREE]: 'Red III',
+  [Colors.YELLOW]: 'Yellow I',
+  [Colors.YELLOW_TWO]: 'Yellow II',
+  [Colors.YELLOW_THREE]: 'Yellow III',
+  [Colors.BLUE]: 'Blue I',
+  [Colors.BLUE_TWO]: 'Blue II',
+  [Colors.BLUE_THREE]: 'Blue III',
+  [Colors.EMPTY]: 'Empty',
 }
 
 export const getSpriteByColor: Record<Colors, PIXI.Texture> = {
