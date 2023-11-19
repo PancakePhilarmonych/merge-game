@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    node-version: 16.x
 
     steps:
       - name: Check Node.js version
