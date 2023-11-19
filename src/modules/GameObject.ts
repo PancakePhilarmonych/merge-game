@@ -14,7 +14,6 @@ export class GameObject {
   private color: Colors;
   // Position
   public initialPosition: { x: number; y: number; };
-  private lastMousePosition: { x: number; y: number; } = { x: 0, y: 0 };
   private mousePosition: { x: number; y: number; } = { x: 0, y: 0 };
   // Additional info
   public sprite: Sprite;
@@ -85,9 +84,6 @@ export class GameObject {
       this.sprite.parent.emit<any>('deselect', this);
       this.sprite.parent.emit<any>('check-cell', this);
     }
-
-    this.lastMousePosition.x = event.data.global.x;
-    this.lastMousePosition.y = event.data.global.y;
   }
 
   setCell(cell: Tile | null) {
