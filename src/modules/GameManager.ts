@@ -2,19 +2,7 @@ import { GameObject } from "./GameObject";
 import Grid from "./Grid";
 import * as PIXI from "pixi.js";
 import Tile from "./Tile";
-import { Colors } from '../utils'
-
-const colors = [
-  Colors.RED,
-  Colors.YELLOW,
-  Colors.BLUE,
-  Colors.EMPTY,
-];
-
-const getRandomColor = () => {
-  const index = Math.floor(Math.random() * colors.length);
-  return colors[index];
-}
+import { Colors, smoothMoveTo, maxLevelColors, getRandomColor } from '../utils'
 
 export default class GameManager {
   private store: any;
@@ -74,7 +62,6 @@ export default class GameManager {
       const spriteSizeHeightAnchor = this.selectedObject.sprite.y;
 
       cells.forEach((cell: Tile) => {
-
         const isHovered = this.selectedObject
         && Math.floor(spriteSizeWidthAnchor / cellSize) === cell.position.x
         && Math.floor(spriteSizeHeightAnchor / cellSize) === cell.position.y;
@@ -86,8 +73,7 @@ export default class GameManager {
         }
 
         cell.sprite.alpha = 1;
-      }
-      );
+      });
     });
   }
 
@@ -133,49 +119,49 @@ export default class GameManager {
   private setObjectToCell(object: GameObject, cell: Tile): void {
     const cellGameObject = cell.getGameObject();
     const cellSize = this.grid.getCellSize();
+    const objectCell = object.getCell()!;
+    const objectCellX = cellSize * objectCell.position.x + (cellSize / 2)
+    const objectCellY = cellSize * objectCell.position.y + (cellSize / 2)
+    const cellX = cellSize * cell.position.x + (cellSize / 2)
+    const cellY = cellSize * cell.position.y + (cellSize / 2)
+    const cellGameObjectColor = cellGameObject?.getColor();
+    const gameObjectColor = object.getColor();
 
-    if(cellGameObject) {
+    if (cellGameObject) {
+      if (cellGameObjectColor === gameObjectColor) {
+        if (maxLevelColors.includes(cellGameObjectColor)) {
+          smoothMoveTo(object.sprite, objectCellX, objectCellY, 0.5)
+          return;
+        }
 
-      if(cellGameObject?.getColor() === object.getColor()) {
-        if(
-          cellGameObject.getColor() === Colors.BLUE_THREE ||
-          cellGameObject.getColor() === Colors.RED_THREE ||
-          cellGameObject.getColor() === Colors.YELLOW_THREE
-          ) {
-            const objectCell = object.getCell();
-            object.sprite.x = cellSize * objectCell!.position.x + (cellSize / 2)
-            object.sprite.y = cellSize * objectCell!.position.y + (cellSize / 2)
-            return;
-          }
-
-        if(cellGameObject === object) {
-          const objectCell = object.getCell();
-          object.sprite.x = cellSize * objectCell!.position.x + (cellSize / 2)
-          object.sprite.y = cellSize * objectCell!.position.y + (cellSize / 2)
+        if (cellGameObject === object) {
+          smoothMoveTo(object.sprite, objectCellX, objectCellY, 0.5)
           return;
         };
 
+        cellGameObject.sprite.x = object.sprite.x;
+        cellGameObject.sprite.y = object.sprite.y;
+        smoothMoveTo(cellGameObject.sprite, cellX, cellY, 0.5)
+
         object.sprite.destroy();
+        object.getCell()!.removeGameObject();
+        setTimeout(() => {
+          this.setNewColorToObject(cellGameObject);
+        }, 100);
+
         const gameObjectIndex = this.gameObjects.indexOf(object);
         this.gameObjects.splice(gameObjectIndex, 1);
-        object.getCell()!.removeGameObject();
-
-        this.setNewColorToObject(cellGameObject);
         return;
       };
 
-      const objectCell = object.getCell();
-
-      object.sprite.x = cellSize * objectCell!.position.x + (cellSize / 2)
-      object.sprite.y = cellSize * objectCell!.position.y + (cellSize / 2)
+      smoothMoveTo(object.sprite, objectCellX, objectCellY, 0.5)
       return;
     };
 
     object.getCell()!.removeGameObject();
     cell.setGameObject(object);
 
-    object.sprite.x = cellSize * cell.position.x + (cellSize / 2)
-    object.sprite.y = cellSize * cell.position.y + (cellSize / 2)
+    smoothMoveTo(object.sprite, cellX, cellY, 0.5)
 
     object.setCell(cell);
   }
