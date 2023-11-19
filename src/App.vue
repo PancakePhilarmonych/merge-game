@@ -12,8 +12,9 @@ const onResetHandler = () => {
   gm.restartGame();
 };
 
-const restart = () => {
-  gm.restartGame();
+const onSellSelected = () => {
+  gm.deleteSelectedObject();
+  counterStore.increment(2);
 };
 
 onMounted(() => {
@@ -28,6 +29,7 @@ onMounted(() => {
     <ActionFooter
       :counter="counterStore.count"
       :selectedColor="counterStore.color"
-      @reset="onResetHandler" />
+      @reset="onResetHandler"
+      @sell="onSellSelected"/>
   </div>
 </template>
