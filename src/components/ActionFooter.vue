@@ -1,14 +1,25 @@
 <script lang="ts" setup>
-defineEmits(["reset"]);
-defineProps({
+import { PropType, computed, defineProps, defineEmits } from 'vue';
+import { Colors, ColorsTextMap } from '../utils';
+
+defineEmits(["reset", "sell"]);
+const props = defineProps({
   counter: {
     type: Number,
     default: 0,
   },
   selectedColor: {
-    type: String,
+    type: String as PropType<Colors>,
     required: true,
   },
+});
+
+const showSellButton = computed(() => {
+  return props.selectedColor !== Colors.EMPTY;
+});
+
+const actualColor = computed(() => {
+  return ColorsTextMap[props.selectedColor];
 });
 </script>
 
@@ -16,7 +27,10 @@ defineProps({
   <div class="action-footer">
     <div class="action-footer__item counter">{{ counter }}</div>
     <div class="action-footer__item selected-color">
-    {{ selectedColor }}
+    {{ actualColor }}
+    <div v-if="showSellButton" @click="$emit('sell')" class="delete-button">
+      Продать
+    </div>
     </div>
     <div style="flex: 1;"/>
     <img class="action-footer__item reset"
@@ -54,6 +68,23 @@ defineProps({
     padding: 0 8px
     min-width: 80px
     justify-content: space-evenly
+
+    .delete-button
+      background: #2ecc71
+      border-radius: 8px
+      padding: 4px
+      font-size: 14px
+      font-weight: 500
+      color: #fff
+      transition: 0.3s
+      margin-left: 8px
+
+      &:hover
+        cursor: pointer
+        scale: 1.05
+
+      &:active
+        scale: 0.9
 
   .counter
     min-width: 40px
