@@ -3,9 +3,14 @@ import { onMounted } from "vue";
 import App from "./modules/App";
 import GameManager from "./modules/GameManager";
 import { useCounterStore } from "./store/counter";
+import ActionFooter from "./components/ActionFooter.vue";
 
 let gm: GameManager = {} as GameManager;
 const counterStore = useCounterStore();
+
+const onResetHandler = () => {
+  gm.restartGame();
+};
 
 const restart = () => {
   gm.restartGame();
@@ -20,7 +25,9 @@ onMounted(() => {
 <template>
   <div class="container">
     <div id="root" />
-    <button @click="restart" class="restart-button">Restart</button>
-    <div class="counter">{{ counterStore.count }}</div>
+    <ActionFooter
+      :counter="counterStore.count"
+      :selectedColor="counterStore.color"
+      @reset="onResetHandler" />
   </div>
 </template>
