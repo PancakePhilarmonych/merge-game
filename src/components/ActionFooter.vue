@@ -71,7 +71,7 @@ const actualColor = computed(() => {
 
     .delete-button
       background: #2ecc71
-      border-radius: 8px
+      border-radius: 4px
       padding: 4px
       font-size: 14px
       font-weight: 500
@@ -81,10 +81,10 @@ const actualColor = computed(() => {
 
       &:hover
         cursor: pointer
-        scale: 1.05
+        scale: 1.02
 
       &:active
-        scale: 0.9
+        scale: 0.98
 
   .counter
     min-width: 40px
