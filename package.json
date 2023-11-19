@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "gsap": "^3.12.2",
     "pinia": "^2.0.32",
     "pixi.js": "^7.2.4",
     "vue": "^3.2.45"

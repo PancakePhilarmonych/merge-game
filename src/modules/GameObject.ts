@@ -73,7 +73,7 @@ export class GameObject {
     }
   }
 
-  onPointedUp(event: PIXI.FederatedPointerEvent) {
+  onPointedUp() {
     clearTimeout(this.ponterDownTimeOut);
 
     this.isDragging = false;

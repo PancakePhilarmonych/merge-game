@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { gsap } from 'gsap';
 
 import redOne from '../assets/sprites/blocks/red_one.png';
 import redTwo from '../assets/sprites/blocks/red_two.png';
@@ -10,7 +11,6 @@ import blueOne from '../assets/sprites/blocks/blue_one.png';
 import blueTwo from '../assets/sprites/blocks/blue_two.png';
 import blueThree from '../assets/sprites/blocks/blue_three.png';
 import empty from '../assets/sprites/blocks/empty.png';
-
 
 export enum Colors {
   RED = 'RED',
@@ -24,6 +24,19 @@ export enum Colors {
   BLUE_THREE = 'BLUE_THREE',
   EMPTY = 'EMPTY',
 }
+
+const mainColors = [
+  Colors.RED,
+  Colors.YELLOW,
+  Colors.BLUE,
+  Colors.EMPTY,
+];
+
+export const getRandomColor = () => {
+  const index = Math.floor(Math.random() * mainColors.length);
+  return mainColors[index];
+}
+
 
 export const ColorsTextMap: Record<Colors, string> = {
   [Colors.RED]: 'Красный I',
@@ -49,4 +62,15 @@ export const getSpriteByColor: Record<Colors, PIXI.Texture> = {
   [Colors.BLUE_TWO]: PIXI.Texture.from(blueTwo),
   [Colors.BLUE_THREE]: PIXI.Texture.from(blueThree),
   [Colors.EMPTY]: PIXI.Texture.from(empty),
+}
+
+export const maxLevelColors = [Colors.BLUE_THREE, Colors.RED_THREE, Colors.YELLOW_THREE];
+
+export const smoothMoveTo = (sprite: PIXI.Sprite, x: number, y: number, duration: number = 0.3) => {
+  gsap.to(sprite, {
+    duration,
+    x,
+    y,
+    ease: 'power2.out',
+  });
 }
