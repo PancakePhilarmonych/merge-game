@@ -220,6 +220,7 @@ export default class GameManager {
     this.gameObjects = [];
     this.grid.getCells().forEach((cell: Tile) => {
       cell.removeGameObject();
+      cell.selectArea.alpha = 0;
     });
 
     this.hoveredCell = null;

@@ -12,6 +12,7 @@ export const useCounterStore = defineStore('counter', {
     },
     reset() {
       this.count = 0
+      this.color = Colors.EMPTY
     },
     select(object: GameObject | null) {
       if(!object) {
