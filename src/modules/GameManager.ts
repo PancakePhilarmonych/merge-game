@@ -13,6 +13,12 @@ export default class GameManager {
   private selectedObject: GameObject | null = null;
   private container: PIXI.Container = new PIXI.Container();
 
+  // Relax mode
+  private timer: number = 0;
+  private overallTime: number = 0;
+  private secondsPerMove: number = 5;
+  private relaxMode: boolean = true;
+
   constructor(app: PIXI.Application, counterStore: any) {
     this.store = counterStore
     this.container.eventMode = 'dynamic';
@@ -48,6 +54,49 @@ export default class GameManager {
     app.stage.hitArea = app.screen;
 
     app.ticker.add(() => {
+
+      // Relax mode
+      if(!this.relaxMode) {
+        if (Date.now() - this.timer < this.secondsPerMove * 1000) {
+          console.log('Time left', this.secondsPerMove - Math.floor((Date.now() - this.timer) / 1000));
+        } else {
+          this.overallTime++;
+          this.overallTime % 5 === 0 && this.secondsPerMove > 1 && this.secondsPerMove--;
+          this.timer = Date.now();
+
+          const allEmptyCells = this.grid.getCells().filter((cell: Tile) => cell.getGameObject() === null);
+
+          if(allEmptyCells.length === 0) {
+            console.log('Game over');
+          } else {
+            const randomEmptyCell = allEmptyCells[Math.floor(Math.random() * allEmptyCells.length)];
+            const randomColor = getRandomColor(true);
+            const newGameObject = new GameObject(
+              randomEmptyCell.position.x,
+              randomEmptyCell.position.y,
+              randomEmptyCell.sprite.width,
+              randomColor
+            );
+
+            this.gameObjects.push(newGameObject);
+            this.container.addChild(newGameObject.sprite)
+            randomEmptyCell.setGameObject(newGameObject);
+            newGameObject.sprite.eventMode = 'none';
+
+            gsap.from(newGameObject.sprite, {
+              alpha: 0.0,
+              duration: .3,
+              ease: "power2.out",
+              y: randomEmptyCell.sprite.y - 40,
+
+              onComplete: () => {
+                newGameObject.setCell(randomEmptyCell);
+                newGameObject.sprite.eventMode = 'dynamic';
+              }
+            })
+          }
+      }}
+
       const cellSize = this.grid.getCellSize();
       const cells = this.grid.getCells();
 
