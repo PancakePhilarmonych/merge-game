@@ -5,6 +5,11 @@ on:
     branches:
       - master
 
+on:
+  pull_request:
+    types: [ closed ]
+    branches: [ master ]
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
