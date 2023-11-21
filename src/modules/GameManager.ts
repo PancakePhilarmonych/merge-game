@@ -3,6 +3,7 @@ import Grid from "./Grid";
 import * as PIXI from "pixi.js";
 import Tile from "./Tile";
 import { Colors, smoothMoveTo, maxLevelColors, getRandomColor } from '../utils'
+import { gsap } from "gsap";
 
 export default class GameManager {
   private store: any;
@@ -18,12 +19,11 @@ export default class GameManager {
     this.container.sortableChildren = true;
     this.container.interactiveChildren = true;
     this.grid = new Grid(6, app.view.width);
-    const cellSprites = this.grid.getSprites();
-    this.container.addChild(...cellSprites);
+    const cellselectArea = this.grid.getContainers();
+    this.container.addChild(...cellselectArea);
 
     this.container.on("pointermove", this.moveOverContainer, this)
       .on("pointerdown", this.moveOverContainer, this)
-
 
     this.container.on<any>('select', (go: GameObject) => {
       if(this.selectedObject === go) return;
@@ -68,17 +68,31 @@ export default class GameManager {
 
         if(isHovered) {
           this.hoveredCell = cell;
-          cell.sprite.alpha = 0.8;
+
+          cell.getGameObject() !== this.selectedObject
+          ? gsap.to(cell.sprite, { alpha: 0.8, duration: 0.8 })
+          : gsap.to(cell.sprite, { alpha: 1, duration: 0.1 });
           return;
         }
 
+        const selectedOjectCell = this.selectedObject!.getCell();
+
+        if(selectedOjectCell){
+          selectedOjectCell.selectArea.alpha = .9;
+          selectedOjectCell.selectArea.zIndex = 2;
+        }
+
         cell.sprite.alpha = 1;
+        cell.selectArea.alpha = 0;
+        cell.selectArea.zIndex = 1;
       });
     });
   }
 
   public deleteSelectedObject(): void {
     if(!this.selectedObject) return;
+    gsap.to(this.selectedObject.sprite, { alpha: 0.1, duration: 0.2 })
+    gsap.to(this.selectedObject.getCell()!.selectArea, { alpha: 0.0, duration: 0.2 });
     this.selectedObject.sprite.destroy();
     const gameObjectIndex = this.gameObjects.indexOf(this.selectedObject);
     this.gameObjects.splice(gameObjectIndex, 1);
@@ -119,9 +133,6 @@ export default class GameManager {
   private setObjectToCell(object: GameObject, cell: Tile): void {
     const cellGameObject = cell.getGameObject();
     const cellSize = this.grid.getCellSize();
-    const objectCell = object.getCell()!;
-    const objectCellX = cellSize * objectCell.position.x + (cellSize / 2)
-    const objectCellY = cellSize * objectCell.position.y + (cellSize / 2)
     const cellX = cellSize * cell.position.x + (cellSize / 2)
     const cellY = cellSize * cell.position.y + (cellSize / 2)
     const cellGameObjectColor = cellGameObject?.getColor();
@@ -130,40 +141,75 @@ export default class GameManager {
     if (cellGameObject) {
       if (cellGameObjectColor === gameObjectColor) {
         if (maxLevelColors.includes(cellGameObjectColor)) {
-          smoothMoveTo(object.sprite, objectCellX, objectCellY, 0.5)
+          this.moveObjectToOwnCell(object);
           return;
         }
 
         if (cellGameObject === object) {
-          smoothMoveTo(object.sprite, objectCellX, objectCellY, 0.5)
+          this.moveObjectToOwnCell(object);
           return;
         };
 
-        cellGameObject.sprite.x = object.sprite.x;
-        cellGameObject.sprite.y = object.sprite.y;
-        smoothMoveTo(cellGameObject.sprite, cellX, cellY, 0.5)
-
-        object.sprite.destroy();
-        object.getCell()!.removeGameObject();
-        setTimeout(() => {
-          this.setNewColorToObject(cellGameObject);
-        }, 100);
-
-        const gameObjectIndex = this.gameObjects.indexOf(object);
-        this.gameObjects.splice(gameObjectIndex, 1);
+        this.moveObjectToMatchedCell(object, cell);
         return;
       };
 
-      smoothMoveTo(object.sprite, objectCellX, objectCellY, 0.5)
+      this.moveObjectToOwnCell(object);
       return;
     };
 
+    // Hide
+    object.getCell()!.selectArea.alpha = 0;
+    object.getCell()!.selectArea.zIndex = 1;
+    // Удаляем объект из клетки
     object.getCell()!.removeGameObject();
+    // Ставим объект в текущую клетку
     cell.setGameObject(object);
-
+    // Показываем спрайт выбора
+    gsap.to(cell.selectArea, { alpha: 1, duration: 0.6 });
+    gsap.to(cell.selectArea, { zIndex: 2, duration: 0.6 });
+    // Перемещаем объект в центр клетки
     smoothMoveTo(object.sprite, cellX, cellY, 0.5)
-
+    // Присваиваем объекту новую клетку
     object.setCell(cell);
+    // Выбираем объект
+    this.selectedObject = object;
+    this.store.select(object);
+  }
+
+  moveObjectToOwnCell(object: GameObject): void {
+    const cellSize = this.grid.getCellSize();
+    const objectCell = object.getCell()!;
+
+    const objectCellX = cellSize * objectCell.position.x + (cellSize / 2)
+    const objectCellY = cellSize * objectCell.position.y + (cellSize / 2)
+
+    smoothMoveTo(object.sprite, objectCellX, objectCellY, 0.5)
+    object.getCell()!.selectArea.alpha = .9;
+    object.getCell()!.selectArea.zIndex = 2;
+    this.selectedObject = object;
+    this.store.select(object);
+  }
+
+  moveObjectToMatchedCell(object: GameObject, cell: Tile): void {
+    const cellGameObject = cell.getGameObject();
+    const cellSize = this.grid.getCellSize();
+    const cellX = cellSize * cell.position.x + (cellSize / 2)
+    const cellY = cellSize * cell.position.y + (cellSize / 2)
+
+    cellGameObject!.sprite.x = object.sprite.x;
+    cellGameObject!.sprite.y = object.sprite.y;
+    smoothMoveTo(cellGameObject!.sprite, cellX, cellY, 0.5)
+    cellGameObject!.getCell()!.selectArea.alpha = .9;
+    cellGameObject!.getCell()!.selectArea.zIndex = 2;
+
+    object.sprite.destroy();
+    object.getCell()!.removeGameObject();
+    object.getCell()!.selectArea.alpha = 0;
+    this.setNewColorToObject(cellGameObject!);
+    this.store.select(cellGameObject!);
+    const gameObjectIndex = this.gameObjects.indexOf(object);
+    this.gameObjects.splice(gameObjectIndex, 1);
   }
 
   public restartGame(): void {
