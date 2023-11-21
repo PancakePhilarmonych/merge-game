@@ -23,8 +23,8 @@ export default class Grid {
     }
   }
 
-  getSprites(): PIXI.Sprite[] {
-    return this.cells.map((row: Tile[]) => row.map((cell: Tile) => cell.sprite)).flat();
+  getContainers(): PIXI.Container[] {
+    return this.cells.map((row: Tile[]) => row.map((cell: Tile) => cell.container)).flat();
   }
 
   getCells(): Tile[] {
