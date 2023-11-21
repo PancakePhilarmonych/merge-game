@@ -208,6 +208,7 @@ export default class GameManager {
     object.getCell()!.selectArea.alpha = 0;
     this.setNewColorToObject(cellGameObject!);
     this.store.select(cellGameObject!);
+    this.selectedObject = cellGameObject!;
     const gameObjectIndex = this.gameObjects.indexOf(object);
     this.gameObjects.splice(gameObjectIndex, 1);
   }
