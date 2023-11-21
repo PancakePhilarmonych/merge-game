@@ -32,9 +32,10 @@ const mainColors = [
   Colors.EMPTY,
 ];
 
-export const getRandomColor = () => {
-  const index = Math.floor(Math.random() * mainColors.length);
-  return mainColors[index];
+export const getRandomColor = (excludeEmpty = false) => {
+  const colors = excludeEmpty ? mainColors.filter(color => color !== Colors.EMPTY) : mainColors;
+  const index = Math.floor(Math.random() * colors.length);
+  return colors[index];
 }
 
 
