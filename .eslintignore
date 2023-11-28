@@ -1,0 +1,8 @@
+node_modules
+.eslintrc.js
+.github
+.vscode
+package-lock.json
+package.json
+.editorconfig
+README.md

@@ -6,8 +6,8 @@ on:
       - master
 
   pull_request:
-    types: [ closed ]
-    branches: [ master ]
+    types: [closed]
+    branches: [master]
 
 jobs:
   deploy:

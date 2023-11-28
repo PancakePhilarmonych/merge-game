@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
-import App from "./modules/App";
-import GameManager from "./modules/GameManager";
-import { useCounterStore } from "./store/counter";
-import ActionFooter from "./components/ActionFooter.vue";
+import { onMounted } from 'vue';
+import App from './modules/App';
+import GameManager from './modules/GameManager';
+import { useCounterStore } from './store/counter';
+import ActionFooter from './components/ActionFooter.vue';
 
 let gm: GameManager = {} as GameManager;
 const counterStore = useCounterStore();
@@ -28,8 +28,9 @@ onMounted(() => {
     <div id="root" />
     <ActionFooter
       :counter="counterStore.count"
-      :selectedColor="counterStore.color"
+      :selected-color="counterStore.color"
       @reset="onResetHandler"
-      @sell="onSellHandler"/>
+      @sell="onSellHandler"
+    />
   </div>
 </template>
