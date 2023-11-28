@@ -1,5 +1,5 @@
-import * as PIXI from "pixi.js";
-import Tile from "./Tile";
+import * as PIXI from 'pixi.js';
+import Tile from './Tile';
 
 export default class Grid {
   private cells: Tile[][];

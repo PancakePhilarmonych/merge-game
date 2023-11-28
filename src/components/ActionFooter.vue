@@ -2,7 +2,7 @@
 import { PropType, computed, defineProps, defineEmits } from 'vue';
 import { Colors, ColorsTextMap } from '../utils';
 
-defineEmits(["reset", "sell"]);
+defineEmits(['reset', 'sell']);
 const props = defineProps({
   counter: {
     type: Number,
@@ -27,16 +27,16 @@ const actualColor = computed(() => {
   <div class="action-footer">
     <div class="action-footer__item counter">{{ counter }}</div>
     <div class="action-footer__item selected-color">
-    {{ actualColor }}
-    <div v-if="showSellButton" @click="$emit('sell')" class="delete-button">
-      Sell
+      {{ actualColor }}
+      <div v-if="showSellButton" @click="$emit('sell')" class="delete-button">Sell</div>
     </div>
-    </div>
-    <div style="flex: 1;"/>
-    <img class="action-footer__item reset"
+    <div style="flex: 1" />
+    <img
+      class="action-footer__item reset"
       src="../assets/icons/reset.svg"
       alt="reset-icon"
-      @click="$emit('reset')"/>
+      @click="$emit('reset')"
+    />
   </div>
 </template>
 

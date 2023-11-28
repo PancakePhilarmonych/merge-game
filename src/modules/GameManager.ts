@@ -1,9 +1,9 @@
-import { GameObject } from "./GameObject";
-import Grid from "./Grid";
-import * as PIXI from "pixi.js";
-import Tile from "./Tile";
-import { Colors, smoothMoveTo, maxLevelColors, getRandomColor } from '../utils'
-import { gsap } from "gsap";
+import { GameObject } from './GameObject';
+import Grid from './Grid';
+import * as PIXI from 'pixi.js';
+import Tile from './Tile';
+import { Colors, smoothMoveTo, maxLevelColors, getRandomColor } from '../utils';
+import { gsap } from 'gsap';
 
 export default class GameManager {
   private store: any;
@@ -14,7 +14,7 @@ export default class GameManager {
   private container: PIXI.Container = new PIXI.Container();
 
   constructor(app: PIXI.Application, counterStore: any) {
-    this.store = counterStore
+    this.store = counterStore;
     this.container.eventMode = 'dynamic';
     this.container.sortableChildren = true;
     this.container.interactiveChildren = true;
@@ -22,24 +22,25 @@ export default class GameManager {
     const cellselectArea = this.grid.getContainers();
     this.container.addChild(...cellselectArea);
 
-    this.container.on("pointermove", this.moveOverContainer, this)
-      .on("pointerdown", this.moveOverContainer, this)
+    this.container
+      .on('pointermove', this.moveOverContainer, this)
+      .on('pointerdown', this.moveOverContainer, this);
 
     this.container.on<any>('select', (go: GameObject) => {
-      if(this.selectedObject === go) return;
+      if (this.selectedObject === go) return;
       this.selectedObject = go;
       this.store.select(go);
     });
 
-    this.container.on<any>('deselect', (go: GameObject) => {
-      if(!this.selectedObject) return;
+    this.container.on<any>('deselect', () => {
+      if (!this.selectedObject) return;
       // this.selectedObject.sprite.alpha = 1;
       this.selectedObject = null;
       this.store.select(null);
     });
 
     this.container.on<any>('check-cell', (gameObject: GameObject) => {
-      if(!this.hoveredCell) return;
+      if (!this.hoveredCell) return;
       this.setObjectToCell(gameObject, this.hoveredCell);
     });
 
@@ -51,34 +52,35 @@ export default class GameManager {
       const cellSize = this.grid.getCellSize();
       const cells = this.grid.getCells();
 
-      if(!this.selectedObject) {
+      if (!this.selectedObject) {
         cells.forEach((cell: Tile) => {
           cell.sprite.alpha = 1;
         });
         return;
-      };
+      }
 
       const spriteSizeWidthAnchor = this.selectedObject.sprite.x;
       const spriteSizeHeightAnchor = this.selectedObject.sprite.y;
 
       cells.forEach((cell: Tile) => {
-        const isHovered = this.selectedObject
-        && Math.floor(spriteSizeWidthAnchor / cellSize) === cell.position.x
-        && Math.floor(spriteSizeHeightAnchor / cellSize) === cell.position.y;
+        const isHovered =
+          this.selectedObject &&
+          Math.floor(spriteSizeWidthAnchor / cellSize) === cell.position.x &&
+          Math.floor(spriteSizeHeightAnchor / cellSize) === cell.position.y;
 
-        if(isHovered) {
+        if (isHovered) {
           this.hoveredCell = cell;
 
           cell.getGameObject() !== this.selectedObject
-          ? gsap.to(cell.sprite, { alpha: 0.8, duration: 0.8 })
-          : gsap.to(cell.sprite, { alpha: 1, duration: 0.1 });
+            ? gsap.to(cell.sprite, { alpha: 0.8, duration: 0.8 })
+            : gsap.to(cell.sprite, { alpha: 1, duration: 0.1 });
           return;
         }
 
         const selectedOjectCell = this.selectedObject!.getCell();
 
-        if(selectedOjectCell){
-          selectedOjectCell.selectArea.alpha = .9;
+        if (selectedOjectCell) {
+          selectedOjectCell.selectArea.alpha = 0.9;
           selectedOjectCell.selectArea.zIndex = 2;
         }
 
@@ -90,9 +92,12 @@ export default class GameManager {
   }
 
   public deleteSelectedObject(): void {
-    if(!this.selectedObject) return;
-    gsap.to(this.selectedObject.sprite, { alpha: 0.1, duration: 0.2 })
-    gsap.to(this.selectedObject.getCell()!.selectArea, { alpha: 0.0, duration: 0.2 });
+    if (!this.selectedObject) return;
+    gsap.to(this.selectedObject.sprite, { alpha: 0.1, duration: 0.2 });
+    gsap.to(this.selectedObject.getCell()!.selectArea, {
+      alpha: 0.0,
+      duration: 0.2,
+    });
     this.selectedObject.sprite.destroy();
     const gameObjectIndex = this.gameObjects.indexOf(this.selectedObject);
     this.gameObjects.splice(gameObjectIndex, 1);
@@ -102,39 +107,39 @@ export default class GameManager {
   }
 
   moveOverContainer(event: PIXI.FederatedPointerEvent) {
-    if(!this.selectedObject) return;
-    if(!this.selectedObject.isUnblocked) return;
-    this.selectedObject.sprite.x = event.globalX
-    this.selectedObject.sprite.y = event.globalY
+    if (!this.selectedObject) return;
+    if (!this.selectedObject.isUnblocked) return;
+    this.selectedObject.sprite.x = event.globalX;
+    this.selectedObject.sprite.y = event.globalY;
   }
 
   private generateGameObjects(): void {
-    const gridCells = this.grid.getCells()
+    const gridCells = this.grid.getCells();
     gridCells.forEach((cell: Tile) => {
       const randomColor = getRandomColor();
 
-      if(randomColor === Colors.EMPTY) return;
+      if (randomColor === Colors.EMPTY) return;
 
       const newGameObject = new GameObject(
         cell.position.x,
         cell.position.y,
         cell.sprite.width,
-        randomColor
+        randomColor,
       );
 
       newGameObject.setCell(cell);
       cell.setGameObject(newGameObject);
 
       this.gameObjects.push(newGameObject);
-      this.container.addChild(newGameObject.sprite)
+      this.container.addChild(newGameObject.sprite);
     });
   }
 
   private setObjectToCell(object: GameObject, cell: Tile): void {
     const cellGameObject = cell.getGameObject();
     const cellSize = this.grid.getCellSize();
-    const cellX = cellSize * cell.position.x + (cellSize / 2)
-    const cellY = cellSize * cell.position.y + (cellSize / 2)
+    const cellX = cellSize * cell.position.x + cellSize / 2;
+    const cellY = cellSize * cell.position.y + cellSize / 2;
     const cellGameObjectColor = cellGameObject?.getColor();
     const gameObjectColor = object.getColor();
 
@@ -148,15 +153,15 @@ export default class GameManager {
         if (cellGameObject === object) {
           this.moveObjectToOwnCell(object);
           return;
-        };
+        }
 
         this.moveObjectToMatchedCell(object, cell);
         return;
-      };
+      }
 
       this.moveObjectToOwnCell(object);
       return;
-    };
+    }
 
     // Hide
     object.getCell()!.selectArea.alpha = 0;
@@ -169,7 +174,7 @@ export default class GameManager {
     gsap.to(cell.selectArea, { alpha: 1, duration: 0.6 });
     gsap.to(cell.selectArea, { zIndex: 2, duration: 0.6 });
     // Перемещаем объект в центр клетки
-    smoothMoveTo(object.sprite, cellX, cellY, 0.5)
+    smoothMoveTo(object.sprite, cellX, cellY, 0.5);
     // Присваиваем объекту новую клетку
     object.setCell(cell);
     // Выбираем объект
@@ -181,11 +186,11 @@ export default class GameManager {
     const cellSize = this.grid.getCellSize();
     const objectCell = object.getCell()!;
 
-    const objectCellX = cellSize * objectCell.position.x + (cellSize / 2)
-    const objectCellY = cellSize * objectCell.position.y + (cellSize / 2)
+    const objectCellX = cellSize * objectCell.position.x + cellSize / 2;
+    const objectCellY = cellSize * objectCell.position.y + cellSize / 2;
 
-    smoothMoveTo(object.sprite, objectCellX, objectCellY, 0.5)
-    object.getCell()!.selectArea.alpha = .9;
+    smoothMoveTo(object.sprite, objectCellX, objectCellY, 0.5);
+    object.getCell()!.selectArea.alpha = 0.9;
     object.getCell()!.selectArea.zIndex = 2;
     this.selectedObject = object;
     this.store.select(object);
@@ -194,13 +199,13 @@ export default class GameManager {
   moveObjectToMatchedCell(object: GameObject, cell: Tile): void {
     const cellGameObject = cell.getGameObject();
     const cellSize = this.grid.getCellSize();
-    const cellX = cellSize * cell.position.x + (cellSize / 2)
-    const cellY = cellSize * cell.position.y + (cellSize / 2)
+    const cellX = cellSize * cell.position.x + cellSize / 2;
+    const cellY = cellSize * cell.position.y + cellSize / 2;
 
     cellGameObject!.sprite.x = object.sprite.x;
     cellGameObject!.sprite.y = object.sprite.y;
-    smoothMoveTo(cellGameObject!.sprite, cellX, cellY, 0.5)
-    cellGameObject!.getCell()!.selectArea.alpha = .9;
+    smoothMoveTo(cellGameObject!.sprite, cellX, cellY, 0.5);
+    cellGameObject!.getCell()!.selectArea.alpha = 0.9;
     cellGameObject!.getCell()!.selectArea.zIndex = 2;
 
     object.sprite.destroy();
@@ -227,41 +232,41 @@ export default class GameManager {
     this.hoveredCell = null;
     this.selectedObject = null;
 
-    this.store.reset()
+    this.store.reset();
     this.generateGameObjects();
   }
 
   private setNewColorToObject(object: GameObject): void {
-    switch(object.getColor()) {
+    switch (object.getColor()) {
       case Colors.RED:
         object.setColor(Colors.RED_TWO);
-        this.store.increment()
+        this.store.increment();
         break;
       case Colors.RED_TWO:
         object.setColor(Colors.RED_THREE);
-        this.store.increment()
+        this.store.increment();
         break;
       case Colors.RED_THREE:
         console.log('Alredy max color');
         break;
       case Colors.YELLOW:
         object.setColor(Colors.YELLOW_TWO);
-        this.store.increment()
+        this.store.increment();
         break;
       case Colors.YELLOW_TWO:
         object.setColor(Colors.YELLOW_THREE);
-        this.store.increment()
+        this.store.increment();
         break;
       case Colors.YELLOW_THREE:
         console.log('Alredy max color');
         break;
       case Colors.BLUE:
         object.setColor(Colors.BLUE_TWO);
-        this.store.increment()
+        this.store.increment();
         break;
       case Colors.BLUE_TWO:
         object.setColor(Colors.BLUE_THREE);
-        this.store.increment()
+        this.store.increment();
         break;
       case Colors.BLUE_THREE:
         console.log('Alredy max color');

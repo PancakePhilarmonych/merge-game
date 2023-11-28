@@ -25,19 +25,13 @@ export enum Colors {
   EMPTY = 'EMPTY',
 }
 
-const mainColors = [
-  Colors.RED,
-  Colors.YELLOW,
-  Colors.BLUE,
-  Colors.EMPTY,
-];
+const mainColors = [Colors.RED, Colors.YELLOW, Colors.BLUE, Colors.EMPTY];
 
 export const getRandomColor = (excludeEmpty = false) => {
   const colors = excludeEmpty ? mainColors.filter(color => color !== Colors.EMPTY) : mainColors;
   const index = Math.floor(Math.random() * colors.length);
   return colors[index];
-}
-
+};
 
 export const ColorsTextMap: Record<Colors, string> = {
   [Colors.RED]: 'Red I',
@@ -50,7 +44,7 @@ export const ColorsTextMap: Record<Colors, string> = {
   [Colors.BLUE_TWO]: 'Blue II',
   [Colors.BLUE_THREE]: 'Blue III',
   [Colors.EMPTY]: 'Empty',
-}
+};
 
 export const getSpriteByColor: Record<Colors, PIXI.Texture> = {
   [Colors.RED]: PIXI.Texture.from(redOne),
@@ -63,7 +57,7 @@ export const getSpriteByColor: Record<Colors, PIXI.Texture> = {
   [Colors.BLUE_TWO]: PIXI.Texture.from(blueTwo),
   [Colors.BLUE_THREE]: PIXI.Texture.from(blueThree),
   [Colors.EMPTY]: PIXI.Texture.from(empty),
-}
+};
 
 export const maxLevelColors = [Colors.BLUE_THREE, Colors.RED_THREE, Colors.YELLOW_THREE];
 
@@ -74,4 +68,4 @@ export const smoothMoveTo = (sprite: PIXI.Sprite, x: number, y: number, duration
     y,
     ease: 'power2.out',
   });
-}
+};

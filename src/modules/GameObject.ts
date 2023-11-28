@@ -13,8 +13,8 @@ export class GameObject {
   // Only for game object
   private color: Colors;
   // Position
-  public initialPosition: { x: number; y: number; };
-  private mousePosition: { x: number; y: number; } = { x: 0, y: 0 };
+  public initialPosition: { x: number; y: number };
+  private mousePosition: { x: number; y: number } = { x: 0, y: 0 };
   // Additional info
   public sprite: Sprite;
   private isDragging: boolean = false;
@@ -23,14 +23,9 @@ export class GameObject {
   private pointerDownTime: number = 0;
   private ponterDownTimeOut: any = null;
 
-  constructor(
-    x: number,
-    y: number,
-    size: number,
-    color: Colors,
-  ) {
+  constructor(x: number, y: number, size: number, color: Colors) {
     this.color = color;
-    this.sprite = PIXI.Sprite.from(getSpriteByColor[color])
+    this.sprite = PIXI.Sprite.from(getSpriteByColor[color]);
     this.initialPosition = { x, y };
 
     this.sprite.x = size * x + size / 2;
@@ -40,15 +35,15 @@ export class GameObject {
     this.sprite.width = size;
     this.sprite.height = size;
 
-    this.sprite.eventMode = 'dynamic'
-    this.sprite.cursor = "pointer";
+    this.sprite.eventMode = 'dynamic';
+    this.sprite.cursor = 'pointer';
     this.sprite.zIndex = 1;
 
     this.sprite
-      .on("pointerdown", this.onPointedDown, this)
-      .on("pointermove", this.onPointerMove, this)
-      .on("pointerup", this.onPointedUp, this)
-      .on("pointerupoutside", this.onPointedUp, this)
+      .on('pointerdown', this.onPointedDown, this)
+      .on('pointermove', this.onPointerMove, this)
+      .on('pointerup', this.onPointedUp, this)
+      .on('pointerupoutside', this.onPointedUp, this);
   }
 
   setPosition(x: number, y: number) {
