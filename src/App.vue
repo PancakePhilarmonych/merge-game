@@ -4,8 +4,10 @@ import App from './modules/App';
 import GameManager from './modules/GameManager';
 import { useCounterStore } from './store/counter';
 import ActionFooter from './components/ActionFooter.vue';
+import { calculateDimensions } from './utils';
 
 let gm: GameManager = {} as GameManager;
+let app: App = {} as App;
 const counterStore = useCounterStore();
 
 const onResetHandler = () => {
@@ -17,9 +19,15 @@ const onSellHandler = () => {
   counterStore.increment(2);
 };
 
+function addAppListeners() {
+  window.addEventListener('orientationchange', calculateDimensions, false);
+  window.addEventListener('resize', calculateDimensions, false);
+}
+
 onMounted(() => {
-  const app = new App();
+  app = new App();
   gm = new GameManager(app.instance, counterStore);
+  addAppListeners();
 });
 </script>
 

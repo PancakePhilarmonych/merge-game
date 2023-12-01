@@ -69,3 +69,16 @@ export const smoothMoveTo = (sprite: PIXI.Sprite, x: number, y: number, duration
     ease: 'power2.out',
   });
 };
+
+export function calculateDimensions(): void {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+
+  if (w > h) {
+    console.log('Landscape', w + ' : ' + h);
+  } else if (w === h) {
+    console.log('Square', w + ' : ' + h);
+  } else {
+    console.log('Portrait', w + ' : ' + h);
+  }
+}

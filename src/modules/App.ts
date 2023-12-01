@@ -8,6 +8,6 @@ export default class App {
     this.instance = new PIXI.Application<HTMLCanvasElement>({
       resizeTo: this.root,
     });
-    this.root.appendChild(this.instance.view as HTMLCanvasElement);
+    this.root.appendChild(this.instance.view);
   }
 }
