@@ -45,11 +45,10 @@ const actualColor = computed(() => {
   display: flex
   align-items: center
   padding: 12px
-  width: 600px
-  height: 60px
+  width: 100%
+  height: 72px
 
   background: #2e2e2e
-  border-radius: 12px
   justify-content: space-between
 
   &__item
