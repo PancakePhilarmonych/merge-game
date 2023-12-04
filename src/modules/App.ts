@@ -7,6 +7,7 @@ export default class App {
     this.root = document.getElementById('root')! as HTMLDivElement;
     this.instance = new PIXI.Application<HTMLCanvasElement>({
       resizeTo: this.root,
+      antialias: true,
     });
     this.root.appendChild(this.instance.view);
   }
