@@ -25,6 +25,19 @@ export enum Colors {
   EMPTY = 'EMPTY',
 }
 
+export const getSpritePathByColor: Record<Colors, string> = {
+  [Colors.RED]: redOne,
+  [Colors.RED_TWO]: redTwo,
+  [Colors.RED_THREE]: redThree,
+  [Colors.YELLOW]: yellowOne,
+  [Colors.YELLOW_TWO]: yellowTwo,
+  [Colors.YELLOW_THREE]: yellowThree,
+  [Colors.BLUE]: blueOne,
+  [Colors.BLUE_TWO]: blueTwo,
+  [Colors.BLUE_THREE]: blueThree,
+  [Colors.EMPTY]: empty,
+};
+
 const mainColors = [Colors.RED, Colors.YELLOW, Colors.BLUE, Colors.EMPTY];
 
 export const getRandomColor = (excludeEmpty = false) => {
@@ -70,15 +83,8 @@ export const smoothMoveTo = (sprite: PIXI.Sprite, x: number, y: number, duration
   });
 };
 
-export function calculateDimensions(): void {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-
-  if (w > h) {
-    console.log('Landscape', w + ' : ' + h);
-  } else if (w === h) {
-    console.log('Square', w + ' : ' + h);
-  } else {
-    console.log('Portrait', w + ' : ' + h);
-  }
+export function resizeRoot(app: PIXI.Application<HTMLCanvasElement>) {
+  const size = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
+  const sizeWithoutPadding = size - 57;
+  app.renderer.resize(sizeWithoutPadding, sizeWithoutPadding);
 }
