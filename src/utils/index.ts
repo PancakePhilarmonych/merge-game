@@ -11,6 +11,7 @@ import blueOne from '../assets/sprites/blocks/blue_one.png';
 import blueTwo from '../assets/sprites/blocks/blue_two.png';
 import blueThree from '../assets/sprites/blocks/blue_three.png';
 import empty from '../assets/sprites/blocks/empty.png';
+import App from 'modules/App';
 
 export enum Colors {
   RED = 'RED',
@@ -83,8 +84,12 @@ export const smoothMoveTo = (sprite: PIXI.Sprite, x: number, y: number, duration
   });
 };
 
+export function addAppListeners(app: App) {
+  window.addEventListener('resize', () => resizeRoot(app.instance), false);
+}
+
 export function resizeRoot(app: PIXI.Application<HTMLCanvasElement>) {
   const size = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
-  const sizeWithoutPadding = size - 57;
+  const sizeWithoutPadding = size - 36;
   app.renderer.resize(sizeWithoutPadding, sizeWithoutPadding);
 }
