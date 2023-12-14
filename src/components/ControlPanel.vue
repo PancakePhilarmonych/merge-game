@@ -273,20 +273,7 @@ const showSellButton = computed(() => {
     justify-content: space-between
 
     .score-counter
-      border: 1px solid white
-      height: 100%
-      width: 100px
-
-      padding: 8px
-      border-radius: 8px
-
-      &__text
-        font-size: 16px
-        font-weight: 400
-
-      &__label
-        font-size: 18px
-        font-weight: 400
+      display: none
 
     .selected-item
       height: 100%

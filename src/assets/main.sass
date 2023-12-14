@@ -17,8 +17,21 @@
     align-self: start
     flex-direction: row-reverse
 
+    .external-score
+      display: none
+
   @media (orientation: portrait)
     flex-direction: column
     align-self: center
     justify-content: center
     align-items: center
+
+    .external-score
+      display: flex
+      flex-direction: row
+      align-self: flex-start
+      color: #fff
+      justify-content: center
+
+      &__text
+        margin-left: 6px

@@ -25,6 +25,10 @@ onMounted(() => {
 
 <template>
   <div class="merge-game">
+    <div class="external-score">
+      <div class="external-score__label">Score:</div>
+      <div class="external-score__text">{{ counterStore.count }}</div>
+    </div>
     <div id="root" />
     <control-panel
       class="control-item"
