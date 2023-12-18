@@ -54,19 +54,33 @@ const showSellButton = computed(() => {
   gap: 18px
   color: #fff
   font-weight: 400
-  background: $ui-main-color
+  background: $main-color
   padding: 16px
   border-radius: 12px
   font-size: 18px
 
   .restart
+    position: relative
     display: flex
     justify-content: center
     align-items: center
-    background: $ui-secondary-color
-    width: 70%
+    width: 100%
     font-size: 14px
     border-radius: 12px
+
+    &:after
+      content: ''
+      position: absolute
+      left: 0
+      bottom: 0
+      display: block
+      width: 100%
+      height: 50%
+      z-index: 1
+
+    .restart-text
+      z-index: 3
+      font-weight: 500
 
     &:hover
       cursor: pointer
@@ -76,7 +90,7 @@ const showSellButton = computed(() => {
 
     &__wrapper
       display: flex
-      background: $ui-secondary-color
+      background: $second-color
       aspect-ratio: 1 / 1
 
       .sprite
@@ -88,7 +102,7 @@ const showSellButton = computed(() => {
       justify-content: center
       align-items: center
       text-align: center
-      background: $ui-secondary-color
+      background: $second-color
       border-radius: 12px
       border: 2px solid white
 
@@ -96,15 +110,9 @@ const showSellButton = computed(() => {
         cursor: pointer
   .score-counter
     display: flex
-    flex-direction: column
-    display: flex
     justify-content: center
     align-items: center
     width: 100%
-    background: $ui-secondary-color
-
-    border-radius: 12px
-    padding: 16px
 
     &__text
       height: max-content
@@ -114,6 +122,7 @@ const showSellButton = computed(() => {
     &__label
       font-size: 18px
       font-weight: 400
+      margin-right: 8px
 
     .coin
       width: 50px
@@ -153,9 +162,6 @@ const showSellButton = computed(() => {
       width: 160px
 
       .score-counter
-        border: 3px solid white
-        padding: 0px
-        border-radius: 12px
         aspect-ratio: 3 / 2
 
         &__text
@@ -209,10 +215,7 @@ const showSellButton = computed(() => {
             font-size: 12px
 
       .score-counter
-        border: 2px solid white
-        border-radius: 10px
         padding: 0px
-        border-radius: 12px
         aspect-ratio: 4 / 3
 
         &__text
@@ -244,18 +247,6 @@ const showSellButton = computed(() => {
 
           .sell-text
             font-size: 10px
-
-      .score-counter
-        border: 1px solid white
-        padding: 0px
-        border-radius: 8px
-        aspect-ratio: 3 / 2
-
-        &__text
-          font-size: 8px
-
-        &__label
-          font-size: 8px
 
       .restart
         border: 1px solid white
@@ -317,19 +308,6 @@ const showSellButton = computed(() => {
     @media screen and (max-width: 700px)
       height: 80px
       gap: 12px
-
-      .score-counter
-        border: 1px solid white
-        padding: 0px
-        border-radius: 10px
-        aspect-ratio: 3 / 2
-        width: 70px
-
-        &__text
-          font-size: 10px
-
-        &__label
-          font-size: 8px
 
       .selected-item
         gap: 12px
