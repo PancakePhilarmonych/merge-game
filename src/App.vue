@@ -24,18 +24,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="merge-game">
-    <div class="external-score">
-      <div class="external-score__label">Score:</div>
-      <div class="external-score__text">{{ counterStore.count }}</div>
+  <div class="game-container">
+    <div class="meta">
+      Meta
+      <!-- <control-panel
+        class="control-item"
+        :counter="counterStore.count"
+        :selected-color="counterStore.color"
+        @reset="onResetHandler"
+        @sell="onSellHandler"
+      /> -->
     </div>
     <div id="root" />
-    <control-panel
-      class="control-item"
-      :counter="counterStore.count"
-      :selected-color="counterStore.color"
-      @reset="onResetHandler"
-      @sell="onSellHandler"
-    />
+    <div class="timer">Timer</div>
   </div>
 </template>
