@@ -89,7 +89,12 @@ export function addAppListeners(app: App) {
 }
 
 export function resizeRoot(app: PIXI.Application<HTMLCanvasElement>) {
-  const size = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
-  const sizeWithoutPadding = size - 36;
-  app.renderer.resize(sizeWithoutPadding, sizeWithoutPadding);
+  const screenSize = getMaxAvailibleSideSize();
+  app.renderer.resize(screenSize, screenSize);
 }
+
+export const getMaxAvailibleSideSize = () => {
+  const root = document.getElementById('root')! as HTMLDivElement;
+  const size = root.offsetWidth > root.offsetHeight ? root.offsetHeight : root.offsetWidth;
+  return size;
+};
