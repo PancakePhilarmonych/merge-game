@@ -4,6 +4,8 @@ import * as PIXI from 'pixi.js';
 import Tile from './Tile';
 import { Colors, smoothMoveTo, maxLevelColors, getRandomColor } from '../utils';
 import { gsap } from 'gsap';
+import App from './App';
+import { addAppListeners } from '../utils';
 
 export default class GameManager {
   private store: any;
@@ -13,12 +15,14 @@ export default class GameManager {
   private selectedObject: GameObject | null = null;
   private container: PIXI.Container = new PIXI.Container();
 
-  constructor(app: PIXI.Application, counterStore: any) {
+  constructor(counterStore: any) {
+    const { instance } = new App();
+    addAppListeners(instance);
     this.store = counterStore;
     this.container.eventMode = 'dynamic';
     this.container.sortableChildren = true;
     this.container.interactiveChildren = true;
-    this.grid = new Grid(5, app.view.width, app.view.height);
+    this.grid = new Grid(5, instance.view.width, instance.view.height);
     const cellselectArea = this.grid.getContainers();
     this.container.addChild(...cellselectArea);
 
@@ -45,10 +49,10 @@ export default class GameManager {
     });
 
     this.generateGameObjects();
-    app.stage.addChild(this.container);
-    app.stage.hitArea = app.screen;
+    instance.stage.addChild(this.container);
+    instance.stage.hitArea = instance.screen;
 
-    app.ticker.add(() => {
+    instance.ticker.add(() => {
       const cellSize = this.grid.getCellSize();
       const cells = this.grid.getCells();
 

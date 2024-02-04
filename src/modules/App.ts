@@ -2,17 +2,18 @@ import * as PIXI from 'pixi.js';
 import { getMaxAvailibleSideSize } from '../utils';
 export default class App {
   public instance: PIXI.Application<HTMLCanvasElement>;
-  private root: HTMLDivElement;
 
   constructor() {
     const size = getMaxAvailibleSideSize();
-    this.root = document.getElementById('root')! as HTMLDivElement;
+    const canvas = document.querySelector('canvas') as HTMLCanvasElement;
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+
     this.instance = new PIXI.Application<HTMLCanvasElement>({
-      width: size,
-      height: size,
       antialias: true,
+      backgroundAlpha: 0,
+      view: document.querySelector('canvas') as HTMLCanvasElement,
     });
-    this.root.appendChild(this.instance.view);
     this.instance.renderer.resize(size, size);
   }
 }

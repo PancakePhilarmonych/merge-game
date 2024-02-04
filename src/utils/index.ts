@@ -11,7 +11,6 @@ import blueOne from '../assets/sprites/blocks/blue_one.png';
 import blueTwo from '../assets/sprites/blocks/blue_two.png';
 import blueThree from '../assets/sprites/blocks/blue_three.png';
 import empty from '../assets/sprites/blocks/empty.png';
-import App from 'modules/App';
 
 export enum Colors {
   RED = 'RED',
@@ -84,8 +83,8 @@ export const smoothMoveTo = (sprite: PIXI.Sprite, x: number, y: number, duration
   });
 };
 
-export function addAppListeners(app: App) {
-  window.addEventListener('resize', () => resizeRoot(app.instance), false);
+export function addAppListeners(instance: PIXI.Application<HTMLCanvasElement>) {
+  window.addEventListener('resize', () => resizeRoot(instance), false);
 }
 
 export function resizeRoot(app: PIXI.Application<HTMLCanvasElement>) {
@@ -94,7 +93,9 @@ export function resizeRoot(app: PIXI.Application<HTMLCanvasElement>) {
 }
 
 export const getMaxAvailibleSideSize = () => {
+  const isLandscape = window.innerWidth > window.innerHeight;
+  const CANVAS_PADDING = isLandscape ? 24 : 0;
   const root = document.getElementById('root')! as HTMLDivElement;
-  const size = root.offsetWidth > root.offsetHeight ? root.offsetHeight : root.offsetWidth;
-  return size;
+  const sideSize = root.offsetWidth > root.offsetHeight ? root.offsetHeight : root.offsetWidth;
+  return sideSize - CANVAS_PADDING;
 };
