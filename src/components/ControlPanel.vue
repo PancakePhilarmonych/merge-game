@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { PropType, computed } from 'vue';
-import { Colors, ColorsTextMap, getSpritePathByColor } from '../utils';
+import { Colors, getSpritePathByColor } from '../utils';
 
 defineEmits(['reset', 'sell']);
 const props = defineProps({
@@ -54,10 +54,12 @@ const showSellButton = computed(() => {
   gap: 18px
   color: #fff
   font-weight: 400
-  background: $main-color
+  background: $linear-two
   padding: 16px
   border-radius: 12px
   font-size: 18px
+  height: 100%
+  width: 100%
 
   .restart
     position: relative
@@ -90,7 +92,7 @@ const showSellButton = computed(() => {
 
     &__wrapper
       display: flex
-      background: $second-color
+      background: $secondary-green
       aspect-ratio: 1 / 1
 
       .sprite
@@ -102,7 +104,7 @@ const showSellButton = computed(() => {
       justify-content: center
       align-items: center
       text-align: center
-      background: $second-color
+      background: $secondary-green
       border-radius: 12px
       border: 2px solid white
 
