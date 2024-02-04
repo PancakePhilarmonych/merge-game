@@ -9,6 +9,13 @@ export const useCounterStore = defineStore('counter', {
   actions: {
     increment(n?: number) {
       n ? (this.count += n) : this.count++;
+
+      const best = localStorage.getItem('best');
+      const bestNum = best ? parseInt(best) : 0;
+
+      if (this.count > bestNum) {
+        localStorage.setItem('best', this.count.toString());
+      }
     },
     reset() {
       this.count = 0;

@@ -25,6 +25,19 @@ export enum Colors {
   EMPTY = 'EMPTY',
 }
 
+export const getSpritePathByColor: Record<Colors, string> = {
+  [Colors.RED]: redOne,
+  [Colors.RED_TWO]: redTwo,
+  [Colors.RED_THREE]: redThree,
+  [Colors.YELLOW]: yellowOne,
+  [Colors.YELLOW_TWO]: yellowTwo,
+  [Colors.YELLOW_THREE]: yellowThree,
+  [Colors.BLUE]: blueOne,
+  [Colors.BLUE_TWO]: blueTwo,
+  [Colors.BLUE_THREE]: blueThree,
+  [Colors.EMPTY]: empty,
+};
+
 const mainColors = [Colors.RED, Colors.YELLOW, Colors.BLUE, Colors.EMPTY];
 
 export const getRandomColor = (excludeEmpty = false) => {
@@ -68,4 +81,21 @@ export const smoothMoveTo = (sprite: PIXI.Sprite, x: number, y: number, duration
     y,
     ease: 'power2.out',
   });
+};
+
+export function addAppListeners(instance: PIXI.Application<HTMLCanvasElement>) {
+  window.addEventListener('resize', () => resizeRoot(instance), false);
+}
+
+export function resizeRoot(app: PIXI.Application<HTMLCanvasElement>) {
+  const screenSize = getMaxAvailibleSideSize();
+  app.renderer.resize(screenSize, screenSize);
+}
+
+export const getMaxAvailibleSideSize = () => {
+  const isLandscape = window.innerWidth > window.innerHeight;
+  const CANVAS_PADDING = isLandscape ? 24 : 0;
+  const root = document.getElementById('root')! as HTMLDivElement;
+  const sideSize = root.offsetWidth > root.offsetHeight ? root.offsetHeight : root.offsetWidth;
+  return sideSize - CANVAS_PADDING;
 };

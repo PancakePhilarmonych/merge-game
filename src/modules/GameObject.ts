@@ -26,6 +26,7 @@ export class GameObject {
   constructor(x: number, y: number, size: number, color: Colors) {
     this.color = color;
     this.sprite = PIXI.Sprite.from(getSpriteByColor[color]);
+    this.sprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
     this.initialPosition = { x, y };
 
     this.sprite.x = size * x + size / 2;

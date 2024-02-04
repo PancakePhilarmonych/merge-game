@@ -6,10 +6,13 @@ export default class Grid {
   private selected: Tile | null = null;
   private cellSize: number;
 
-  constructor(rowsCount: number, boardWidth: number) {
+  constructor(objectCount: number, gameWidth: number, gameHeight: number) {
     this.cells = [];
-    this.cellSize = boardWidth / rowsCount;
-    this.initRows(rowsCount);
+    const cellWidth = gameWidth / objectCount;
+    const cellHeight = gameHeight / objectCount;
+    this.cellSize = cellWidth > cellHeight ? cellHeight : cellWidth;
+
+    this.initRows(objectCount);
   }
 
   private initRows(rowsCount: number): void {
