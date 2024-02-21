@@ -7,17 +7,15 @@ import BackDropComponent from './components/UI/BackDropComponent.vue';
 import MetaComponent from './components/UI/MetaComponent.vue';
 import TimerComponent from './components/UI/TimerComponent.vue';
 import SelectedTileComponent from './components/UI/SelectedTileComponent.vue';
-import { getSpritePathByColor } from './utils';
+import { getSpritePathByColor, getCostByColor } from './utils';
 // import { RoundedRectangle } from 'pixi.js';
 
 const counterStore = useCounterStore();
 let gm = {} as GameManager | null;
-let best = 0;
 
 const onSellHandler = () => {
-  // const count = gm.getSelectedObjectCost();
   gm?.deleteSelectedObject();
-  counterStore.increment(2);
+  counterStore.increment(currentCost.value);
 };
 
 const selecetedSprite = computed(() => {
@@ -26,16 +24,20 @@ const selecetedSprite = computed(() => {
     : getSpritePathByColor['EMPTY'];
 });
 
+const currentCost = computed(() => {
+  return getCostByColor[counterStore.color];
+});
+
+const timerPercentage = computed(() => {
+  return Math.round(counterStore.timerFill);
+});
+
 const selectedIsDisabled = computed(() => {
   return counterStore.color === 'EMPTY';
 });
 
 onBeforeMount(() => {
-  let bestFromStorage = localStorage.getItem('best');
-
-  if (bestFromStorage) {
-    best = parseInt(bestFromStorage);
-  }
+  counterStore.reset();
 });
 
 onMounted(() => {
@@ -47,19 +49,20 @@ onMounted(() => {
   <div class="game-container">
     <div class="meta-info">
       <back-drop-component class="info-wrapper">
-        <meta-component class="info-item">Best: {{ best }}</meta-component>
+        <meta-component class="info-item">Best: {{ counterStore.best }}</meta-component>
         <meta-component class="info-item">Score: {{ counterStore.count }}</meta-component>
       </back-drop-component>
       <selected-tile-component
         :disabled="selectedIsDisabled"
         :selected-tile="selecetedSprite"
+        :cost="currentCost"
         @sell-item="onSellHandler"
       />
     </div>
     <div id="root">
       <canvas></canvas>
     </div>
-    <timer-component :interval="50" />
+    <timer-component :interval="timerPercentage" />
   </div>
 </template>
 
