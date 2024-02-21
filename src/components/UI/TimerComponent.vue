@@ -2,7 +2,7 @@
   <div class="panel">
     <back-drop-component>
       <div class="timer">
-        <MetaComponent class="timer__speed">Speed x1</MetaComponent>
+        <MetaComponent class="timer__speed">Speed</MetaComponent>
         <div class="timer-wrapper">
           <div class="timer-progress" :style="progressStyles" />
         </div>
@@ -26,18 +26,20 @@
 <script setup lang="ts">
 import BackDropComponent from './BackDropComponent.vue';
 import MetaComponent from './MetaComponent.vue';
-import { defineProps } from 'vue';
+import { computed, defineProps } from 'vue';
 
-const { interval } = defineProps({
+const props = defineProps({
   interval: {
     type: Number,
     default: 5,
   },
 });
 
-const progressStyles = {
-  '--progress': `${interval}%`,
-};
+const progressStyles = computed(() => {
+  return {
+    '--progress': `${props.interval}%`,
+  };
+});
 </script>
 
 <style scoped lang="sass">
@@ -71,7 +73,7 @@ const progressStyles = {
     position: absolute
     width: 100%
     height: var(--progress)
-    background: $additional
+    background: $green
     border-radius: 12px
 
   @media (orientation: portrait)

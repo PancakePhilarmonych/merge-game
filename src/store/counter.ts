@@ -4,9 +4,13 @@ import { Colors } from '../utils';
 
 export const useCounterStore = defineStore('counter', {
   state: () => {
-    return { count: 0, color: Colors.EMPTY };
+    return { count: 0, best: 0, timerFill: 100, color: Colors.EMPTY };
   },
   actions: {
+    updateTimerBar(v: number) {
+      this.timerFill = v;
+      console.log('timerFill', this.timerFill);
+    },
     increment(n?: number) {
       n ? (this.count += n) : this.count++;
 
@@ -18,8 +22,15 @@ export const useCounterStore = defineStore('counter', {
       }
     },
     reset() {
+      const bestFromStorage = localStorage.getItem('best');
+
+      if (bestFromStorage) {
+        this.best = parseInt(bestFromStorage);
+      }
+
       this.count = 0;
       this.color = Colors.EMPTY;
+      this.timerFill = 100;
     },
     select(object: GameObject | null) {
       if (!object) {
