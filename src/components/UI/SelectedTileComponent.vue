@@ -15,6 +15,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  cost: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const sell = () => {
@@ -30,7 +34,7 @@ const sell = () => {
       <img v-if="selectedTile" :src="selectedTile" alt="img" />
     </back-drop-component>
 
-    <coin-button :disabled="disabled" :coins-amount="999" class="selected__button" @click="sell">
+    <coin-button :disabled="disabled" :coins-amount="cost" class="selected__button" @click="sell">
       Sell
     </coin-button>
   </div>

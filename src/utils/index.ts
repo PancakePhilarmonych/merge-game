@@ -72,6 +72,19 @@ export const getSpriteByColor: Record<Colors, PIXI.Texture> = {
   [Colors.EMPTY]: PIXI.Texture.from(empty),
 };
 
+export const getCostByColor: Record<Colors, number> = {
+  [Colors.RED]: 1,
+  [Colors.RED_TWO]: 3,
+  [Colors.RED_THREE]: 5,
+  [Colors.YELLOW]: 1,
+  [Colors.YELLOW_TWO]: 3,
+  [Colors.YELLOW_THREE]: 5,
+  [Colors.BLUE]: 1,
+  [Colors.BLUE_TWO]: 3,
+  [Colors.BLUE_THREE]: 5,
+  [Colors.EMPTY]: 0,
+};
+
 export const maxLevelColors = [Colors.BLUE_THREE, Colors.RED_THREE, Colors.YELLOW_THREE];
 
 export const smoothMoveTo = (sprite: PIXI.Sprite, x: number, y: number, duration: number = 0.3) => {
