@@ -2,7 +2,7 @@
   <div class="panel">
     <back-drop-component>
       <div class="timer">
-        <MetaComponent class="timer__speed">Speed</MetaComponent>
+        <MetaComponent class="timer__speed">Timer</MetaComponent>
         <div class="timer-wrapper">
           <div class="timer-progress" :style="progressStyles" />
         </div>
