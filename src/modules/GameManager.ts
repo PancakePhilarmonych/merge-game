@@ -2,7 +2,7 @@ import { GameObject } from './GameObject';
 import Grid from './Grid';
 import * as PIXI from 'pixi.js';
 import Tile from './Tile';
-import { Colors, smoothMoveTo, maxLevelColors, getRandomColor } from '../utils';
+import { Colors, smoothMoveTo, getRandomColor } from '../utils';
 import { gsap } from 'gsap';
 import App from './App';
 import { addAppListeners } from '../utils';
@@ -21,6 +21,7 @@ export default class GameManager {
   private secondsPerMove = 3;
   private container: PIXI.Container = new PIXI.Container();
   private restartContainer: PIXI.Container = new PIXI.Container();
+  private maxLevel = 5;
 
   constructor(counterStore: any) {
     this.app = new App();
@@ -102,6 +103,7 @@ export default class GameManager {
       fill: 0x000000,
       fontSize: startButton.height / 2,
       fontWeight: 'bold',
+      fontFamily: 'Titan One',
       align: 'center',
     });
     startText.zIndex = 102;
@@ -134,7 +136,7 @@ export default class GameManager {
             this.store.updateTimerBar(percent);
           } else {
             this.overallTime++;
-            this.overallTime % 10 === 0 && this.secondsPerMove > 1 && this.secondsPerMove--;
+            this.overallTime % 15 === 0 && this.secondsPerMove > 1 && this.secondsPerMove--;
             this.timer = Date.now();
 
             const allEmptyCells = this.grid
@@ -142,23 +144,12 @@ export default class GameManager {
               .filter((cell: Tile) => cell.getGameObject() === null);
 
             if (allEmptyCells.length === 0) {
-              console.log('Game over');
             } else {
-              const firstRandomEmptyCell =
-                allEmptyCells[Math.floor(Math.random() * allEmptyCells.length)];
+              const randomCell = allEmptyCells[Math.floor(Math.random() * allEmptyCells.length)];
 
-              const firstRandomColor = getRandomColor(true);
+              const randomColor = getRandomColor(true);
 
-              this.addNewObject(firstRandomEmptyCell, firstRandomColor);
-
-              if (allEmptyCells.length > 1) {
-                const secondRandomEmptyCell = allEmptyCells.filter(
-                  (cell: Tile) => cell !== firstRandomEmptyCell,
-                )[Math.floor(Math.random() * (allEmptyCells.length - 1))];
-
-                const secondRandomColor = getRandomColor(true);
-                this.addNewObject(secondRandomEmptyCell, secondRandomColor);
-              }
+              this.addNewObject(randomCell, randomColor);
             }
           }
         }
@@ -174,6 +165,7 @@ export default class GameManager {
           const scoreText = new PIXI.Text(`Score: ${this.store.count}`, {
             fill: 0xffffff,
             fontSize: 40,
+            fontFamily: 'Titan One',
             align: 'center',
           });
 
@@ -201,8 +193,8 @@ export default class GameManager {
 
         if (!this.selectedObject) return;
 
-        const spriteSizeWidthAnchor = this.selectedObject.sprite.x;
-        const spriteSizeHeightAnchor = this.selectedObject.sprite.y;
+        const spriteSizeWidthAnchor = this.selectedObject.container.x;
+        const spriteSizeHeightAnchor = this.selectedObject.container.y;
 
         cells.forEach((cell: Tile) => {
           const isHovered =
@@ -267,7 +259,7 @@ export default class GameManager {
     const restartText = new PIXI.Text('Restart', {
       fill: 0x000000,
       fontSize: restartButton.height / 2,
-      fontWeight: 'bold',
+      fontFamily: 'Titan One',
       align: 'center',
     });
     restartText.zIndex = 102;
@@ -294,11 +286,10 @@ export default class GameManager {
     );
 
     this.gameObjects.push(newGameObject);
-    this.container.addChild(newGameObject.sprite);
+    this.container.addChild(newGameObject.container);
     cell.setGameObject(newGameObject);
-    newGameObject.sprite.eventMode = 'none';
 
-    gsap.from(newGameObject.sprite, {
+    gsap.from(newGameObject.container, {
       alpha: 0.0,
       duration: 0.3,
       ease: 'power2.out',
@@ -306,19 +297,19 @@ export default class GameManager {
 
       onComplete: () => {
         newGameObject.setCell(cell);
-        newGameObject.sprite.eventMode = 'dynamic';
+        newGameObject.container.eventMode = 'dynamic';
       },
     });
   }
 
   public deleteSelectedObject(): void {
     if (!this.selectedObject) return;
-    gsap.to(this.selectedObject.sprite, { alpha: 0.1, duration: 0.2 });
+    gsap.to(this.selectedObject.container, { alpha: 0.1, duration: 0.2 });
     gsap.to(this.selectedObject.getCell()!.selectArea, {
       alpha: 0.0,
       duration: 0.2,
     });
-    this.selectedObject.sprite.destroy();
+    this.selectedObject.container.destroy();
     const gameObjectIndex = this.gameObjects.indexOf(this.selectedObject);
     this.gameObjects.splice(gameObjectIndex, 1);
     this.selectedObject.getCell()!.removeGameObject();
@@ -329,8 +320,8 @@ export default class GameManager {
   moveOverContainer(event: PIXI.FederatedPointerEvent) {
     if (!this.selectedObject) return;
     if (!this.selectedObject.isUnblocked) return;
-    this.selectedObject.sprite.x = event.globalX;
-    this.selectedObject.sprite.y = event.globalY;
+    this.selectedObject.container.x = event.globalX;
+    this.selectedObject.container.y = event.globalY;
   }
 
   private generateGameObjects(): void {
@@ -351,8 +342,12 @@ export default class GameManager {
       cell.setGameObject(newGameObject);
 
       this.gameObjects.push(newGameObject);
-      this.container.addChild(newGameObject.sprite);
+      this.container.addChild(newGameObject.container);
     });
+
+    if (this.gameObjects.length < 16) {
+      this.generateGameObjects();
+    }
   }
 
   private setObjectToCell(object: GameObject, cell: Tile): void {
@@ -360,21 +355,23 @@ export default class GameManager {
     const cellSize = this.grid.getCellSize();
     const cellX = cellSize * cell.position.x + cellSize / 2;
     const cellY = cellSize * cell.position.y + cellSize / 2;
-    const cellGameObjectColor = cellGameObject?.getColor();
-    const gameObjectColor = object.getColor();
 
     if (cellGameObject) {
-      if (cellGameObjectColor === gameObjectColor) {
-        if (maxLevelColors.includes(cellGameObjectColor)) {
-          this.moveObjectToOwnCell(object);
-          return;
-        }
+      if (cellGameObject === object) {
+        this.moveObjectToOwnCell(object);
+        return;
+      }
 
-        if (cellGameObject === object) {
-          this.moveObjectToOwnCell(object);
-          return;
-        }
+      const objectColor = object.getColor();
+      const cellObjectColor = cellGameObject.getColor();
+      const objectLevel = object.level;
+      const cellObjectLevel = cellGameObject.level;
 
+      const sameColor = objectColor === cellObjectColor;
+      const sameLevel = objectLevel === cellObjectLevel;
+      const sameColorAndLevel = sameColor && sameLevel;
+
+      if (sameColorAndLevel) {
         this.moveObjectToMatchedCell(object, cell);
         return;
       }
@@ -394,7 +391,7 @@ export default class GameManager {
     gsap.to(cell.selectArea, { alpha: 1, duration: 0.6 });
     gsap.to(cell.selectArea, { zIndex: 2, duration: 0.6 });
     // Перемещаем объект в центр клетки
-    smoothMoveTo(object.sprite, cellX, cellY, 0.5);
+    smoothMoveTo(object.container, cellX, cellY, 0.5);
     // Присваиваем объекту новую клетку
     object.setCell(cell);
     // Выбираем объект
@@ -409,7 +406,7 @@ export default class GameManager {
     const objectCellX = cellSize * objectCell.position.x + cellSize / 2;
     const objectCellY = cellSize * objectCell.position.y + cellSize / 2;
 
-    smoothMoveTo(object.sprite, objectCellX, objectCellY, 0.5);
+    smoothMoveTo(object.container, objectCellX, objectCellY, 0.5);
     object.getCell()!.selectArea.alpha = 0.9;
     object.getCell()!.selectArea.zIndex = 2;
     this.selectedObject = object;
@@ -422,16 +419,16 @@ export default class GameManager {
     const cellX = cellSize * cell.position.x + cellSize / 2;
     const cellY = cellSize * cell.position.y + cellSize / 2;
 
-    cellGameObject!.sprite.x = object.sprite.x;
-    cellGameObject!.sprite.y = object.sprite.y;
-    smoothMoveTo(cellGameObject!.sprite, cellX, cellY, 0.5);
+    cellGameObject!.container.x = object.container.x;
+    cellGameObject!.container.y = object.container.y;
+    smoothMoveTo(cellGameObject!.container, cellX, cellY, 0.5);
     cellGameObject!.getCell()!.selectArea.alpha = 0.9;
     cellGameObject!.getCell()!.selectArea.zIndex = 2;
 
-    object.sprite.destroy();
+    object.container.destroy();
     object.getCell()!.removeGameObject();
     object.getCell()!.selectArea.alpha = 0;
-    this.setNewColorToObject(cellGameObject!);
+    this.levelUpObject(cellGameObject!);
     this.store.select(cellGameObject!);
     this.selectedObject = cellGameObject!;
     const gameObjectIndex = this.gameObjects.indexOf(object);
@@ -442,13 +439,14 @@ export default class GameManager {
     this.setListeners();
 
     this.gameObjects.forEach((gameObject: GameObject) => {
-      gameObject.sprite.destroy();
+      gameObject.container.destroy();
     });
 
     this.timer = Date.now();
     this.overallTime = 0;
     this.relaxMode = true;
     this.secondsPerMove = 3;
+    this.maxLevel = 5;
 
     this.selectedObject = null;
     this.hoveredCell = null;
@@ -457,7 +455,7 @@ export default class GameManager {
     this.grid.getCells().forEach((cell: Tile) => {
       cell.removeGameObject();
       cell.selectArea.alpha = 0;
-      cell.sprite.alpha = 1;
+      cell.container.alpha = 1;
     });
 
     this.hoveredCell = null;
@@ -471,44 +469,15 @@ export default class GameManager {
     this.app.instance.ticker.start();
   }
 
-  private setNewColorToObject(object: GameObject): void {
-    switch (object.getColor()) {
-      case Colors.RED:
-        object.setColor(Colors.RED_TWO);
-        this.store.increment();
-        break;
-      case Colors.RED_TWO:
-        object.setColor(Colors.RED_THREE);
-        this.store.increment();
-        break;
-      case Colors.RED_THREE:
-        console.log('Alredy max color');
-        break;
-      case Colors.YELLOW:
-        object.setColor(Colors.YELLOW_TWO);
-        this.store.increment();
-        break;
-      case Colors.YELLOW_TWO:
-        object.setColor(Colors.YELLOW_THREE);
-        this.store.increment();
-        break;
-      case Colors.YELLOW_THREE:
-        console.log('Alredy max color');
-        break;
-      case Colors.BLUE:
-        object.setColor(Colors.BLUE_TWO);
-        this.store.increment();
-        break;
-      case Colors.BLUE_TWO:
-        object.setColor(Colors.BLUE_THREE);
-        this.store.increment();
-        break;
-      case Colors.BLUE_THREE:
-        console.log('Alredy max color');
-        break;
-      default:
-        console.log('No color');
-        break;
+  private levelUpObject(object: GameObject): void {
+    object.levelUp();
+    const newLevel = object.getLevel();
+    if (newLevel > this.maxLevel) {
+      this.maxLevel = newLevel;
+      this.secondsPerMove < 3 ? this.secondsPerMove++ : (this.secondsPerMove = 3);
+      this.overallTime = 0;
     }
+
+    this.store.increment(object.getLevel());
   }
 }

@@ -6,34 +6,11 @@ import { useCounterStore } from './store/counter';
 import BackDropComponent from './components/UI/BackDropComponent.vue';
 import MetaComponent from './components/UI/MetaComponent.vue';
 import TimerComponent from './components/UI/TimerComponent.vue';
-import SelectedTileComponent from './components/UI/SelectedTileComponent.vue';
-import { getSpritePathByColor, getCostByColor } from './utils';
-// import { RoundedRectangle } from 'pixi.js';
 
 const counterStore = useCounterStore();
-let gm = {} as GameManager | null;
-
-const onSellHandler = () => {
-  gm?.deleteSelectedObject();
-  counterStore.increment(currentCost.value);
-};
-
-const selecetedSprite = computed(() => {
-  return counterStore.color !== 'EMPTY'
-    ? getSpritePathByColor[counterStore.color]
-    : getSpritePathByColor['EMPTY'];
-});
-
-const currentCost = computed(() => {
-  return getCostByColor[counterStore.color];
-});
 
 const timerPercentage = computed(() => {
   return Math.round(counterStore.timerFill);
-});
-
-const selectedIsDisabled = computed(() => {
-  return counterStore.color === 'EMPTY';
 });
 
 onBeforeMount(() => {
@@ -41,7 +18,26 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
-  gm = new GameManager(counterStore);
+  document.body.style.backgroundColor = '#000';
+  const loading = document.createElement('div');
+  loading.style.position = 'absolute';
+  loading.style.top = '0';
+  loading.style.left = '0';
+  loading.style.width = '100%';
+  loading.style.height = '100%';
+  loading.style.backgroundColor = '#000';
+  loading.style.display = 'flex';
+  loading.style.justifyContent = 'center';
+  loading.style.alignItems = 'center';
+  loading.style.zIndex = '1000';
+  loading.innerHTML = '<h1 style="color: #fff">Loading...</h1>';
+  document.body.appendChild(loading);
+
+  setTimeout(() => {
+    new GameManager(counterStore);
+    document.body.style.backgroundColor = '#fff';
+    document.body.removeChild(loading);
+  }, 1500);
 });
 </script>
 
@@ -52,12 +48,6 @@ onMounted(() => {
         <meta-component class="info-item">Best: {{ counterStore.best }}</meta-component>
         <meta-component class="info-item">Score: {{ counterStore.count }}</meta-component>
       </back-drop-component>
-      <selected-tile-component
-        :disabled="selectedIsDisabled"
-        :selected-tile="selecetedSprite"
-        :cost="currentCost"
-        @sell-item="onSellHandler"
-      />
     </div>
     <div id="root">
       <canvas></canvas>
@@ -80,7 +70,7 @@ onMounted(() => {
     border: 5px solid #fff
 
 .info-wrapper
-  height: max-content
+  height: 100%
   .info-item
     align-self: center
     width: 80%
@@ -92,7 +82,7 @@ onMounted(() => {
   gap: 16px
 
   @media (orientation: portrait)
-    grid-template-columns: 1fr 1fr
+    grid-template-columns: 1fr
     grid-template-rows: 1fr
     gap: 8px
 </style>

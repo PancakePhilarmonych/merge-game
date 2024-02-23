@@ -9,7 +9,6 @@ export const useCounterStore = defineStore('counter', {
   actions: {
     updateTimerBar(v: number) {
       this.timerFill = v;
-      console.log('timerFill', this.timerFill);
     },
     increment(n?: number) {
       n ? (this.count += n) : this.count++;

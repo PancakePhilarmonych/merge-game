@@ -4,33 +4,34 @@ import Tile from './Tile';
 import { Colors, getSpriteByColor } from '../utils';
 
 export class GameObject {
-  // Only for game object
-  private maxLevel: boolean = false;
-  private level: number = 0;
-  private type: string = '';
-  private canBeSell: boolean = false;
-  private cost: number = 0;
-  // Only for game object
+  // Meta
+  public level: number = 1;
   private color: Colors;
   // Position
   public initialPosition: { x: number; y: number };
-  private mousePosition: { x: number; y: number } = { x: 0, y: 0 };
   // Additional info
-  public sprite: Sprite;
-  private isDragging: boolean = false;
   private cell: Tile | null = null;
+  public sprite: Sprite;
+  public levelText: PIXI.Text;
+  // Movement state
+  private isDragging: boolean = false;
   public isUnblocked: boolean = false;
   private pointerDownTime: number = 0;
   private ponterDownTimeOut: any = null;
+  public container: PIXI.Container;
 
   constructor(x: number, y: number, size: number, color: Colors) {
     this.color = color;
+    this.container = new PIXI.Container();
     this.sprite = PIXI.Sprite.from(getSpriteByColor[color]);
     this.sprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
     this.initialPosition = { x, y };
 
-    this.sprite.x = size * x + size / 2;
-    this.sprite.y = size * y + size / 2;
+    this.container.x = size * x + size / 2;
+    this.container.y = size * y + size / 2;
+    this.container.width = size;
+    this.container.height = size;
+
     this.sprite.anchor.set(0.5);
 
     this.sprite.width = size;
@@ -38,7 +39,22 @@ export class GameObject {
 
     this.sprite.eventMode = 'dynamic';
     this.sprite.cursor = 'pointer';
-    this.sprite.zIndex = 1;
+    this.container.zIndex = 1;
+
+    this.levelText = new PIXI.Text(this.getLevel(), {
+      fontSize: this.sprite.width / 3,
+      fontFamily: 'Titan One',
+      fill: 0xffffff,
+    });
+
+    this.levelText.anchor.set(0.5);
+    this.levelText.x = this.sprite.x;
+    this.levelText.y = this.sprite.y;
+    this.levelText.zIndex = 2;
+    this.levelText.eventMode = 'none';
+
+    this.container.addChild(this.sprite);
+    this.container.addChild(this.levelText);
 
     this.sprite
       .on('pointerdown', this.onPointedDown, this)
@@ -49,12 +65,12 @@ export class GameObject {
 
   setPosition(x: number, y: number) {
     this.initialPosition = { x, y };
-    this.sprite.x = x;
-    this.sprite.y = y;
+    this.container.x = x;
+    this.container.y = y;
   }
 
   onPointedDown() {
-    this.sprite.parent.emit<any>('select', this);
+    this.container.parent.emit<any>('select', this);
     this.pointerDownTime = Date.now();
 
     this.ponterDownTimeOut = setTimeout(() => {
@@ -65,7 +81,7 @@ export class GameObject {
   onPointerMove() {
     if (this.isDragging) {
       this.isUnblocked = true;
-      this.sprite.zIndex = 2;
+      this.container.zIndex = 2;
     }
   }
 
@@ -73,12 +89,12 @@ export class GameObject {
     clearTimeout(this.ponterDownTimeOut);
 
     this.isDragging = false;
-    this.sprite.zIndex = 1;
+    this.container.zIndex = 1;
 
     if (this.isUnblocked) {
       this.isUnblocked = false;
-      this.sprite.parent.emit<any>('deselect', this);
-      this.sprite.parent.emit<any>('check-cell', this);
+      this.container.parent.emit<any>('deselect', this);
+      this.container.parent.emit<any>('check-cell', this);
     }
   }
 
@@ -104,6 +120,21 @@ export class GameObject {
   }
 
   delete() {
-    this.sprite.parent.removeChild(this.sprite);
+    this.container.parent.removeChild(this.container);
+  }
+
+  public getLevel() {
+    let result = 1;
+
+    for (let i = 1; i < this.level; i++) {
+      result *= 2;
+    }
+
+    return result;
+  }
+
+  levelUp() {
+    this.level++;
+    this.levelText.text = this.getLevel();
   }
 }
