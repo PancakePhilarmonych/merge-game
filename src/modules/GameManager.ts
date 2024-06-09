@@ -5,7 +5,6 @@ import Tile from './Cell';
 import { Colors, smoothMoveTo, getRandomColor } from '../utils';
 import { gsap } from 'gsap';
 import App from './App';
-import { addAppListeners } from '../utils';
 
 export default class GameManager {
   private app: App;
@@ -21,7 +20,6 @@ export default class GameManager {
   constructor(counterStore: any) {
     this.app = new App();
     const instance = this.app.instance;
-    addAppListeners(instance);
     this.store = counterStore;
     this.container.eventMode = 'dynamic';
     this.container.sortableChildren = true;

@@ -44,7 +44,11 @@ onMounted(() => {
 
 #root
   display: flex
+  justify-content: center
+  align-items: center
   canvas
+    width: 100%
+    height: 100%
     border-radius: 12px
     border: 5px solid #fff
 </style>

@@ -13,6 +13,7 @@ export default class App {
       antialias: true,
       backgroundAlpha: 0,
       view: document.querySelector('canvas') as HTMLCanvasElement,
+      autoDensity: true,
     });
     this.instance.renderer.resize(size, size);
   }
