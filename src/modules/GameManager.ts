@@ -139,13 +139,12 @@ export default class GameManager {
             this.overallTime % 15 === 0 && this.secondsPerMove > 1 && this.secondsPerMove--;
             this.timer = Date.now();
 
-            const allEmptyCells = this.grid
+            const emptyCells = this.grid
               .getCells()
               .filter((cell: Tile) => cell.getGameObject() === null);
 
-            if (allEmptyCells.length === 0) {
-            } else {
-              const randomCell = allEmptyCells[Math.floor(Math.random() * allEmptyCells.length)];
+            if (emptyCells.length) {
+              const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
 
               const randomColor = getRandomColor(true);
 
