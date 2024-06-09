@@ -14,14 +14,9 @@ export default class GameManager {
   private gameObjects: GameObject[] = [];
   private hoveredCell: Tile | null = null;
   private selectedObject: GameObject | null = null;
-  private relaxMode = true;
-  private timer = Date.now();
-  private overallTime = 0;
   private pause = false;
-  private secondsPerMove = 3;
   private container: PIXI.Container = new PIXI.Container();
   private restartContainer: PIXI.Container = new PIXI.Container();
-  private maxLevel = 5;
 
   constructor(counterStore: any) {
     this.app = new App();
@@ -123,36 +118,6 @@ export default class GameManager {
       this.app.instance.stage.removeChild(startContainer);
       this.container.eventMode = 'dynamic';
       instance.ticker.add(() => {
-        // Spritefall
-        // ------------------------------------------------------------------------------------------------
-        if (this.relaxMode) {
-          if (Date.now() - this.timer < this.secondsPerMove * 1000) {
-            if (this.pause) return;
-
-            const secondsToMillis = this.secondsPerMove * 1000;
-            const timeLeft = secondsToMillis - (Date.now() - this.timer);
-            const houndredPercent = secondsToMillis / 100;
-            const percent = timeLeft / houndredPercent;
-            this.store.updateTimerBar(percent);
-          } else {
-            this.overallTime++;
-            this.overallTime % 15 === 0 && this.secondsPerMove > 1 && this.secondsPerMove--;
-            this.timer = Date.now();
-
-            const allEmptyCells = this.grid
-              .getCells()
-              .filter((cell: Tile) => cell.getGameObject() === null);
-
-            if (allEmptyCells.length) {
-              const randomCell = allEmptyCells[Math.floor(Math.random() * allEmptyCells.length)];
-
-              const randomColor = getRandomColor(true);
-
-              this.addNewObject(randomCell, randomColor);
-            }
-          }
-        }
-
         const cellSize = this.grid.getCellSize();
         const cells = this.grid.getCells();
 
@@ -221,8 +186,6 @@ export default class GameManager {
           cell.selectArea.zIndex = 1;
         });
       });
-
-      this.timer = Date.now();
     });
   }
 
@@ -440,9 +403,6 @@ export default class GameManager {
       gameObject.container.destroy();
     });
 
-    this.timer = Date.now();
-    this.overallTime = 0;
-    this.relaxMode = true;
     this.secondsPerMove = 3;
     this.maxLevel = 5;
 
@@ -469,13 +429,6 @@ export default class GameManager {
 
   private levelUpObject(object: GameObject): void {
     object.levelUp();
-    const newLevel = object.getLevel();
-    if (newLevel > this.maxLevel) {
-      this.maxLevel = newLevel;
-      this.secondsPerMove < 3 ? this.secondsPerMove++ : (this.secondsPerMove = 3);
-      this.overallTime = 0;
-    }
-
     this.store.increment(object.getLevel());
   }
 }
