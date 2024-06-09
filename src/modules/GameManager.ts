@@ -143,8 +143,7 @@ export default class GameManager {
               .getCells()
               .filter((cell: Tile) => cell.getGameObject() === null);
 
-            if (allEmptyCells.length === 0) {
-            } else {
+            if (allEmptyCells.length) {
               const randomCell = allEmptyCells[Math.floor(Math.random() * allEmptyCells.length)];
 
               const randomColor = getRandomColor(true);
@@ -153,7 +152,6 @@ export default class GameManager {
             }
           }
         }
-        // ------------------------------------------------------------------------------------------------
 
         const cellSize = this.grid.getCellSize();
         const cells = this.grid.getCells();
