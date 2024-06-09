@@ -9,7 +9,9 @@ export class GameObject extends PIXI.Container {
   public level: number = 1;
   public levelText: PIXI.Text;
 
-  constructor(x: number, y: number, size: number, color: Colors, cell: Tile) {
+  constructor(cell: Tile, color: Colors) {
+    const [x, y, size] = [cell.position.x, cell.position.y, cell.sprite.width];
+
     super();
     this.cell = cell;
     this.color = color;

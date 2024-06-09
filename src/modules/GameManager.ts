@@ -231,13 +231,7 @@ export default class GameManager {
   }
 
   private addNewObject(cell: Tile, color: Colors): void {
-    const newGameObject = new GameObject(
-      cell.position.x,
-      cell.position.y,
-      cell.sprite.width,
-      color,
-      cell,
-    );
+    const newGameObject = new GameObject(cell, color);
 
     this.gameObjects.push(newGameObject);
     this.container.addChild(newGameObject);
@@ -284,13 +278,7 @@ export default class GameManager {
 
       if (randomColor === Colors.EMPTY) return;
 
-      const newGameObject = new GameObject(
-        cell.position.x,
-        cell.position.y,
-        cell.sprite.width,
-        randomColor,
-        cell,
-      );
+      const newGameObject = new GameObject(cell, randomColor);
 
       // newGameObject.setCell(cell);
       cell.setGameObject(newGameObject);
