@@ -1,6 +1,6 @@
 import { Sprite } from 'pixi.js';
 import * as PIXI from 'pixi.js';
-import Tile from './Tile';
+import Tile from './Cell';
 import { Colors, getSpriteByColor } from '../utils';
 
 export class GameObject {

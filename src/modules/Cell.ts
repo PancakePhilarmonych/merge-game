@@ -3,11 +3,14 @@ import EmptyField from '../assets/sprites/blocks/grass-tile.png';
 import EmptyFieldSecond from '../assets/sprites/blocks/grass-tile-second.png';
 import { GameObject } from './GameObject';
 import SelectedTile from '../assets/sprites/blocks/selected.png';
+import AvaibleTile from '../assets/sprites/blocks/availible.png';
 
 export default class Tile {
   public container: PIXI.Container = new PIXI.Container();
   public sprite: PIXI.Sprite;
   public selectArea: PIXI.Sprite;
+  public availibleArea: PIXI.Sprite;
+  public availible: boolean = false;
   private row: number;
   private column: number;
   private gameObject: GameObject | null = null;
@@ -24,6 +27,7 @@ export default class Tile {
     }
 
     this.selectArea = PIXI.Sprite.from(SelectedTile);
+    this.availibleArea = PIXI.Sprite.from(AvaibleTile);
 
     this.sprite.width = size;
     this.sprite.height = size;
@@ -36,11 +40,19 @@ export default class Tile {
     this.selectArea.y = size * y;
     this.selectArea.alpha = 0;
 
+    this.availibleArea.width = size;
+    this.availibleArea.height = size;
+    this.availibleArea.x = size * x;
+    this.availibleArea.y = size * y;
+    this.availibleArea.alpha = 0;
+
     this.sprite.zIndex = 1;
     this.selectArea.zIndex = 2;
+    this.availibleArea.zIndex = 3;
 
     this.container.addChild(this.sprite);
     this.container.addChild(this.selectArea);
+    this.container.addChild(this.availibleArea);
   }
 
   get position() {
@@ -49,6 +61,16 @@ export default class Tile {
 
   getGameObject() {
     return this.gameObject;
+  }
+
+  setAvailible() {
+    this.availible = true;
+    this.availibleArea.alpha = 1;
+  }
+
+  removeAvailible() {
+    this.availible = false;
+    this.availibleArea.alpha = 0;
   }
 
   setGameObject(gameObject: GameObject) {

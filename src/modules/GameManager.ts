@@ -1,7 +1,7 @@
 import { GameObject } from './GameObject';
 import Grid from './Grid';
 import * as PIXI from 'pixi.js';
-import Tile from './Tile';
+import Tile from './Cell';
 import { Colors, smoothMoveTo, getRandomColor } from '../utils';
 import { gsap } from 'gsap';
 import App from './App';
