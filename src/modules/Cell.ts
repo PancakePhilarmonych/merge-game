@@ -2,10 +2,10 @@ import * as PIXI from 'pixi.js';
 import EmptyField from '../assets/sprites/blocks/grass-tile.png';
 import EmptyFieldSecond from '../assets/sprites/blocks/grass-tile-second.png';
 import { GameObject } from './GameObject';
-import SelectedTile from '../assets/sprites/blocks/selected.png';
-import AvaibleTile from '../assets/sprites/blocks/availible.png';
+import SelectedCell from '../assets/sprites/blocks/selected.png';
+import AvaibleCell from '../assets/sprites/blocks/availible.png';
 
-export default class Tile extends PIXI.Container {
+export default class Cell extends PIXI.Container {
   public sprite: PIXI.Sprite;
   public selectArea: PIXI.Sprite;
   public availibleArea: PIXI.Sprite;
@@ -19,15 +19,15 @@ export default class Tile extends PIXI.Container {
     this.column = x;
     this.row = y;
 
-    const tileeCount = x + y;
-    if (tileeCount % 2 === 0) {
+    const cellCount = x + y;
+    if (cellCount % 2 === 0) {
       this.sprite = PIXI.Sprite.from(EmptyField);
     } else {
       this.sprite = PIXI.Sprite.from(EmptyFieldSecond);
     }
 
-    this.selectArea = PIXI.Sprite.from(SelectedTile);
-    this.availibleArea = PIXI.Sprite.from(AvaibleTile);
+    this.selectArea = PIXI.Sprite.from(SelectedCell);
+    this.availibleArea = PIXI.Sprite.from(AvaibleCell);
 
     this.sprite.width = size;
     this.sprite.height = size;

@@ -1,7 +1,7 @@
 import { GameObject } from './GameObject';
 import Grid from './Grid';
 import * as PIXI from 'pixi.js';
-import Tile from './Cell';
+import Cell from './Cell';
 import { Colors, smoothMoveTo, getRandomColor } from '../utils';
 import { gsap } from 'gsap';
 import App from './App';
@@ -11,7 +11,7 @@ export default class GameManager {
   private store: any;
   private grid: Grid;
   private gameObjects: GameObject[] = [];
-  private hoveredCell: Tile | null = null;
+  private hoveredCell: Cell | null = null;
   private selectedObject: GameObject | null = null;
   private pause = false;
   private container: PIXI.Container = new PIXI.Container();
@@ -114,7 +114,7 @@ export default class GameManager {
         const cellSize = this.grid.getCellSize();
         const cells = this.grid.getCells();
 
-        if (cells.every((cell: Tile) => cell.getGameObject() !== null)) {
+        if (cells.every((cell: Cell) => cell.getGameObject() !== null)) {
           this.restartContainer.visible = true;
           this.pause = true;
 
@@ -151,7 +151,7 @@ export default class GameManager {
         const spriteSizeWidthAnchor = this.selectedObject.x;
         const spriteSizeHeightAnchor = this.selectedObject.y;
 
-        cells.forEach((cell: Tile) => {
+        cells.forEach((cell: Cell) => {
           const isHovered =
             this.selectedObject &&
             Math.floor(spriteSizeWidthAnchor / cellSize) === cell.x &&
@@ -230,7 +230,7 @@ export default class GameManager {
     restartButton.on('pointerdown', () => this.restartGame());
   }
 
-  private addNewObject(cell: Tile, color: Colors): void {
+  private addNewObject(cell: Cell, color: Colors): void {
     const newGameObject = new GameObject(cell, color);
 
     this.gameObjects.push(newGameObject);
@@ -273,7 +273,7 @@ export default class GameManager {
 
   private generateGameObjects(): void {
     const gridCells = this.grid.getCells();
-    gridCells.forEach((cell: Tile) => {
+    gridCells.forEach((cell: Cell) => {
       const randomColor = getRandomColor();
 
       if (randomColor === Colors.EMPTY) return;
@@ -292,7 +292,7 @@ export default class GameManager {
     }
   }
 
-  private setObjectToCell(object: GameObject, cell: Tile): void {
+  private setObjectToCell(object: GameObject, cell: Cell): void {
     const cellGameObject = cell.getGameObject();
     const cellSize = this.grid.getCellSize();
     const cellX = cellSize * cell.x + cellSize / 2;
@@ -355,7 +355,7 @@ export default class GameManager {
     this.store.select(object);
   }
 
-  moveObjectToMatchedCell(object: GameObject, cell: Tile): void {
+  moveObjectToMatchedCell(object: GameObject, cell: Cell): void {
     const cellGameObject = cell.getGameObject();
     const cellSize = this.grid.getCellSize();
     const cellX = cellSize * cell.x + cellSize / 2;
@@ -388,7 +388,7 @@ export default class GameManager {
     this.hoveredCell = null;
 
     this.gameObjects = [];
-    this.grid.getCells().forEach((cell: Tile) => {
+    this.grid.getCells().forEach((cell: Cell) => {
       cell.removeGameObject();
       cell.selectArea.alpha = 0;
       cell.alpha = 1;

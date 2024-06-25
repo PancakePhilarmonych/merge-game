@@ -1,15 +1,15 @@
 import * as PIXI from 'pixi.js';
-import Tile from './Cell';
+import Cell from './Cell';
 import { Colors, getSpriteByColor } from '../utils';
 export class GameObject extends PIXI.Container {
   private color: Colors;
-  private cell: Tile;
+  private cell: Cell;
   private sprite: PIXI.Sprite;
 
   public level: number = 1;
   public levelText: PIXI.Text;
 
-  constructor(cell: Tile, color: Colors) {
+  constructor(cell: Cell, color: Colors) {
     const [x, y, size] = [cell.x, cell.y, cell.sprite.width];
 
     super();
@@ -60,7 +60,7 @@ export class GameObject extends PIXI.Container {
     this.parent.emit<any>('select', this);
   }
 
-  setCell(cell: Tile) {
+  setCell(cell: Cell) {
     this.cell = cell;
   }
 
