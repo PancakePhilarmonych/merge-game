@@ -10,6 +10,8 @@ export default class GameManager {
   private app: App;
   private store: any;
   private grid: Grid;
+  private availibleCells: Cell[] = [];
+  private availibleForMerge: GameObject[] = [];
   private gameObjects: GameObject[] = [];
   private hoveredCell: Cell | null = null;
   private selectedObject: GameObject | null = null;
@@ -39,11 +41,20 @@ export default class GameManager {
   }
 
   private setListeners(): void {
-    this.container.on<any>('select', (go: GameObject) => {
+    this.container.on('mg-select', (go: GameObject) => {
+      if (this.selectedObject && this.selectedObject === go) {
+        this.selectedObject = null;
+        this.store.select(null);
+        this.cleanSteps();
+        go.getCell()!.selectArea.alpha = 0;
+
+        return;
+      }
       if (this.pause) return;
       if (this.selectedObject === go) return;
       this.selectedObject = go;
       this.store.select(go);
+      this.getAvailibleCellsAround(go);
     });
 
     this.container.on<any>('deselect', () => {
@@ -51,10 +62,56 @@ export default class GameManager {
       this.selectedObject = null;
       this.store.select(null);
     });
+  }
 
-    this.container.on<any>('check-cell', (gameObject: GameObject) => {
-      if (!this.hoveredCell) return;
-      this.setObjectToCell(gameObject, this.hoveredCell);
+  private getAvailibleCellsAround(gameObject: GameObject): void {
+    this.cleanSteps();
+
+    const cells = this.grid.getCells();
+    const gameObjectCell = gameObject.getCell();
+    const gameObjectX = gameObjectCell!.x;
+    const gameObjectY = gameObjectCell!.y;
+
+    cells.forEach((cell: Cell) => {
+      const x = cell.x;
+      const y = cell.y;
+      const isAround =
+        (x === gameObjectX && y === gameObjectY - 1) ||
+        (x === gameObjectX && y === gameObjectY + 1) ||
+        (x === gameObjectX - 1 && y === gameObjectY) ||
+        (x === gameObjectX + 1 && y === gameObjectY);
+
+      if (isAround && !cell.getGameObject()) {
+        this.availibleCells.push(cell);
+      }
+
+      if (
+        isAround &&
+        cell.getGameObject() &&
+        cell.getGameObject()!.getColor() === gameObject.getColor() &&
+        cell.getGameObject()!.level === gameObject.level
+      ) {
+        this.availibleForMerge.push(cell.getGameObject()!);
+        this.availibleCells.push(cell);
+      }
+    });
+
+    this.availibleForMerge.forEach((go: GameObject) => {
+      go.setAvailibleForMerge();
+      go.on('pointerdown', () => {
+        this.setObjectToCell(gameObject, go.getCell()!);
+      });
+    });
+
+    this.availibleCells.forEach((cell: Cell) => {
+      cell.availibleArea.alpha = 0.8;
+
+      cell.availibleArea.zIndex = 1;
+      cell.eventMode = 'dynamic';
+      cell.cursor = 'pointer';
+      cell.on('pointerdown', () => {
+        this.setObjectToCell(gameObject, cell);
+      });
     });
   }
 
@@ -339,6 +396,15 @@ export default class GameManager {
     // Выбираем объект
     this.selectedObject = object;
     this.store.select(object);
+
+    this.cleanSteps();
+    const emptyCells = this.grid.getCells().filter((cell: Cell) => !cell.getGameObject());
+    const randomEmptyCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+
+    if (randomEmptyCell) {
+      this.addNewObject(randomEmptyCell, getRandomColor(true));
+    }
+    this.getAvailibleCellsAround(object);
   }
 
   moveObjectToOwnCell(object: GameObject): void {
@@ -375,9 +441,39 @@ export default class GameManager {
     this.selectedObject = cellGameObject!;
     const gameObjectIndex = this.gameObjects.indexOf(object);
     this.gameObjects.splice(gameObjectIndex, 1);
+
+    this.cleanSteps();
+
+    const emptyCells = this.grid.getCells().filter((cell: Cell) => !cell.getGameObject());
+    const randomEmptyCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+
+    if (randomEmptyCell) {
+      this.addNewObject(randomEmptyCell, getRandomColor(true));
+    }
+
+    this.getAvailibleCellsAround(cellGameObject!);
+  }
+
+  private cleanSteps(): void {
+    this.availibleCells.forEach((cell: Cell) => {
+      cell.availibleArea.alpha = 0;
+      cell.availibleArea.zIndex = 1;
+      cell.eventMode = 'none';
+      cell.cursor = 'default';
+      cell.removeAllListeners();
+    });
+
+    this.availibleForMerge.forEach((go: GameObject) => {
+      go.off('pointerdown');
+      go.setUnavailibleForMerge();
+    });
+
+    this.availibleCells = [];
+    this.availibleForMerge = [];
   }
 
   public restartGame(): void {
+    this.cleanSteps();
     this.setListeners();
 
     this.gameObjects.forEach((gameObject: GameObject) => {
