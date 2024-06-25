@@ -154,8 +154,8 @@ export default class GameManager {
         cells.forEach((cell: Tile) => {
           const isHovered =
             this.selectedObject &&
-            Math.floor(spriteSizeWidthAnchor / cellSize) === cell.position.x &&
-            Math.floor(spriteSizeHeightAnchor / cellSize) === cell.position.y;
+            Math.floor(spriteSizeWidthAnchor / cellSize) === cell.x &&
+            Math.floor(spriteSizeHeightAnchor / cellSize) === cell.y;
 
           if (isHovered) {
             this.hoveredCell = cell;
@@ -295,8 +295,8 @@ export default class GameManager {
   private setObjectToCell(object: GameObject, cell: Tile): void {
     const cellGameObject = cell.getGameObject();
     const cellSize = this.grid.getCellSize();
-    const cellX = cellSize * cell.position.x + cellSize / 2;
-    const cellY = cellSize * cell.position.y + cellSize / 2;
+    const cellX = cellSize * cell.x + cellSize / 2;
+    const cellY = cellSize * cell.y + cellSize / 2;
 
     if (cellGameObject) {
       if (cellGameObject === object) {
@@ -345,8 +345,8 @@ export default class GameManager {
     const cellSize = this.grid.getCellSize();
     const objectCell = object.getCell()!;
 
-    const objectCellX = cellSize * objectCell.position.x + cellSize / 2;
-    const objectCellY = cellSize * objectCell.position.y + cellSize / 2;
+    const objectCellX = cellSize * objectCell.x + cellSize / 2;
+    const objectCellY = cellSize * objectCell.y + cellSize / 2;
 
     smoothMoveTo(object, objectCellX, objectCellY, 0.5);
     object.getCell()!.selectArea.alpha = 0.9;
@@ -358,8 +358,8 @@ export default class GameManager {
   moveObjectToMatchedCell(object: GameObject, cell: Tile): void {
     const cellGameObject = cell.getGameObject();
     const cellSize = this.grid.getCellSize();
-    const cellX = cellSize * cell.position.x + cellSize / 2;
-    const cellY = cellSize * cell.position.y + cellSize / 2;
+    const cellX = cellSize * cell.x + cellSize / 2;
+    const cellY = cellSize * cell.y + cellSize / 2;
 
     cellGameObject!.x = object.x;
     cellGameObject!.y = object.y;
@@ -391,7 +391,7 @@ export default class GameManager {
     this.grid.getCells().forEach((cell: Tile) => {
       cell.removeGameObject();
       cell.selectArea.alpha = 0;
-      cell.container.alpha = 1;
+      cell.alpha = 1;
     });
 
     this.hoveredCell = null;

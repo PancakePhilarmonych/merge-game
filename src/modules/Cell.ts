@@ -5,8 +5,7 @@ import { GameObject } from './GameObject';
 import SelectedTile from '../assets/sprites/blocks/selected.png';
 import AvaibleTile from '../assets/sprites/blocks/availible.png';
 
-export default class Tile {
-  public container: PIXI.Container = new PIXI.Container();
+export default class Tile extends PIXI.Container {
   public sprite: PIXI.Sprite;
   public selectArea: PIXI.Sprite;
   public availibleArea: PIXI.Sprite;
@@ -16,6 +15,7 @@ export default class Tile {
   private gameObject: GameObject | null = null;
 
   constructor(x: number, y: number, size: number) {
+    super();
     this.column = x;
     this.row = y;
 
@@ -50,13 +50,17 @@ export default class Tile {
     this.selectArea.zIndex = 2;
     this.availibleArea.zIndex = 3;
 
-    this.container.addChild(this.sprite);
-    this.container.addChild(this.selectArea);
-    this.container.addChild(this.availibleArea);
+    this.addChild(this.sprite);
+    this.addChild(this.selectArea);
+    this.addChild(this.availibleArea);
   }
 
-  get position() {
-    return { x: this.column, y: this.row };
+  get x() {
+    return this.column;
+  }
+
+  get y() {
+    return this.row;
   }
 
   getGameObject() {

@@ -27,7 +27,7 @@ export default class Grid {
   }
 
   getContainers(): PIXI.Container[] {
-    return this.cells.map((row: Tile[]) => row.map((cell: Tile) => cell.container)).flat();
+    return this.cells.map((row: Tile[]) => row.map((cell: Tile) => cell)).flat();
   }
 
   getCells(): Tile[] {
