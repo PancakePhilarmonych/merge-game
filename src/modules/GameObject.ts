@@ -43,7 +43,6 @@ export class GameObject extends PIXI.Container {
     this.levelText.y = this.sprite.y;
     this.levelText.zIndex = 2;
     this.levelText.eventMode = 'none';
-
     this.addChild(this.sprite);
     this.addChild(this.levelText);
 
@@ -57,7 +56,15 @@ export class GameObject extends PIXI.Container {
   }
 
   onPointedDown() {
-    this.parent.emit<any>('select', this);
+    this.parent.emit('mg-select', this);
+  }
+
+  setAvailibleForMerge() {
+    this.off('pointerdown', this.onPointedDown, this);
+  }
+
+  setUnavailibleForMerge() {
+    this.on('pointerdown', this.onPointedDown, this);
   }
 
   setCell(cell: Cell) {

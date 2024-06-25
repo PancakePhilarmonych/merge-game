@@ -28,13 +28,6 @@ export enum Colors {
   EMPTY = 'EMPTY',
 }
 
-export const getSpritePathByColor: Record<Colors, string> = {
-  [Colors.RED]: red,
-  [Colors.YELLOW]: yellow,
-  [Colors.BLUE]: blue,
-  [Colors.EMPTY]: empty,
-};
-
 const mainColors = [Colors.RED, Colors.YELLOW, Colors.BLUE, Colors.EMPTY];
 
 export const getRandomColor = (excludeEmpty = false) => {

@@ -3,7 +3,7 @@ import EmptyField from '../assets/sprites/blocks/grass-tile.png';
 import EmptyFieldSecond from '../assets/sprites/blocks/grass-tile-second.png';
 import { GameObject } from './GameObject';
 import SelectedCell from '../assets/sprites/blocks/selected.png';
-import AvaibleCell from '../assets/sprites/blocks/availible.png';
+import AvaibleCell from '../assets/sprites/blocks/second-availible.png';
 
 export default class Cell extends PIXI.Container {
   public sprite: PIXI.Sprite;
