@@ -1,5 +1,6 @@
 import { GameObject } from './GameObject';
 import Grid from './Grid';
+import Store from './Store';
 import * as PIXI from 'pixi.js';
 import Cell from './Cell';
 import { Colors, smoothMoveTo, getRandomColor } from '../utils';
@@ -8,7 +9,7 @@ import App from './App';
 
 export default class GameManager {
   private app: App;
-  private store: any;
+  private store: Store;
   private grid: Grid;
   private availibleCells: Cell[] = [];
   private availibleForMerge: GameObject[] = [];
@@ -19,10 +20,10 @@ export default class GameManager {
   private container: PIXI.Container = new PIXI.Container();
   private restartContainer: PIXI.Container = new PIXI.Container();
 
-  constructor(counterStore: any) {
+  constructor() {
     this.app = new App();
     const instance = this.app.instance;
-    this.store = counterStore;
+    this.store = new Store();
     this.container.eventMode = 'dynamic';
     this.container.sortableChildren = true;
     this.container.interactiveChildren = true;
@@ -44,7 +45,6 @@ export default class GameManager {
     this.container.on('mg-select', (go: GameObject) => {
       if (this.selectedObject && this.selectedObject === go) {
         this.selectedObject = null;
-        this.store.select(null);
         this.cleanSteps();
         go.selection.alpha = 0;
 
@@ -54,14 +54,12 @@ export default class GameManager {
       if (this.selectedObject === go) return;
       if (this.selectedObject) this.selectedObject.selection.alpha = 0;
       this.selectedObject = go;
-      this.store.select(go);
       this.getAvailibleCellsAround(go);
     });
 
     this.container.on<any>('deselect', () => {
       if (!this.selectedObject) return;
       this.selectedObject = null;
-      this.store.select(null);
     });
   }
 
@@ -175,7 +173,7 @@ export default class GameManager {
           this.restartContainer.visible = true;
           this.pause = true;
 
-          const scoreText = new PIXI.Text(`Score: ${this.store.count}`, {
+          const scoreText = new PIXI.Text(`Score: ${this.store.getScore()}`, {
             fill: 0xffffff,
             fontSize: 40,
             fontFamily: 'Titan One',
@@ -193,7 +191,6 @@ export default class GameManager {
             this.selectedObject.selection.alpha = 0;
             this.container.removeAllListeners();
             this.selectedObject = null;
-            this.store.select(null);
           }
 
           setTimeout(() => {
@@ -291,7 +288,6 @@ export default class GameManager {
     this.gameObjects.splice(gameObjectIndex, 1);
     this.selectedObject.getCell()!.removeGameObject();
     this.selectedObject = null;
-    this.store.select(null);
   }
 
   private generateGameObjects(): void {
@@ -361,7 +357,6 @@ export default class GameManager {
     object.setCell(cell);
     // Выбираем объект
     this.selectedObject = object;
-    this.store.select(object);
 
     this.cleanSteps();
     const emptyCells = this.grid.getCells().filter((cell: Cell) => !cell.getGameObject());
@@ -384,7 +379,6 @@ export default class GameManager {
     object.selection.alpha = 0.9;
     object.selection.zIndex = 2;
     this.selectedObject = object;
-    this.store.select(object);
   }
 
   moveObjectToMatchedCell(object: GameObject, cell: Cell): void {
@@ -403,7 +397,6 @@ export default class GameManager {
     object.getCell()!.removeGameObject();
     object.selection.alpha = 0;
     this.levelUpObject(cellGameObject!);
-    this.store.select(cellGameObject!);
     this.selectedObject = cellGameObject!;
     const gameObjectIndex = this.gameObjects.indexOf(object);
     this.gameObjects.splice(gameObjectIndex, 1);
@@ -468,6 +461,6 @@ export default class GameManager {
 
   private levelUpObject(object: GameObject): void {
     object.levelUp();
-    this.store.increment(object.getLevel());
+    this.store.incrementScore(object.getLevel());
   }
 }
