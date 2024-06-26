@@ -2,12 +2,10 @@ import * as PIXI from 'pixi.js';
 import EmptyField from '../assets/sprites/blocks/grass-tile.png';
 import EmptyFieldSecond from '../assets/sprites/blocks/grass-tile-second.png';
 import { GameObject } from './GameObject';
-import SelectedCell from '../assets/sprites/blocks/selected.png';
 import AvaibleCell from '../assets/sprites/blocks/second-availible.png';
 
 export default class Cell extends PIXI.Container {
   public sprite: PIXI.Sprite;
-  public selectArea: PIXI.Sprite;
   public availibleArea: PIXI.Sprite;
   public availible: boolean = false;
   private row: number;
@@ -26,19 +24,12 @@ export default class Cell extends PIXI.Container {
       this.sprite = PIXI.Sprite.from(EmptyFieldSecond);
     }
 
-    this.selectArea = PIXI.Sprite.from(SelectedCell);
     this.availibleArea = PIXI.Sprite.from(AvaibleCell);
 
     this.sprite.width = size;
     this.sprite.height = size;
     this.sprite.x = size * x;
     this.sprite.y = size * y;
-
-    this.selectArea.width = size;
-    this.selectArea.height = size;
-    this.selectArea.x = size * x;
-    this.selectArea.y = size * y;
-    this.selectArea.alpha = 0;
 
     this.availibleArea.width = size;
     this.availibleArea.height = size;
@@ -47,11 +38,9 @@ export default class Cell extends PIXI.Container {
     this.availibleArea.alpha = 0;
 
     this.sprite.zIndex = 1;
-    this.selectArea.zIndex = 2;
     this.availibleArea.zIndex = 3;
 
     this.addChild(this.sprite);
-    this.addChild(this.selectArea);
     this.addChild(this.availibleArea);
   }
 

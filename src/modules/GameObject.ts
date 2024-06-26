@@ -1,10 +1,12 @@
 import * as PIXI from 'pixi.js';
 import Cell from './Cell';
 import { Colors, getSpriteByColor } from '../utils';
+import SelectedCell from '../assets/sprites/blocks/selected.png';
 export class GameObject extends PIXI.Container {
   private color: Colors;
   private cell: Cell;
   private sprite: PIXI.Sprite;
+  public selection: PIXI.Sprite;
 
   public level: number = 1;
   public levelText: PIXI.Text;
@@ -24,10 +26,18 @@ export class GameObject extends PIXI.Container {
     this.zIndex = 1;
 
     this.sprite = PIXI.Sprite.from(getSpriteByColor[color]);
+    this.selection = PIXI.Sprite.from(SelectedCell);
     this.sprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
     this.sprite.anchor.set(0.5);
     this.sprite.width = size;
     this.sprite.height = size;
+
+    this.selection.width = size;
+    this.selection.height = size;
+    this.selection.anchor.set(0.5);
+
+    this.selection.alpha = 0;
+    this.selection.zIndex = 2;
 
     this.eventMode = 'dynamic';
     this.cursor = 'pointer';
@@ -45,6 +55,7 @@ export class GameObject extends PIXI.Container {
     this.levelText.eventMode = 'none';
     this.addChild(this.sprite);
     this.addChild(this.levelText);
+    this.addChild(this.selection);
 
     this.on('pointerdown', this.onPointedDown, this);
   }
