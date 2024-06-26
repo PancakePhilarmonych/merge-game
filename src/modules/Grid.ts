@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js';
-import Tile from './Tile';
+import Cell from './Cell';
 
 export default class Grid {
-  private cells: Tile[][];
-  private selected: Tile | null = null;
+  private cells: Cell[][];
+  private selected: Cell | null = null;
   private cellSize: number;
 
   constructor(objectCount: number, gameWidth: number, gameHeight: number) {
@@ -20,25 +20,25 @@ export default class Grid {
       this.cells[row] = [];
 
       for (let col = 0; col < rowsCount; col++) {
-        const cell = new Tile(col, row, this.cellSize);
+        const cell = new Cell(col, row, this.cellSize);
         this.cells[row][col] = cell;
       }
     }
   }
 
   getContainers(): PIXI.Container[] {
-    return this.cells.map((row: Tile[]) => row.map((cell: Tile) => cell.container)).flat();
+    return this.cells.map((row: Cell[]) => row.map((cell: Cell) => cell)).flat();
   }
 
-  getCells(): Tile[] {
+  getCells(): Cell[] {
     return this.cells.flat();
   }
 
-  public getCell(x: number, y: number): Tile | null {
+  public getCell(x: number, y: number): Cell | null {
     return this.cells?.[x]?.[y] ?? null;
   }
 
-  public select(cell: Tile): void {
+  public select(cell: Cell): void {
     if (this.selected) {
       this.deselect();
     }

@@ -1,17 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, onBeforeMount } from 'vue';
+import { onMounted, onBeforeMount } from 'vue';
 
 import GameManager from './modules/GameManager';
 import { useCounterStore } from './store/counter';
-import BackDropComponent from './components/UI/BackDropComponent.vue';
-import MetaComponent from './components/UI/MetaComponent.vue';
-import TimerComponent from './components/UI/TimerComponent.vue';
 
 const counterStore = useCounterStore();
-
-const timerPercentage = computed(() => {
-  return Math.round(counterStore.timerFill);
-});
 
 onBeforeMount(() => {
   counterStore.reset();
@@ -42,47 +35,20 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="game-container">
-    <div class="meta-info">
-      <back-drop-component class="info-wrapper">
-        <meta-component class="info-item">Best: {{ counterStore.best }}</meta-component>
-        <meta-component class="info-item">Score: {{ counterStore.count }}</meta-component>
-      </back-drop-component>
-    </div>
-    <div id="root">
-      <canvas></canvas>
-    </div>
-    <timer-component :interval="timerPercentage" />
+  <div id="root">
+    <canvas></canvas>
   </div>
 </template>
 
 <style scoped lang="sass">
-@import './assets/colors'
 
 #root
   display: flex
-  flex-direction: column
-  align-items: center
   justify-content: center
-
+  align-items: center
   canvas
+    width: 100%
+    height: 100%
     border-radius: 12px
     border: 5px solid #fff
-
-.info-wrapper
-  height: 100%
-  .info-item
-    align-self: center
-    width: 80%
-
-.meta-info
-  display: grid
-  grid-template-columns: 1fr
-  grid-template-rows: max-content 1fr
-  gap: 16px
-
-  @media (orientation: portrait)
-    grid-template-columns: 1fr
-    grid-template-rows: 1fr
-    gap: 8px
 </style>
