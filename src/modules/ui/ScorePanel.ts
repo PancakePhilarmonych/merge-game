@@ -51,7 +51,7 @@ export default class ScorePanel extends PIXI.Container {
     const gameSize = getMaxAvailibleSideSize();
 
     this.background.clear();
-    this.background.lineStyle(this.BORDER_WIDTH, 0xffffff);
+    this.background.lineStyle(this.BORDER_WIDTH, '#00b894');
     this.background.beginFill(0x1f322f, 0.9);
     this.background.drawRoundedRect(2, 10, gameSize - 4, height - 20, this.BORDER_RADIUS);
     this.background.endFill();
