@@ -2,8 +2,16 @@ import { GameObject } from '@/modules/core/GameObject';
 import Grid from '@/modules/core/Grid';
 import Store from '@/modules/app/Store';
 import Cell from '@/modules/core/Cell';
-import { Colors, smoothMoveTo, getRandomColor, getMaxAvailibleSideSize } from '@/utils';
+import {
+  Colors,
+  smoothMoveTo,
+  getRandomColor,
+  getMaxAvailibleSideSize,
+  getTopUIHeight,
+  getBottomUIHeight,
+} from '@/utils';
 import ScorePanel from '../ui/ScorePanel';
+import BottomPanel from '../ui/BottomPanel';
 import RestartView from '@/modules/ui/RestartView';
 import StartView from '@/modules/ui/StartView';
 import { gsap } from 'gsap';
@@ -13,6 +21,7 @@ export default class GameManager {
   private app: App = new App();
   private store: Store = new Store();
   private scorePanel: ScorePanel = new ScorePanel();
+  private bottomPanel: BottomPanel = new BottomPanel();
   private grid = new Grid();
 
   private availibleCells: Cell[] = [];
@@ -27,14 +36,23 @@ export default class GameManager {
     this.startView = new StartView();
 
     this.grid.generateGameObjects();
+
+    this.app.container.y = getTopUIHeight();
+
     this.app.addToContainer(this.grid.gameObjects);
     this.app.addToContainer(this.grid.cellsContainers);
-    this.app.addToStage(this.startView.container);
-    this.scorePanel.y = getMaxAvailibleSideSize();
+
     this.app.addToStage(this.scorePanel);
+    this.app.addToStage(this.bottomPanel);
+    this.app.addToStage(this.startView.container);
     this.app.addToStage(this.restartView.container);
 
+    this.bottomPanel.updateInfoText('WELCOME!');
+    this.bottomPanel.y = window.innerHeight - getBottomUIHeight();
+
     this.setListeners();
+
+    this.resize();
   }
 
   private resize() {
@@ -42,7 +60,12 @@ export default class GameManager {
 
     this.app.resize();
     this.grid.resize(size);
-    this.scorePanel.y = getMaxAvailibleSideSize();
+
+    this.app.container.y = getTopUIHeight();
+
+    this.scorePanel.resize();
+    this.bottomPanel.resize();
+
     this.startView.resize(size);
     this.restartView.resize(size);
   }
@@ -282,6 +305,12 @@ export default class GameManager {
     this.selectedObject = null;
 
     this.scorePanel.setScore(0);
+    this.bottomPanel.updateInfoText('New game is started!');
+
+    setTimeout(() => {
+      this.bottomPanel.updateInfoText('Merge them all!');
+    }, 2000);
+
     this.store.reset();
     this.grid.generateGameObjects();
     this.app.addToContainer(this.grid.gameObjects);
@@ -295,14 +324,31 @@ export default class GameManager {
     object.levelUp();
     this.store.incrementScore(object.getLevel());
     this.scorePanel.setScore(this.store.getScore());
+
+    const level = object.getLevel();
+    if (level >= 8) {
+      this.bottomPanel.updateInfoText(`You are a genius!`);
+      setTimeout(() => {
+        this.bottomPanel.updateInfoText(`Merge them all!`);
+      }, 2000);
+    } else if (level >= 4) {
+      this.bottomPanel.updateInfoText(`WOW!`);
+      setTimeout(() => {
+        this.bottomPanel.updateInfoText(`Merge them all!`);
+      }, 2000);
+    }
   }
 
   private startGame(): void {
     this.app.container.eventMode = 'dynamic';
+    this.scorePanel.setScore(0);
+    this.bottomPanel.updateInfoText('Merge them all!');
+
     this.app.instance.ticker.add(() => {
       if (this.grid.isFull) {
         this.pause = true;
         this.restartView.show();
+        this.bottomPanel.updateInfoText(`GAME OVER!`);
         this.restartView.setScoreText(this.store.getScore(), this.store.getBestScore());
 
         if (this.selectedObject) {
