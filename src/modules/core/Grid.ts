@@ -4,13 +4,14 @@ import { GameObject } from '@/modules/core/GameObject';
 import { Colors, getMaxAvailibleSideSize, getRandomColor } from '@/utils';
 const DEFAULT_GRID_SIZE = 5;
 
-export default class Grid {
+export default class Grid extends PIXI.Container {
   private cells: Cell[][];
   //TODO: Move game objects from the grid
   public gameObjects: GameObject[];
   public size: number;
 
   constructor() {
+    super();
     this.cells = [];
     this.gameObjects = [];
     this.size = getMaxAvailibleSideSize() / DEFAULT_GRID_SIZE;
