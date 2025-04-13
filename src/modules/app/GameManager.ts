@@ -306,10 +306,7 @@ export default class GameManager {
 
     this.scorePanel.setScore(0);
     this.bottomPanel.updateInfoText('New game is started!');
-
-    setTimeout(() => {
-      this.bottomPanel.updateInfoText('Merge them all!');
-    }, 2000);
+    this.bottomPanel.updateInfoText('Merge them all!', 2000);
 
     this.store.reset();
     this.grid.generateGameObjects();
@@ -328,14 +325,10 @@ export default class GameManager {
     const level = object.getLevel();
     if (level >= 8) {
       this.bottomPanel.updateInfoText(`You are a genius!`);
-      setTimeout(() => {
-        this.bottomPanel.updateInfoText(`Merge them all!`);
-      }, 2000);
+      this.bottomPanel.updateInfoText(`Merge them all!`, 2000);
     } else if (level >= 4) {
       this.bottomPanel.updateInfoText(`WOW!`);
-      setTimeout(() => {
-        this.bottomPanel.updateInfoText(`Merge them all!`);
-      }, 2000);
+      this.bottomPanel.updateInfoText(`Merge them all!`, 2000);
     }
   }
 

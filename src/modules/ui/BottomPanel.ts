@@ -4,6 +4,7 @@ import { getBottomUIHeight, getMaxAvailibleSideSize, getTotalGameHeight } from '
 export default class BottomPanel extends PIXI.Container {
   private background: PIXI.Graphics;
   private infoText: PIXI.Text;
+  private infoTimeout: NodeJS.Timeout | null = null;
 
   constructor() {
     super();
@@ -68,7 +69,7 @@ export default class BottomPanel extends PIXI.Container {
     this.y = getTotalGameHeight() - height;
   }
 
-  public updateInfoText(text: string): void {
+  private setInfoText(text: string): void {
     this.infoText.text = text;
 
     const maxWidth = this.background.width * 0.9;
@@ -77,6 +78,21 @@ export default class BottomPanel extends PIXI.Container {
       this.infoText.scale.set(scale);
     } else {
       this.infoText.scale.set(1);
+    }
+  }
+
+  public updateInfoText(text: string, debounce = 0): void {
+    if (this.infoTimeout) {
+      clearTimeout(this.infoTimeout);
+      this.infoTimeout = null;
+    }
+
+    if (debounce > 0) {
+      this.infoTimeout = setTimeout(() => {
+        this.setInfoText(text);
+      }, debounce);
+    } else {
+      this.setInfoText(text);
     }
   }
 }
