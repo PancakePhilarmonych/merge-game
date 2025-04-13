@@ -61,10 +61,22 @@ export function resizeRoot(app: PIXI.Application<HTMLCanvasElement>) {
   app.renderer.resize(screenSize, screenSize);
 }
 
+export const getTopUIHeight = () => {
+  return window.innerHeight * 0.1;
+};
+
+export const getBottomUIHeight = () => {
+  return window.innerHeight * 0.1;
+};
+
 export const getMaxAvailibleSideSize = () => {
   const width = window.innerWidth;
   const height = window.innerHeight;
-  const isLandscape = width > height;
+  const availableHeight = height - getTopUIHeight() - getBottomUIHeight();
 
-  return isLandscape ? height : width;
+  return Math.min(width, availableHeight);
+};
+
+export const getTotalGameHeight = () => {
+  return getMaxAvailibleSideSize() + getTopUIHeight() + getBottomUIHeight();
 };
