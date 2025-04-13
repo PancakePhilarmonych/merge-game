@@ -34,7 +34,8 @@ export default class Cell extends PIXI.Container {
     this.sprite.zIndex = 1;
 
     this.availibleArea = createSqareGraphics({
-      size,
+      width: size,
+      height: size,
       color: 0xffffff,
       offset: size * (this.AVAILABLE_AREA_PADDING_PERCENT / 100),
       radius: size * 0.05,
@@ -92,7 +93,8 @@ export default class Cell extends PIXI.Container {
     this.removeChild(this.availibleArea);
 
     this.availibleArea = createSqareGraphics({
-      size,
+      width: size,
+      height: size,
       color: 0xffffff,
       offset: size * (this.AVAILABLE_AREA_PADDING_PERCENT / 100),
       radius: size * 0.05,

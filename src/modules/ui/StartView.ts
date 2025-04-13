@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { createSqareGraphics, createText } from '@/utils/graphics';
-import { getMaxAvailibleSideSize } from '@/utils';
+import { getMaxAvailibleSideSize, getTotalGameHeight } from '@/utils';
 
 export default class StartView {
   public container: PIXI.Container = new PIXI.Container();
@@ -13,7 +13,8 @@ export default class StartView {
 
     this.container.addChild(
       createSqareGraphics({
-        size: sideSize,
+        width: getMaxAvailibleSideSize(),
+        height: getTotalGameHeight(),
         color: 0x2ecc71,
         transparentType: 'low',
       }),
@@ -21,6 +22,8 @@ export default class StartView {
     this.container.addChild(this.createStartButton(sideSize));
 
     this.show();
+
+    this.centerContainer();
   }
 
   public createStartButton(size: number) {
@@ -54,7 +57,7 @@ export default class StartView {
     startButton.addChild(startText);
 
     startButton.x = (size - buttonWidth) / 2;
-    startButton.y = (size - buttonHeight) / 2;
+    startButton.y = getTotalGameHeight() / 2 - buttonHeight / 2;
 
     startButton.eventMode = 'dynamic';
     startButton.cursor = 'pointer';
@@ -78,11 +81,25 @@ export default class StartView {
     this.container.removeChildren();
     this.container.addChild(
       createSqareGraphics({
-        size: newSize,
+        width: getMaxAvailibleSideSize(),
+        height: getTotalGameHeight(),
         color: 0x2ecc71,
         transparentType: 'low',
       }),
     );
     this.container.addChild(this.createStartButton(newSize));
+
+    this.centerContainer();
+  }
+
+  private centerContainer(): void {
+    const gameSize = getMaxAvailibleSideSize();
+    const screenWidth = window.innerWidth;
+
+    if (screenWidth > gameSize) {
+      this.container.x = (screenWidth - gameSize) / 2;
+    } else {
+      this.container.x = 0;
+    }
   }
 }

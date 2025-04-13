@@ -31,7 +31,8 @@ export class GameObject extends PIXI.Container {
     const selectionOffset = size * (this.SELECTION_PADDING_PERCENT / 100);
 
     this.sprite = createSqareGraphics({
-      size,
+      width: size,
+      height: size,
       offset: objectOffset,
       color: getHexColorByColor(this.color),
       radius: size * 0.05,
@@ -39,7 +40,8 @@ export class GameObject extends PIXI.Container {
     });
 
     this.selection = createSqareGraphics({
-      size,
+      width: size,
+      height: size,
       offset: selectionOffset,
       color: 0xffffff,
       transparentType: 'medium',
@@ -137,7 +139,8 @@ export class GameObject extends PIXI.Container {
     this.removeChild(this.selection);
 
     this.sprite = createSqareGraphics({
-      size,
+      width: size,
+      height: size,
       offset: objectOffset,
       color: getHexColorByColor(this.color),
       radius: size * 0.05,
@@ -145,7 +148,8 @@ export class GameObject extends PIXI.Container {
     });
 
     this.selection = createSqareGraphics({
-      size,
+      width: size,
+      height: size,
       offset: selectionOffset,
       color: 0xffffff,
       transparentType: 'medium',

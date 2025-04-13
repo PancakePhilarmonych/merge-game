@@ -1,4 +1,6 @@
 import * as PIXI from 'pixi.js';
+import { getMaxAvailibleSideSize, getTotalGameHeight } from '@/utils';
+
 export default class App {
   public instance: PIXI.Application<HTMLCanvasElement>;
   public container: PIXI.Container = new PIXI.Container();
@@ -10,11 +12,14 @@ export default class App {
       autoDensity: true,
       resolution: window.devicePixelRatio || 1,
       view: document.getElementById('app') as HTMLCanvasElement,
-      resizeTo: window,
+      width: window.innerWidth,
+      height: getTotalGameHeight(),
     });
 
     this.instance.stage.addChild(this.container);
     this.initAppContainer();
+
+    this.centerGameField();
   }
 
   public addToContainer(container: PIXI.Container | PIXI.Container[]) {
@@ -32,8 +37,18 @@ export default class App {
   }
 
   public resize() {
-    this.instance.renderer.reset();
+    const totalHeight = getTotalGameHeight();
+
+    this.instance.renderer.resize(window.innerWidth, totalHeight);
     this.instance.render();
+
+    this.centerGameField();
+  }
+
+  private centerGameField(): void {
+    const gameSize = getMaxAvailibleSideSize();
+
+    this.container.x = (window.innerWidth - gameSize) / 2;
   }
 
   private initAppContainer(): void {
