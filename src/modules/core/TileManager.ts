@@ -20,9 +20,9 @@ export default class TileManager {
 
     emptyCells.forEach((cell: Cell) => {
       if (this.tiles.length >= TileManager.INITIAL_OBJECT_COUNT) return;
-      const hasGameObject = cell.getGameObject();
+      const hasTile = cell.getTile();
 
-      if (hasGameObject) return;
+      if (hasTile) return;
 
       const randomColor = getRandomColor();
 
@@ -72,7 +72,7 @@ export default class TileManager {
   }
 
   private getEmptyCells(): Cell[] {
-    return this.grid.flatCells.filter(cell => cell.getGameObject() === null);
+    return this.grid.flatCells.filter(cell => cell.getTile() === null);
   }
 
   public getTiles(): Tile[] {
@@ -80,6 +80,6 @@ export default class TileManager {
   }
 
   public isFull(): boolean {
-    return this.grid.flatCells.every((cell: Cell) => cell.getGameObject() !== null);
+    return this.grid.flatCells.every((cell: Cell) => cell.getTile() !== null);
   }
 }

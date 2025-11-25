@@ -100,7 +100,6 @@ export default class RestartView extends PIXI.Container {
   }
 
   public setScoreText(score: number, bestScoreText: number) {
-    // Удаляем старые текстовые элементы счета, если они существуют
     while (this.container.children.length > 3) {
       this.container.removeChildAt(3);
     }

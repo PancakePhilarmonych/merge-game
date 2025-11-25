@@ -69,7 +69,7 @@ export class Tile extends PIXI.Container {
     this.addChild(this.sprite);
 
     this.on('pointerdown', this.onPointedDown, this);
-    cell.setGameObject(this);
+    cell.setTile(this);
   }
 
   private positionLevelText(size: number, offset: number) {

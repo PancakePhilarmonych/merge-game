@@ -65,11 +65,6 @@ export default class Cell extends PIXI.Container {
     return this.tile;
   }
 
-  // Обратная совместимость
-  getGameObject() {
-    return this.tile;
-  }
-
   setAvailible() {
     this.availible = true;
     this.availibleArea.alpha = 1;
@@ -84,17 +79,7 @@ export default class Cell extends PIXI.Container {
     this.tile = tile;
   }
 
-  // Обратная совместимость
-  setGameObject(tile: Tile) {
-    this.tile = tile;
-  }
-
   removeTile() {
-    this.tile = null;
-  }
-
-  // Обратная совместимость
-  removeGameObject() {
     this.tile = null;
   }
 

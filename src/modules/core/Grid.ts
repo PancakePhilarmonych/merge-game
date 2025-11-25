@@ -33,7 +33,7 @@ export default class Grid extends PIXI.Container {
   public cleanAllCells(): void {
     this.cells.forEach(row =>
       row.forEach(cell => {
-        cell.removeGameObject();
+        cell.removeTile();
         cell.alpha = 1;
       }),
     );
@@ -55,7 +55,7 @@ export default class Grid extends PIXI.Container {
   }
 
   get emptyCells(): Cell[] {
-    return this.flatCells.filter(cell => cell.getGameObject() === null);
+    return this.flatCells.filter(cell => cell.getTile() === null);
   }
 
   get cellsContainers(): PIXI.Container[] {
