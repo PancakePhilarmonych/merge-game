@@ -53,6 +53,7 @@ export default class App {
 
   private initAppContainer(): void {
     this.instance.stage.hitArea = this.instance.screen;
+    this.instance.stage.sortableChildren = true;
     this.container.sortableChildren = true;
     this.container.interactiveChildren = true;
     this.container.eventMode = 'none';

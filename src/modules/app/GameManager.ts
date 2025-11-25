@@ -382,9 +382,6 @@ export default class GameManager {
     if (this.pause) return;
 
     this.pause = true;
-    this.restartView.show();
-    this.bottomPanel.updateInfoText(message);
-    this.restartView.setScoreText(this.store.getScore(), this.store.getBestScore());
 
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
@@ -407,7 +404,9 @@ export default class GameManager {
       tile.eventMode = 'none';
     });
 
-    this.app.instance.ticker.stop();
+    this.restartView.setScoreText(this.store.getScore(), this.store.getBestScore());
+    this.bottomPanel.updateInfoText(message);
+    this.restartView.show();
   }
 
   private levelUpTile(tile: Tile): void {
