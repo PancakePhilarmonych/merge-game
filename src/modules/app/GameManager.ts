@@ -41,6 +41,7 @@ export default class GameManager {
   private startView: StartView;
   private timeLeft = GameManager.GAME_DURATION;
   private timerInterval: NodeJS.Timeout | null = null;
+  private tickerCallback: (() => void) | null = null;
 
   constructor() {
     this.restartView = new RestartView();
@@ -324,6 +325,12 @@ export default class GameManager {
 
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+
+    if (this.tickerCallback) {
+      this.app.instance.ticker.remove(this.tickerCallback);
+      this.tickerCallback = null;
     }
 
     this.scorePanel.setScore(0);
@@ -338,8 +345,8 @@ export default class GameManager {
     this.pause = false;
 
     this.resetTimer();
-    this.app.instance.ticker.start();
     this.startTimer();
+    this.startGame();
   }
 
   private resetTimer(): void {
@@ -365,6 +372,8 @@ export default class GameManager {
   }
 
   private handleGameOver(message: string): void {
+    if (this.pause) return;
+
     this.pause = true;
     this.restartView.show();
     this.bottomPanel.updateInfoText(message);
@@ -372,6 +381,12 @@ export default class GameManager {
 
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+
+    if (this.tickerCallback) {
+      this.app.instance.ticker.remove(this.tickerCallback);
+      this.tickerCallback = null;
     }
 
     if (this.selectedTile) {
@@ -404,14 +419,11 @@ export default class GameManager {
   }
 
   private startGame(): void {
-    this.app.container.eventMode = 'dynamic';
-    this.scorePanel.setScore(0);
-    this.bottomPanel.updateInfoText('Merge them all!');
+    if (this.tickerCallback) {
+      this.app.instance.ticker.remove(this.tickerCallback);
+    }
 
-    this.resetTimer();
-    this.startTimer();
-
-    this.app.instance.ticker.add(() => {
+    this.tickerCallback = () => {
       if (this.tileManager.isFull()) {
         this.handleGameOver('GAME OVER!');
         return;
@@ -421,6 +433,15 @@ export default class GameManager {
         this.selectedTile.selection.alpha = GameManager.SELECTION_ALPHA;
         this.selectedTile.selection.zIndex = GameManager.SELECTION_Z_INDEX;
       }
-    });
+    };
+
+    this.app.container.eventMode = 'dynamic';
+    this.scorePanel.setScore(0);
+    this.bottomPanel.updateInfoText('Merge them all!');
+
+    this.resetTimer();
+    this.startTimer();
+    this.app.instance.ticker.start();
+    this.app.instance.ticker.add(this.tickerCallback);
   }
 }
