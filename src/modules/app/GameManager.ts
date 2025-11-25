@@ -345,7 +345,7 @@ export default class GameManager {
     this.pause = false;
 
     this.resetTimer();
-    this.startTimer();
+    this.app.instance.ticker.start();
     this.startGame();
   }
 
@@ -357,10 +357,17 @@ export default class GameManager {
   private startTimer(): void {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
+      this.timerInterval = null;
     }
 
     this.timerInterval = setInterval(() => {
-      if (this.pause) return;
+      if (this.pause) {
+        if (this.timerInterval) {
+          clearInterval(this.timerInterval);
+          this.timerInterval = null;
+        }
+        return;
+      }
 
       this.timeLeft--;
       this.scorePanel.setTimer(this.timeLeft);
@@ -419,11 +426,15 @@ export default class GameManager {
   }
 
   private startGame(): void {
+    this.pause = false;
+
     if (this.tickerCallback) {
       this.app.instance.ticker.remove(this.tickerCallback);
     }
 
     this.tickerCallback = () => {
+      if (this.pause) return;
+
       if (this.tileManager.isFull()) {
         this.handleGameOver('GAME OVER!');
         return;
@@ -436,7 +447,6 @@ export default class GameManager {
     };
 
     this.app.container.eventMode = 'dynamic';
-    this.scorePanel.setScore(0);
     this.bottomPanel.updateInfoText('Merge them all!');
 
     this.resetTimer();
