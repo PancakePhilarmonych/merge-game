@@ -1,12 +1,9 @@
 import * as PIXI from 'pixi.js';
-import EmptyField from '@/assets/sprites/grass-tile.png';
-import EmptyFieldSecond from '@/assets/sprites/grass-tile-second.png';
 import { Tile } from '@/modules/core/Tile';
 import { createSqareGraphics } from '@/utils/graphics';
 
 export default class Cell extends PIXI.Container {
   private static readonly AVAILABLE_AREA_PADDING_PERCENT = 20;
-  private static readonly CORNER_RADIUS_PERCENT = 5;
   private static readonly BORDER_WIDTH_PERCENT = 4;
 
   public sprite: PIXI.Sprite;
@@ -23,9 +20,9 @@ export default class Cell extends PIXI.Container {
 
     const cellCount = x + y;
     if (cellCount % 2 === 0) {
-      this.sprite = PIXI.Sprite.from(EmptyField);
+      this.sprite = PIXI.Sprite.from('grass-tile');
     } else {
-      this.sprite = PIXI.Sprite.from(EmptyFieldSecond);
+      this.sprite = PIXI.Sprite.from('grass-tile-second');
     }
 
     this.sprite.width = size;
