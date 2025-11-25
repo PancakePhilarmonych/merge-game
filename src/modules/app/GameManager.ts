@@ -30,6 +30,8 @@ export default class GameManager {
   private pause = false;
   private restartView: RestartView;
   private startView: StartView;
+  private timeLeft = 20;
+  private timerInterval: NodeJS.Timeout | null = null;
 
   constructor() {
     this.restartView = new RestartView();
@@ -304,6 +306,10 @@ export default class GameManager {
 
     this.selectedObject = null;
 
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+
     this.scorePanel.setScore(0);
     this.bottomPanel.updateInfoText('New game is started!');
     this.bottomPanel.updateInfoText('Merge them all!', 2000);
@@ -314,7 +320,42 @@ export default class GameManager {
     this.app.container.eventMode = 'dynamic';
     this.restartView.hide();
     this.pause = false;
+
+    this.timeLeft = 20;
+    this.scorePanel.setTimer(this.timeLeft);
+
     this.app.instance.ticker.start();
+
+    this.timerInterval = setInterval(() => {
+      if (this.pause) return;
+
+      this.timeLeft--;
+      this.scorePanel.setTimer(this.timeLeft);
+
+      if (this.timeLeft <= 0) {
+        this.pause = true;
+        this.restartView.show();
+        this.bottomPanel.updateInfoText(`TIME'S UP!`);
+        this.restartView.setScoreText(this.store.getScore(), this.store.getBestScore());
+
+        if (this.timerInterval) {
+          clearInterval(this.timerInterval);
+        }
+
+        if (this.selectedObject) {
+          this.moveObjectToOwnCell(this.selectedObject);
+          this.selectedObject.selection.alpha = 0;
+          this.app.container.removeAllListeners();
+          this.selectedObject = null;
+        }
+
+        this.grid.gameObjects.forEach((gameObject: GameObject) => {
+          gameObject.eventMode = 'none';
+        });
+
+        this.app.instance.ticker.stop();
+      }
+    }, 1000);
   }
 
   private levelUpObject(object: GameObject): void {
@@ -336,6 +377,44 @@ export default class GameManager {
     this.app.container.eventMode = 'dynamic';
     this.scorePanel.setScore(0);
     this.bottomPanel.updateInfoText('Merge them all!');
+
+    this.timeLeft = 20;
+    this.scorePanel.setTimer(this.timeLeft);
+
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+
+    this.timerInterval = setInterval(() => {
+      if (this.pause) return;
+
+      this.timeLeft--;
+      this.scorePanel.setTimer(this.timeLeft);
+
+      if (this.timeLeft <= 0) {
+        this.pause = true;
+        this.restartView.show();
+        this.bottomPanel.updateInfoText(`TIME'S UP!`);
+        this.restartView.setScoreText(this.store.getScore(), this.store.getBestScore());
+
+        if (this.timerInterval) {
+          clearInterval(this.timerInterval);
+        }
+
+        if (this.selectedObject) {
+          this.moveObjectToOwnCell(this.selectedObject);
+          this.selectedObject.selection.alpha = 0;
+          this.app.container.removeAllListeners();
+          this.selectedObject = null;
+        }
+
+        this.grid.gameObjects.forEach((gameObject: GameObject) => {
+          gameObject.eventMode = 'none';
+        });
+
+        this.app.instance.ticker.stop();
+      }
+    }, 1000);
 
     this.app.instance.ticker.add(() => {
       if (this.grid.isFull) {

@@ -17,8 +17,8 @@ export default class RestartView extends PIXI.Container {
       createSqareGraphics({
         width: getMaxAvailibleSideSize(),
         height: getTotalGameHeight(),
-        color: 0xff7675,
-        transparentType: 'low',
+        color: 0x1f322f,
+        transparentType: 'medium',
       }),
     );
     this.container.addChild(this.createRestartButton(sideSize));
@@ -124,8 +124,8 @@ export default class RestartView extends PIXI.Container {
       createSqareGraphics({
         width: getMaxAvailibleSideSize(),
         height: getTotalGameHeight(),
-        color: 0xff7675,
-        transparentType: 'low',
+        color: 0x1f322f,
+        transparentType: 'medium',
       }),
     );
     this.container.addChild(this.createRestartButton(newSize));
