@@ -17,20 +17,22 @@ import RestartView from '@/modules/ui/RestartView';
 import StartView from '@/modules/ui/StartView';
 import { gsap } from 'gsap';
 import App from '@/modules/app/App';
+import {
+  DEFAULT_GRID_SIZE,
+  GAME_DURATION,
+  NEW_OBJECT_DELAY,
+  MERGE_OBJECT_DELAY,
+  AVAILABLE_CELL_ALPHA,
+  SELECTION_ALPHA,
+  SELECTION_Z_INDEX,
+} from '@/config/constants';
 
 export default class GameManager {
-  private static readonly GAME_DURATION = 20;
-  private static readonly NEW_OBJECT_DELAY = 300;
-  private static readonly MERGE_OBJECT_DELAY = 500;
-  private static readonly AVAILABLE_CELL_ALPHA = 0.8;
-  private static readonly SELECTION_ALPHA = 0.9;
-  private static readonly SELECTION_Z_INDEX = 2;
-
   private app: App = new App();
   private store: Store = new Store();
   private scorePanel: ScorePanel = new ScorePanel();
   private bottomPanel: BottomPanel = new BottomPanel();
-  private grid = new Grid();
+  private grid: Grid;
   private tileManager: TileManager;
 
   private availibleCells: Cell[] = [];
@@ -39,13 +41,14 @@ export default class GameManager {
   private pause = false;
   private restartView: RestartView;
   private startView: StartView;
-  private timeLeft = GameManager.GAME_DURATION;
+  private timeLeft = GAME_DURATION;
   private timerInterval: NodeJS.Timeout | null = null;
   private tickerCallback: (() => void) | null = null;
 
   constructor() {
     this.restartView = new RestartView();
     this.startView = new StartView();
+    this.grid = new Grid(DEFAULT_GRID_SIZE);
 
     this.tileManager = new TileManager(this.grid, this.grid.size);
     this.tileManager.generateTiles();
@@ -154,7 +157,7 @@ export default class GameManager {
     });
 
     this.availibleCells.forEach((cell: Cell) => {
-      cell.availibleArea.alpha = GameManager.AVAILABLE_CELL_ALPHA;
+      cell.availibleArea.alpha = AVAILABLE_CELL_ALPHA;
 
       cell.availibleArea.zIndex = 1;
       cell.eventMode = 'dynamic';
@@ -238,7 +241,7 @@ export default class GameManager {
     if (randomEmptyCell) {
       setTimeout(() => {
         this.addNewTile(randomEmptyCell, getRandomColor(true));
-      }, GameManager.NEW_OBJECT_DELAY);
+      }, NEW_OBJECT_DELAY);
     }
   }
 
@@ -250,8 +253,8 @@ export default class GameManager {
     const objectCellY = cellSize * objectCell.y;
 
     smoothMoveTo(tile, objectCellX, objectCellY, 0.5);
-    tile.selection.alpha = GameManager.SELECTION_ALPHA;
-    tile.selection.zIndex = GameManager.SELECTION_Z_INDEX;
+    tile.selection.alpha = SELECTION_ALPHA;
+    tile.selection.zIndex = SELECTION_Z_INDEX;
     this.selectedTile = tile;
 
     this.selectedTile.selection.alpha = 0;
@@ -270,8 +273,8 @@ export default class GameManager {
     cellTile.x = tile.x;
     cellTile.y = tile.y;
     smoothMoveTo(cellTile!, cellX, cellY, 0.5);
-    cellTile.selection.alpha = GameManager.SELECTION_ALPHA;
-    cellTile.selection.zIndex = GameManager.SELECTION_Z_INDEX;
+    cellTile.selection.alpha = SELECTION_ALPHA;
+    cellTile.selection.zIndex = SELECTION_Z_INDEX;
 
     tile.getCell().removeTile();
     tile.selection.alpha = 0;
@@ -286,7 +289,7 @@ export default class GameManager {
     if (randomEmptyCell) {
       setTimeout(() => {
         this.addNewTile(randomEmptyCell, getRandomColor(true));
-      }, GameManager.MERGE_OBJECT_DELAY);
+      }, MERGE_OBJECT_DELAY);
     }
 
     this.cleanSteps();
@@ -351,7 +354,7 @@ export default class GameManager {
   }
 
   private resetTimer(): void {
-    this.timeLeft = GameManager.GAME_DURATION;
+    this.timeLeft = GAME_DURATION;
     this.scorePanel.setTimer(this.timeLeft);
   }
 
@@ -443,8 +446,8 @@ export default class GameManager {
       }
 
       if (this.selectedTile) {
-        this.selectedTile.selection.alpha = GameManager.SELECTION_ALPHA;
-        this.selectedTile.selection.zIndex = GameManager.SELECTION_Z_INDEX;
+        this.selectedTile.selection.alpha = SELECTION_ALPHA;
+        this.selectedTile.selection.zIndex = SELECTION_Z_INDEX;
       }
     };
 

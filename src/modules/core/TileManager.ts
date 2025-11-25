@@ -1,13 +1,10 @@
 import { Tile } from '@/modules/core/Tile';
 import { Colors, getRandomColor } from '@/utils';
-import Grid, { DEFAULT_GRID_SIZE } from '@/modules/core/Grid';
+import Grid from '@/modules/core/Grid';
 import Cell from '@/modules/core/Cell';
+import { INITIAL_OBJECT_COUNT } from '@/config/constants';
 
 export default class TileManager {
-  private static readonly INITIAL_OBJECT_COUNT = Math.floor(
-    DEFAULT_GRID_SIZE * DEFAULT_GRID_SIZE * 0.7,
-  );
-
   private tiles: Tile[] = [];
   private grid: Grid;
   private gridSize: number;
@@ -21,7 +18,7 @@ export default class TileManager {
     const emptyCells = this.getEmptyCells();
 
     emptyCells.forEach((cell: Cell) => {
-      if (this.tiles.length >= TileManager.INITIAL_OBJECT_COUNT) return;
+      if (this.tiles.length >= INITIAL_OBJECT_COUNT) return;
       const hasTile = cell.getTile();
 
       if (hasTile) return;
@@ -35,7 +32,7 @@ export default class TileManager {
       this.tiles.push(newTile);
     });
 
-    if (this.tiles.length < TileManager.INITIAL_OBJECT_COUNT) {
+    if (this.tiles.length < INITIAL_OBJECT_COUNT) {
       this.generateTiles();
     }
   }
