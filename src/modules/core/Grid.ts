@@ -1,19 +1,15 @@
 import * as PIXI from 'pixi.js';
 import Cell from '@/modules/core/Cell';
-import { GameObject } from '@/modules/core/GameObject';
-import { Colors, getMaxAvailibleSideSize, getRandomColor } from '@/utils';
+import { getMaxAvailibleSideSize } from '@/utils';
 const DEFAULT_GRID_SIZE = 5;
 
 export default class Grid extends PIXI.Container {
   private cells: Cell[][];
-  //TODO: Move game objects from the grid
-  public gameObjects: GameObject[];
   public size: number;
 
   constructor() {
     super();
     this.cells = [];
-    this.gameObjects = [];
     this.size = getMaxAvailibleSideSize() / DEFAULT_GRID_SIZE;
 
     this.initRows(DEFAULT_GRID_SIZE);
@@ -34,19 +30,6 @@ export default class Grid extends PIXI.Container {
     return this.cells?.[y]?.[x] ?? null;
   }
 
-  public clean() {
-    this.destroyGameObjects();
-    this.cleanAllCells();
-  }
-
-  private destroyGameObjects() {
-    this.gameObjects.forEach((gameObject: GameObject) => {
-      gameObject.destroy();
-    });
-
-    this.gameObjects = [];
-  }
-
   public cleanAllCells(): void {
     this.cells.forEach(row =>
       row.forEach(cell => {
@@ -54,31 +37,6 @@ export default class Grid extends PIXI.Container {
         cell.alpha = 1;
       }),
     );
-  }
-
-  public getRandomEmptyCell(): Cell {
-    return this.emptyCells[Math.floor(Math.random() * this.emptyCells.length)];
-  }
-
-  public generateGameObjects(): void {
-    this.emptyCells.forEach((cell: Cell) => {
-      if (this.gameObjects.length >= 18) return;
-      const hasGameObject = cell.getGameObject();
-
-      if (hasGameObject) return;
-
-      const randomColor = getRandomColor();
-
-      if (randomColor === Colors.EMPTY) return;
-
-      const newGameObject = new GameObject(cell, randomColor, this.size);
-
-      this.gameObjects.push(newGameObject);
-    });
-
-    if (this.gameObjects.length < 18) {
-      this.generateGameObjects();
-    }
   }
 
   public resize(newSize: number) {
@@ -98,10 +56,6 @@ export default class Grid extends PIXI.Container {
 
   get emptyCells(): Cell[] {
     return this.flatCells.filter(cell => cell.getGameObject() === null);
-  }
-
-  get isFull(): boolean {
-    return this.flatCells.every((cell: Cell) => cell.getGameObject() !== null);
   }
 
   get cellsContainers(): PIXI.Container[] {

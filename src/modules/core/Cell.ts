@@ -1,19 +1,20 @@
 import * as PIXI from 'pixi.js';
 import EmptyField from '@/assets/sprites/grass-tile.png';
 import EmptyFieldSecond from '@/assets/sprites/grass-tile-second.png';
-import { GameObject } from '@/modules/core/GameObject';
+import { Tile } from '@/modules/core/Tile';
 import { createSqareGraphics } from '@/utils/graphics';
 
 export default class Cell extends PIXI.Container {
+  private static readonly AVAILABLE_AREA_PADDING_PERCENT = 20;
+  private static readonly CORNER_RADIUS_PERCENT = 5;
+  private static readonly BORDER_WIDTH_PERCENT = 4;
+
   public sprite: PIXI.Sprite;
   public availibleArea: PIXI.Graphics;
   public availible: boolean = false;
   private row: number;
   private column: number;
-  private gameObject: GameObject | null = null;
-
-  private readonly AVAILABLE_AREA_PADDING_PERCENT = 20;
-  private readonly CORNER_RADIUS_PERCENT = 5;
+  private tile: Tile | null = null;
 
   constructor(x: number, y: number, size: number) {
     super();
@@ -60,8 +61,13 @@ export default class Cell extends PIXI.Container {
     return this.row;
   }
 
+  getTile() {
+    return this.tile;
+  }
+
+  // Обратная совместимость
   getGameObject() {
-    return this.gameObject;
+    return this.tile;
   }
 
   setAvailible() {
@@ -74,12 +80,22 @@ export default class Cell extends PIXI.Container {
     this.availibleArea.alpha = 0;
   }
 
-  setGameObject(gameObject: GameObject) {
-    this.gameObject = gameObject;
+  setTile(tile: Tile) {
+    this.tile = tile;
   }
 
+  // Обратная совместимость
+  setGameObject(tile: Tile) {
+    this.tile = tile;
+  }
+
+  removeTile() {
+    this.tile = null;
+  }
+
+  // Обратная совместимость
   removeGameObject() {
-    this.gameObject = null;
+    this.tile = null;
   }
 
   public resize(size: number) {
@@ -96,9 +112,9 @@ export default class Cell extends PIXI.Container {
       width: size,
       height: size,
       color: 0xffffff,
-      offset: size * (this.AVAILABLE_AREA_PADDING_PERCENT / 100),
+      offset: size * (Cell.AVAILABLE_AREA_PADDING_PERCENT / 100),
       radius: size * 0.05,
-      borderSize: (size / 100) * 4,
+      borderSize: (size / 100) * Cell.BORDER_WIDTH_PERCENT,
       transparentType: 'strong',
     });
     this.availibleArea.x = size * this.column;
@@ -109,6 +125,6 @@ export default class Cell extends PIXI.Container {
 
     this.addChild(this.availibleArea);
 
-    this.gameObject?.resize(size);
+    this.tile?.resize(size);
   }
 }

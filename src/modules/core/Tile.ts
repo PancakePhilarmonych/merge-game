@@ -3,7 +3,7 @@ import Cell from '@/modules/core/Cell';
 import { Colors, getHexColorByColor } from '@/utils';
 import { createSqareGraphics, createText } from '@/utils/graphics';
 
-export class GameObject extends PIXI.Container {
+export class Tile extends PIXI.Container {
   private color: Colors;
   private cell: Cell;
   private sprite: PIXI.Graphics;
