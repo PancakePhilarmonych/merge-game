@@ -38,7 +38,7 @@ export default class Cell extends PIXI.Container {
       width: size,
       height: size,
       color: 0xffffff,
-      offset: size * (this.AVAILABLE_AREA_PADDING_PERCENT / 100),
+      offset: size * (Cell.AVAILABLE_AREA_PADDING_PERCENT / 100),
       radius: size * 0.05,
       borderSize: (size / 100) * 4,
       transparentType: 'strong',
