@@ -1,10 +1,12 @@
 import { Tile } from '@/modules/core/Tile';
 import { Colors, getRandomColor } from '@/utils';
-import Grid from '@/modules/core/Grid';
+import Grid, { DEFAULT_GRID_SIZE } from '@/modules/core/Grid';
 import Cell from '@/modules/core/Cell';
 
 export default class TileManager {
-  private static readonly INITIAL_OBJECT_COUNT = 18;
+  private static readonly INITIAL_OBJECT_COUNT = Math.floor(
+    DEFAULT_GRID_SIZE * DEFAULT_GRID_SIZE * 0.7,
+  );
 
   private tiles: Tile[] = [];
   private grid: Grid;
