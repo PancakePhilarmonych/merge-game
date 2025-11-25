@@ -340,6 +340,7 @@ export default class GameManager {
     this.store.reset();
     this.tileManager.generateTiles();
     this.app.addToContainer(this.tileManager.getTiles());
+    this.app.container.on('mg-select', (tile: Tile) => this.handleTileSelection(tile));
     this.app.container.eventMode = 'dynamic';
     this.restartView.hide();
     this.pause = false;
@@ -394,11 +395,13 @@ export default class GameManager {
     }
 
     if (this.selectedTile) {
-      this.moveTileToOwnCell(this.selectedTile);
-      this.selectedTile.selection.alpha = 0;
-      this.app.container.removeAllListeners();
+      const tile = this.selectedTile;
       this.selectedTile = null;
+      tile.selection.alpha = 0;
+      this.cleanSteps();
     }
+
+    this.app.container.removeAllListeners();
 
     this.tileManager.getTiles().forEach((tile: Tile) => {
       tile.eventMode = 'none';
