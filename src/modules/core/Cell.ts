@@ -34,7 +34,8 @@ export default class Cell extends PIXI.Container {
     this.sprite.zIndex = 1;
 
     this.availibleArea = createSqareGraphics({
-      size,
+      width: size,
+      height: size,
       color: 0xffffff,
       offset: size * (this.AVAILABLE_AREA_PADDING_PERCENT / 100),
       radius: size * 0.05,
@@ -81,7 +82,7 @@ export default class Cell extends PIXI.Container {
     this.gameObject = null;
   }
 
-  public updateSize(size: number) {
+  public resize(size: number) {
     this.sprite.width = size;
     this.sprite.height = size;
     this.sprite.x = size * this.column;
@@ -92,7 +93,8 @@ export default class Cell extends PIXI.Container {
     this.removeChild(this.availibleArea);
 
     this.availibleArea = createSqareGraphics({
-      size,
+      width: size,
+      height: size,
       color: 0xffffff,
       offset: size * (this.AVAILABLE_AREA_PADDING_PERCENT / 100),
       radius: size * 0.05,
@@ -107,6 +109,6 @@ export default class Cell extends PIXI.Container {
 
     this.addChild(this.availibleArea);
 
-    this.gameObject?.updateSize(size);
+    this.gameObject?.resize(size);
   }
 }

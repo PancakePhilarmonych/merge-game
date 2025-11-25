@@ -1,7 +1,8 @@
 import * as PIXI from 'pixi.js';
 
 interface SqareOptions {
-  size: number;
+  width: number;
+  height: number;
   color: PIXI.ColorSource;
   offset?: number;
   radius?: number;
@@ -30,7 +31,8 @@ const mainTransparencyMap = {
 export function createSqareGraphics(options: SqareOptions): PIXI.Graphics {
   const xStartPosition = options.offset ? 0 + options.offset / 2 : 0;
   const yStartPosition = options.offset ? 0 + options.offset / 2 : 0;
-  const ofsettedSize = options.offset ? options.size - options.offset : options.size;
+  const ofsettedWidth = options.offset ? options.width - options.offset : options.width;
+  const ofsettedHeight = options.offset ? options.height - options.offset : options.height;
 
   const graphics = new PIXI.Graphics();
   graphics.beginFill(
@@ -40,8 +42,8 @@ export function createSqareGraphics(options: SqareOptions): PIXI.Graphics {
   graphics.drawRoundedRect(
     xStartPosition,
     yStartPosition,
-    ofsettedSize,
-    ofsettedSize,
+    ofsettedWidth,
+    ofsettedHeight,
     options.radius || 0,
   );
   graphics.endFill();
@@ -56,8 +58,8 @@ export function createSqareGraphics(options: SqareOptions): PIXI.Graphics {
       .drawRoundedRect(
         xStartPosition,
         yStartPosition,
-        ofsettedSize,
-        ofsettedSize,
+        ofsettedWidth,
+        ofsettedHeight,
         options.radius || 0,
       );
 

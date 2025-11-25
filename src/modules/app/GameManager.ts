@@ -2,7 +2,16 @@ import { GameObject } from '@/modules/core/GameObject';
 import Grid from '@/modules/core/Grid';
 import Store from '@/modules/app/Store';
 import Cell from '@/modules/core/Cell';
-import { Colors, smoothMoveTo, getRandomColor, getMaxAvailibleSideSize } from '@/utils';
+import {
+  Colors,
+  smoothMoveTo,
+  getRandomColor,
+  getMaxAvailibleSideSize,
+  getTopUIHeight,
+  getBottomUIHeight,
+} from '@/utils';
+import ScorePanel from '../ui/ScorePanel';
+import BottomPanel from '../ui/BottomPanel';
 import RestartView from '@/modules/ui/RestartView';
 import StartView from '@/modules/ui/StartView';
 import { gsap } from 'gsap';
@@ -11,7 +20,9 @@ import App from '@/modules/app/App';
 export default class GameManager {
   private app: App = new App();
   private store: Store = new Store();
-  private grid = new Grid(getMaxAvailibleSideSize());
+  private scorePanel: ScorePanel = new ScorePanel();
+  private bottomPanel: BottomPanel = new BottomPanel();
+  private grid = new Grid();
 
   private availibleCells: Cell[] = [];
   private availibleForMerge: GameObject[] = [];
@@ -19,51 +30,46 @@ export default class GameManager {
   private pause = false;
   private restartView: RestartView;
   private startView: StartView;
+  private timeLeft = 20;
+  private timerInterval: NodeJS.Timeout | null = null;
 
   constructor() {
-    this.setMainContainer();
-    this.setListeners();
-
-    this.grid.generateGameObjects(this.grid.emptyCells);
-
-    this.grid.gameObjects.forEach((gameObject: GameObject) => {
-      this.app.container.addChild(gameObject);
-    });
-    this.app.instance.stage.addChild(this.app.container);
-    this.app.instance.stage.hitArea = this.app.instance.screen;
-
     this.restartView = new RestartView();
     this.startView = new StartView();
-    this.startView.show();
-    this.restartView.container.on('mg-restart', () => this.restartGame());
-    this.startView.container.on('mg-start', () => {
-      this.startView.hide();
-      this.startGame();
-    });
 
-    this.app.instance.stage.addChild(this.startView.container);
-    this.app.instance.stage.addChild(this.restartView.container);
+    this.grid.generateGameObjects();
 
-    window.addEventListener('resize', () => this.resizeGrid());
-    window.addEventListener('orientationchange', () => this.resizeGrid());
+    this.app.container.y = getTopUIHeight();
+
+    this.app.addToContainer(this.grid.gameObjects);
+    this.app.addToContainer(this.grid.cellsContainers);
+
+    this.app.addToStage(this.scorePanel);
+    this.app.addToStage(this.bottomPanel);
+    this.app.addToStage(this.startView.container);
+    this.app.addToStage(this.restartView.container);
+
+    this.bottomPanel.updateInfoText('WELCOME!');
+    this.bottomPanel.y = window.innerHeight - getBottomUIHeight();
+
+    this.setListeners();
+
+    this.resize();
   }
 
-  private resizeGrid() {
-    const newSize = getMaxAvailibleSideSize();
+  private resize() {
+    const size = getMaxAvailibleSideSize();
 
-    this.app.instance.renderer.resize(newSize, newSize);
-    this.app.instance.render();
-    this.grid.updateSize(newSize);
-    this.startView.resize(newSize);
-    this.restartView.resize(newSize);
-  }
+    this.app.resize();
+    this.grid.resize(size);
 
-  private setMainContainer(): void {
-    this.app.container.eventMode = 'dynamic';
-    this.app.container.sortableChildren = true;
-    this.app.container.interactiveChildren = true;
-    this.app.container.eventMode = 'none';
-    this.app.container.addChild(...this.grid.cellsContainers);
+    this.app.container.y = getTopUIHeight();
+
+    this.scorePanel.resize();
+    this.bottomPanel.resize();
+
+    this.startView.resize(size);
+    this.restartView.resize(size);
   }
 
   private setListeners(): void {
@@ -79,43 +85,43 @@ export default class GameManager {
       if (this.selectedObject === go) return;
       if (this.selectedObject) this.selectedObject.selection.alpha = 0;
       this.selectedObject = go;
+      this.cleanSteps();
       this.getAvailibleCellsAround(go);
     });
 
-    this.app.container.on<any>('deselect', () => {
-      if (!this.selectedObject) return;
-      this.selectedObject = null;
+    this.restartView.container.on('mg-restart', () => this.restartGame());
+    this.startView.container.on('mg-start', () => {
+      this.startView.hide();
+      this.startGame();
     });
+
+    window.addEventListener('resize', () => this.resize());
+    window.addEventListener('orientationchange', () => this.resize());
   }
 
-  private getAvailibleCellsAround(gameObject: GameObject): void {
-    this.cleanSteps();
+  private getAvailibleCellsAround(checkedGameObject: GameObject): void {
+    //TODO: write getSurroundingsCells function
+    const gameObjectCell = checkedGameObject.getCell();
+    const up = this.grid.getCell(gameObjectCell.x, gameObjectCell.y + 1);
+    const down = this.grid.getCell(gameObjectCell.x, gameObjectCell.y - 1);
+    const left = this.grid.getCell(gameObjectCell.x + 1, gameObjectCell.y);
+    const right = this.grid.getCell(gameObjectCell.x - 1, gameObjectCell.y);
 
-    const cells = this.grid.flatCells;
-    const gameObjectCell = gameObject.getCell();
-    const gameObjectX = gameObjectCell!.x;
-    const gameObjectY = gameObjectCell!.y;
+    const surroundingCells = [up, down, left, right].filter(cell => cell !== null);
 
-    cells.forEach((cell: Cell) => {
-      const x = cell.x;
-      const y = cell.y;
-      const isAround =
-        (x === gameObjectX && y === gameObjectY - 1) ||
-        (x === gameObjectX && y === gameObjectY + 1) ||
-        (x === gameObjectX - 1 && y === gameObjectY) ||
-        (x === gameObjectX + 1 && y === gameObjectY);
+    surroundingCells.forEach((cell: Cell) => {
+      // TODO: Write surrounding cells handler
+      const gameObject = cell.getGameObject();
+      const sameColor = gameObject?.getColor() === checkedGameObject.getColor();
+      const sameLevel = gameObject?.level === checkedGameObject.level;
+      const isEmpty = gameObject === null;
 
-      if (isAround && !cell.getGameObject()) {
+      if (isEmpty) {
         this.availibleCells.push(cell);
       }
 
-      if (
-        isAround &&
-        cell.getGameObject() &&
-        cell.getGameObject()!.getColor() === gameObject.getColor() &&
-        cell.getGameObject()!.level === gameObject.level
-      ) {
-        this.availibleForMerge.push(cell.getGameObject()!);
+      if (sameColor && sameLevel) {
+        this.availibleForMerge.push(gameObject);
         this.availibleCells.push(cell);
       }
     });
@@ -123,7 +129,7 @@ export default class GameManager {
     this.availibleForMerge.forEach((go: GameObject) => {
       go.setAvailibleForMerge();
       go.on('pointerdown', () => {
-        this.setObjectToCell(gameObject, go.getCell()!);
+        this.setObjectToCell(checkedGameObject, go.getCell());
       });
     });
 
@@ -134,7 +140,7 @@ export default class GameManager {
       cell.eventMode = 'dynamic';
       cell.cursor = 'pointer';
       cell.on('pointerdown', () => {
-        this.setObjectToCell(gameObject, cell);
+        this.setObjectToCell(checkedGameObject, cell);
       });
     });
   }
@@ -190,25 +196,32 @@ export default class GameManager {
 
     object.selection.alpha = 0;
     object.selection.zIndex = 1;
-    object.getCell()!.removeGameObject();
+    object.getCell().removeGameObject();
     cell.setGameObject(object);
     smoothMoveTo(object, cellX, cellY, 0.5);
     object.setCell(cell);
     this.selectedObject = object;
 
     this.cleanSteps();
-    const randomEmptyCell = this.grid.getRandomEmptyCell();
+    this.addNewObjectToRandomCell();
 
-    if (randomEmptyCell) {
-      setTimeout(() => {
-        this.addNewObject(randomEmptyCell, getRandomColor(true));
-      }, 500);
-    }
+    this.cleanSteps();
     this.getAvailibleCellsAround(object);
 
     this.selectedObject.selection.alpha = 0;
     this.selectedObject = null;
     this.cleanSteps();
+  }
+
+  addNewObjectToRandomCell(): void {
+    // MAYBE I HAVE TO USE THIS FUNCTION TO DEFINE THE END OF THE GAME ????
+    const randomEmptyCell = this.grid.getRandomEmptyCell();
+
+    if (randomEmptyCell) {
+      setTimeout(() => {
+        this.addNewObject(randomEmptyCell, getRandomColor(true));
+      }, 300);
+    }
   }
 
   moveObjectToOwnCell(object: GameObject): void {
@@ -260,6 +273,7 @@ export default class GameManager {
       }, 500);
     }
 
+    this.cleanSteps();
     this.getAvailibleCellsAround(cellGameObject!);
 
     this.selectedObject.selection.alpha = 0;
@@ -288,39 +302,125 @@ export default class GameManager {
   public restartGame(): void {
     this.cleanSteps();
 
-    this.grid.gameObjects.forEach((gameObject: GameObject) => {
-      gameObject.destroy();
-    });
+    this.grid.clean();
 
     this.selectedObject = null;
 
-    this.grid.gameObjects = [];
-    this.grid.cleanAllCells();
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
 
-    this.selectedObject = null;
+    this.scorePanel.setScore(0);
+    this.bottomPanel.updateInfoText('New game is started!');
+    this.bottomPanel.updateInfoText('Merge them all!', 2000);
 
     this.store.reset();
-    this.grid.generateGameObjects(this.grid.emptyCells);
-    this.grid.gameObjects.forEach((gameObject: GameObject) => {
-      this.app.container.addChild(gameObject);
-    });
+    this.grid.generateGameObjects();
+    this.app.addToContainer(this.grid.gameObjects);
     this.app.container.eventMode = 'dynamic';
     this.restartView.hide();
     this.pause = false;
+
+    this.timeLeft = 20;
+    this.scorePanel.setTimer(this.timeLeft);
+
     this.app.instance.ticker.start();
+
+    this.timerInterval = setInterval(() => {
+      if (this.pause) return;
+
+      this.timeLeft--;
+      this.scorePanel.setTimer(this.timeLeft);
+
+      if (this.timeLeft <= 0) {
+        this.pause = true;
+        this.restartView.show();
+        this.bottomPanel.updateInfoText(`TIME'S UP!`);
+        this.restartView.setScoreText(this.store.getScore(), this.store.getBestScore());
+
+        if (this.timerInterval) {
+          clearInterval(this.timerInterval);
+        }
+
+        if (this.selectedObject) {
+          this.moveObjectToOwnCell(this.selectedObject);
+          this.selectedObject.selection.alpha = 0;
+          this.app.container.removeAllListeners();
+          this.selectedObject = null;
+        }
+
+        this.grid.gameObjects.forEach((gameObject: GameObject) => {
+          gameObject.eventMode = 'none';
+        });
+
+        this.app.instance.ticker.stop();
+      }
+    }, 1000);
   }
 
   private levelUpObject(object: GameObject): void {
     object.levelUp();
     this.store.incrementScore(object.getLevel());
+    this.scorePanel.setScore(this.store.getScore());
+
+    const level = object.getLevel();
+    if (level >= 8) {
+      this.bottomPanel.updateInfoText(`You are a genius!`);
+      this.bottomPanel.updateInfoText(`Merge them all!`, 2000);
+    } else if (level >= 4) {
+      this.bottomPanel.updateInfoText(`WOW!`);
+      this.bottomPanel.updateInfoText(`Merge them all!`, 2000);
+    }
   }
 
   private startGame(): void {
     this.app.container.eventMode = 'dynamic';
+    this.scorePanel.setScore(0);
+    this.bottomPanel.updateInfoText('Merge them all!');
+
+    this.timeLeft = 20;
+    this.scorePanel.setTimer(this.timeLeft);
+
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+
+    this.timerInterval = setInterval(() => {
+      if (this.pause) return;
+
+      this.timeLeft--;
+      this.scorePanel.setTimer(this.timeLeft);
+
+      if (this.timeLeft <= 0) {
+        this.pause = true;
+        this.restartView.show();
+        this.bottomPanel.updateInfoText(`TIME'S UP!`);
+        this.restartView.setScoreText(this.store.getScore(), this.store.getBestScore());
+
+        if (this.timerInterval) {
+          clearInterval(this.timerInterval);
+        }
+
+        if (this.selectedObject) {
+          this.moveObjectToOwnCell(this.selectedObject);
+          this.selectedObject.selection.alpha = 0;
+          this.app.container.removeAllListeners();
+          this.selectedObject = null;
+        }
+
+        this.grid.gameObjects.forEach((gameObject: GameObject) => {
+          gameObject.eventMode = 'none';
+        });
+
+        this.app.instance.ticker.stop();
+      }
+    }, 1000);
+
     this.app.instance.ticker.add(() => {
       if (this.grid.isFull) {
         this.pause = true;
         this.restartView.show();
+        this.bottomPanel.updateInfoText(`GAME OVER!`);
         this.restartView.setScoreText(this.store.getScore(), this.store.getBestScore());
 
         if (this.selectedObject) {
@@ -329,6 +429,10 @@ export default class GameManager {
           this.app.container.removeAllListeners();
           this.selectedObject = null;
         }
+
+        this.grid.gameObjects.forEach((gameObject: GameObject) => {
+          gameObject.eventMode = 'none';
+        });
 
         this.app.instance.ticker.stop();
       }
