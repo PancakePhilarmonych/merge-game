@@ -1,6 +1,6 @@
 import { Tile } from '@/modules/core/Tile';
 import Grid from '@/modules/core/Grid';
-import TileManager from '@/modules/core/TileManager';
+import TileManager from '@/modules/app/TileManager';
 import Store from '@/modules/app/Store';
 import Cell from '@/modules/core/Cell';
 import {
