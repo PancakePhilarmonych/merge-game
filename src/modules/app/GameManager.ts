@@ -18,7 +18,6 @@ import StartView from '@/modules/ui/StartView';
 import { gsap } from 'gsap';
 import App from '@/modules/app/App';
 import {
-  DEFAULT_GRID_SIZE,
   GAME_DURATION,
   NEW_OBJECT_DELAY,
   MERGE_OBJECT_DELAY,
@@ -48,9 +47,9 @@ export default class GameManager {
   constructor() {
     this.restartView = new RestartView();
     this.startView = new StartView();
-    this.grid = new Grid(DEFAULT_GRID_SIZE);
+    this.grid = new Grid();
 
-    this.tileManager = new TileManager(this.grid, this.grid.size);
+    this.tileManager = new TileManager(this.grid);
     this.tileManager.generateTiles();
 
     this.app.container.y = getTopUIHeight();
@@ -76,7 +75,7 @@ export default class GameManager {
 
     this.app.resize();
     this.grid.resize(size);
-    this.tileManager.resize(this.grid.size);
+    this.tileManager.resize(this.grid.cellSize);
 
     this.app.container.y = getTopUIHeight();
 
@@ -188,7 +187,7 @@ export default class GameManager {
 
   private setTileToCell(tile: Tile, cell: Cell): void {
     const cellTile = cell.getTile();
-    const cellSize = this.grid.size;
+    const cellSize = this.grid.cellSize;
     const cellX = cellSize * cell.x;
     const cellY = cellSize * cell.y;
 
@@ -246,7 +245,7 @@ export default class GameManager {
   }
 
   moveTileToOwnCell(tile: Tile): void {
-    const cellSize = this.grid.size;
+    const cellSize = this.grid.cellSize;
     const objectCell = tile.getCell()!;
 
     const objectCellX = cellSize * objectCell.x;
@@ -266,7 +265,7 @@ export default class GameManager {
     const cellTile = cell.getTile() || null;
     if (!cellTile) return;
 
-    const cellSize = this.grid.size;
+    const cellSize = this.grid.cellSize;
     const cellX = cellSize * cell.x;
     const cellY = cellSize * cell.y;
 
@@ -342,6 +341,8 @@ export default class GameManager {
 
     this.store.reset();
     this.tileManager.generateTiles();
+    // Убедимся, что вновь созданные тайлы подстроены под текущий размер сетки
+    this.tileManager.resize(this.grid.cellSize);
     this.app.addToContainer(this.tileManager.getTiles());
     this.app.container.on('mg-select', (tile: Tile) => this.handleTileSelection(tile));
     this.app.container.eventMode = 'dynamic';

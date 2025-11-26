@@ -14,7 +14,7 @@ export default class Cell extends PIXI.Container {
   private column: number;
   private tile: Tile | null = null;
 
-  constructor(x: number, y: number, size: number) {
+  constructor(x: number, y: number, cellSize: number) {
     super();
     this.column = x;
     this.row = y;
@@ -26,26 +26,26 @@ export default class Cell extends PIXI.Container {
       this.sprite = PIXI.Sprite.from('grass-tile-second');
     }
 
-    this.sprite.width = size;
-    this.sprite.height = size;
-    this.sprite.x = size * x;
-    this.sprite.y = size * y;
+    this.sprite.width = cellSize;
+    this.sprite.height = cellSize;
+    this.sprite.x = cellSize * x;
+    this.sprite.y = cellSize * y;
     this.sprite.zIndex = 1;
 
     this.availibleArea = createSqareGraphics({
-      width: size,
-      height: size,
+      width: cellSize,
+      height: cellSize,
       color: PALETTE.WHITE,
-      offset: size * (Cell.AVAILABLE_AREA_PADDING_PERCENT / 100),
-      radius: size * 0.05,
-      borderSize: (size / 100) * 4,
+      offset: cellSize * (Cell.AVAILABLE_AREA_PADDING_PERCENT / 100),
+      radius: cellSize * 0.05,
+      borderSize: (cellSize / 100) * 4,
       transparentType: 'strong',
     });
 
-    this.availibleArea.x = size * x;
-    this.availibleArea.y = size * y;
+    this.availibleArea.x = cellSize * x;
+    this.availibleArea.y = cellSize * y;
     this.availibleArea.alpha = 0;
-    this.availibleArea.zIndex = 3;
+    this.availibleArea.zIndex = 1;
 
     this.addChild(this.sprite);
     this.addChild(this.availibleArea);
@@ -81,33 +81,33 @@ export default class Cell extends PIXI.Container {
     this.tile = null;
   }
 
-  public resize(size: number) {
-    this.sprite.width = size;
-    this.sprite.height = size;
-    this.sprite.x = size * this.column;
-    this.sprite.y = size * this.row;
+  public resize(newSize: number) {
+    this.sprite.width = newSize;
+    this.sprite.height = newSize;
+    this.sprite.x = newSize * this.column;
+    this.sprite.y = newSize * this.row;
 
     const currentAlpha = this.availibleArea.alpha;
 
     this.removeChild(this.availibleArea);
 
     this.availibleArea = createSqareGraphics({
-      width: size,
-      height: size,
+      width: newSize,
+      height: newSize,
       color: PALETTE.WHITE,
-      offset: size * (Cell.AVAILABLE_AREA_PADDING_PERCENT / 100),
-      radius: size * 0.05,
-      borderSize: (size / 100) * Cell.BORDER_WIDTH_PERCENT,
+      offset: newSize * (Cell.AVAILABLE_AREA_PADDING_PERCENT / 100),
+      radius: newSize * 0.05,
+      borderSize: (newSize / 100) * Cell.BORDER_WIDTH_PERCENT,
       transparentType: 'strong',
     });
-    this.availibleArea.x = size * this.column;
-    this.availibleArea.y = size * this.row;
+    this.availibleArea.x = newSize * this.column;
+    this.availibleArea.y = newSize * this.row;
 
     this.availibleArea.alpha = currentAlpha;
-    this.availibleArea.zIndex = 3;
+    this.availibleArea.zIndex = 1;
 
     this.addChild(this.availibleArea);
 
-    this.tile?.resize(size);
+    this.tile?.resize(newSize);
   }
 }

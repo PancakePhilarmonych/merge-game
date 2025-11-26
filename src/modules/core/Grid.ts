@@ -1,27 +1,26 @@
 import * as PIXI from 'pixi.js';
 import Cell from '@/modules/core/Cell';
 import { getMaxAvailibleSideSize } from '@/utils';
+import { ROWS_COUNT } from '@/config/constants';
 
 export default class Grid extends PIXI.Container {
   private cells: Cell[][];
-  public size: number;
-  public gridSize: number;
+  public cellSize: number;
 
-  constructor(gridSize: number) {
+  constructor() {
     super();
     this.cells = [];
-    this.gridSize = gridSize;
-    this.size = getMaxAvailibleSideSize() / gridSize;
+    this.cellSize = getMaxAvailibleSideSize() / ROWS_COUNT;
 
-    this.initRows(gridSize);
+    this.initRows();
   }
 
-  private initRows(rowsCount: number): void {
-    for (let row = 0; row < rowsCount; row++) {
+  private initRows(): void {
+    for (let row = 0; row < ROWS_COUNT; row++) {
       this.cells[row] = [];
 
-      for (let col = 0; col < rowsCount; col++) {
-        const cell = new Cell(col, row, this.size);
+      for (let col = 0; col < ROWS_COUNT; col++) {
+        const cell = new Cell(col, row, this.cellSize);
         this.cells[row][col] = cell;
       }
     }
@@ -41,12 +40,12 @@ export default class Grid extends PIXI.Container {
   }
 
   public resize(newSize: number) {
-    this.size = newSize / this.gridSize;
+    this.cellSize = newSize / ROWS_COUNT;
 
-    for (let row = 0; row < this.gridSize; row++) {
-      for (let col = 0; col < this.gridSize; col++) {
+    for (let row = 0; row < ROWS_COUNT; row++) {
+      for (let col = 0; col < ROWS_COUNT; col++) {
         const cell = this.cells[row][col];
-        cell.resize(this.size);
+        cell.resize(this.cellSize);
       }
     }
   }

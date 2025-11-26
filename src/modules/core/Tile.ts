@@ -3,6 +3,7 @@ import Cell from '@/modules/core/Cell';
 import { Colors, getHexColorByColor } from '@/utils';
 import { createSqareGraphics, createText } from '@/utils/graphics';
 import { PALETTE } from '@/config/colors';
+import { ROWS_COUNT } from '@/config/constants';
 
 export class Tile extends PIXI.Container {
   private color: Colors;
@@ -16,7 +17,7 @@ export class Tile extends PIXI.Container {
   private readonly OBJECT_PADDING_PERCENT = 40;
   private readonly SELECTION_PADDING_PERCENT = 20;
 
-  constructor(cell: Cell, color: Colors, size: number) {
+  constructor(cell: Cell, color: Colors, size: number = ROWS_COUNT) {
     const [x, y] = [cell.x, cell.y];
 
     super();
@@ -26,7 +27,7 @@ export class Tile extends PIXI.Container {
 
     this.x = size * x;
     this.y = size * y;
-    this.zIndex = 1;
+    this.zIndex = 2;
 
     const objectOffset = size * (this.OBJECT_PADDING_PERCENT / 100);
     const selectionOffset = size * (this.SELECTION_PADDING_PERCENT / 100);
@@ -51,7 +52,7 @@ export class Tile extends PIXI.Container {
     });
 
     this.selection.alpha = 0;
-    this.selection.zIndex = 2;
+    this.selection.zIndex = 3;
 
     this.eventMode = 'dynamic';
     this.cursor = 'pointer';
@@ -129,41 +130,41 @@ export class Tile extends PIXI.Container {
     this.levelText.text = this.getLevel();
   }
 
-  public resize(size: number) {
-    this.x = this.cell.x * size;
-    this.y = this.cell.y * size;
+  public resize(newSize: number) {
+    this.x = this.cell.x * newSize;
+    this.y = this.cell.y * newSize;
 
-    const objectOffset = size * (this.OBJECT_PADDING_PERCENT / 100);
-    const selectionOffset = size * (this.SELECTION_PADDING_PERCENT / 100);
+    const objectOffset = newSize * (this.OBJECT_PADDING_PERCENT / 100);
+    const selectionOffset = newSize * (this.SELECTION_PADDING_PERCENT / 100);
 
     this.removeChild(this.sprite);
     this.removeChild(this.selection);
 
     this.sprite = createSqareGraphics({
-      width: size,
-      height: size,
+      width: newSize,
+      height: newSize,
       offset: objectOffset,
       color: getHexColorByColor(this.color),
-      radius: size * 0.05,
-      borderSize: (size / 100) * 4,
+      radius: newSize * 0.05,
+      borderSize: (newSize / 100) * 4,
     });
 
     this.selection = createSqareGraphics({
-      width: size,
-      height: size,
+      width: newSize,
+      height: newSize,
       offset: selectionOffset,
       color: PALETTE.WHITE,
       transparentType: 'medium',
-      radius: size * 0.05,
-      borderSize: (size / 100) * 4,
+      radius: newSize * 0.05,
+      borderSize: (newSize / 100) * 4,
     });
 
     this.selection.alpha = 0;
-    this.selection.zIndex = 2;
+    this.selection.zIndex = 3;
 
     this.levelText.style.fontSize = this.sprite.width / 3;
 
-    this.positionLevelText(size, objectOffset);
+    this.positionLevelText(newSize, objectOffset);
 
     this.sprite.addChild(this.levelText);
     this.addChild(this.selection);

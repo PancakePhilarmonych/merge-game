@@ -2,23 +2,21 @@ import { Tile } from '@/modules/core/Tile';
 import { Colors, getRandomColor } from '@/utils';
 import Grid from '@/modules/core/Grid';
 import Cell from '@/modules/core/Cell';
-import { INITIAL_OBJECT_COUNT } from '@/config/constants';
+import { INITIAL_TILES_COUNT } from '@/config/constants';
 
 export default class TileManager {
   private tiles: Tile[] = [];
   private grid: Grid;
-  private gridSize: number;
 
-  constructor(grid: Grid, gridSize: number) {
+  constructor(grid: Grid) {
     this.grid = grid;
-    this.gridSize = gridSize;
   }
 
   public generateTiles(): void {
     const emptyCells = this.getEmptyCells();
 
     emptyCells.forEach((cell: Cell) => {
-      if (this.tiles.length >= INITIAL_OBJECT_COUNT) return;
+      if (this.tiles.length >= INITIAL_TILES_COUNT) return;
       const hasTile = cell.getTile();
 
       if (hasTile) return;
@@ -27,18 +25,18 @@ export default class TileManager {
 
       if (randomColor === Colors.EMPTY) return;
 
-      const newTile = new Tile(cell, randomColor, this.gridSize);
+      const newTile = new Tile(cell, randomColor, this.grid.cellSize);
 
       this.tiles.push(newTile);
     });
 
-    if (this.tiles.length < INITIAL_OBJECT_COUNT) {
+    if (this.tiles.length < INITIAL_TILES_COUNT) {
       this.generateTiles();
     }
   }
 
   public addTile(cell: Cell, color: Colors): Tile {
-    const newTile = new Tile(cell, color, this.gridSize);
+    const newTile = new Tile(cell, color, this.grid.cellSize);
     this.tiles.push(newTile);
     return newTile;
   }
@@ -59,7 +57,6 @@ export default class TileManager {
   }
 
   public resize(gridSize: number): void {
-    this.gridSize = gridSize;
     this.tiles.forEach((tile: Tile) => {
       tile.resize(gridSize);
     });
