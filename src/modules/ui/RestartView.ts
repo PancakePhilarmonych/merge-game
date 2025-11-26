@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { createSqareGraphics, createText } from '@/utils/graphics';
 import { getMaxAvailibleSideSize, getTotalGameHeight } from '@/utils';
+import { PALETTE } from '@/config/colors';
 
 export default class RestartView extends PIXI.Container {
   public container: PIXI.Container;
@@ -36,13 +37,13 @@ export default class RestartView extends PIXI.Container {
     const restartButton = new PIXI.Container();
 
     const border = new PIXI.Graphics()
-      .lineStyle(size / 100, 0xffffff, 1)
+      .lineStyle(size / 100, PALETTE.BUTTON_BORDER, 1)
       .drawRoundedRect(0, 0, buttonWidth, buttonHeight, radius);
 
     restartButton.addChild(border);
 
     const buttonBackground = new PIXI.Graphics();
-    buttonBackground.beginFill(0xf5cd79);
+    buttonBackground.beginFill(PALETTE.BUTTON_SUCCESS);
     buttonBackground.drawRoundedRect(0, 0, buttonWidth, buttonHeight, radius);
     buttonBackground.endFill();
 

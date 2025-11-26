@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { getTopUIHeight, getMaxAvailibleSideSize } from '@/utils';
+import { PALETTE } from '@/config/colors';
 import UIPanel from './UIPanel';
 
 export default class ScorePanel extends UIPanel {
@@ -37,11 +38,11 @@ export default class ScorePanel extends UIPanel {
     this.timerText.text = `Time: ${this.timeLeft}`;
 
     if (this.timeLeft <= 5) {
-      this.timerText.style.fill = 0xff6b6b;
+      this.timerText.style.fill = PALETTE.DANGER;
     } else if (this.timeLeft <= 10) {
-      this.timerText.style.fill = 0xffd93d;
+      this.timerText.style.fill = PALETTE.WARNING;
     } else {
-      this.timerText.style.fill = 0xffffff;
+      this.timerText.style.fill = PALETTE.TEXT_PRIMARY;
     }
   }
 

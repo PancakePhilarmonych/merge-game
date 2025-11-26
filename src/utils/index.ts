@@ -23,16 +23,18 @@ export const ColorsTextMap: Record<Colors, string> = {
   [Colors.EMPTY]: 'Empty',
 };
 
+import { PALETTE } from '@/config/colors';
+
 export const getHexColorByColor = (color: Colors): PIXI.ColorSource => {
   switch (color) {
     case Colors.RED:
-      return 0xff7675;
+      return PALETTE.RED;
     case Colors.YELLOW:
-      return 0xf5cd79;
+      return PALETTE.YELLOW;
     case Colors.BLUE:
-      return 0x74b9ff;
+      return PALETTE.BLUE;
     default:
-      return 0x000000;
+      return PALETTE.BLACK;
   }
 };
 

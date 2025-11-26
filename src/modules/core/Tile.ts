@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import Cell from '@/modules/core/Cell';
 import { Colors, getHexColorByColor } from '@/utils';
 import { createSqareGraphics, createText } from '@/utils/graphics';
+import { PALETTE } from '@/config/colors';
 
 export class Tile extends PIXI.Container {
   private color: Colors;
@@ -43,7 +44,7 @@ export class Tile extends PIXI.Container {
       width: size,
       height: size,
       offset: selectionOffset,
-      color: 0xffffff,
+      color: PALETTE.WHITE,
       transparentType: 'medium',
       radius: size * 0.05,
       borderSize: (size / 100) * 4,
@@ -151,7 +152,7 @@ export class Tile extends PIXI.Container {
       width: size,
       height: size,
       offset: selectionOffset,
-      color: 0xffffff,
+      color: PALETTE.WHITE,
       transparentType: 'medium',
       radius: size * 0.05,
       borderSize: (size / 100) * 4,

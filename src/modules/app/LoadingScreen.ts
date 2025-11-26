@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { gsap } from 'gsap';
+import { PALETTE } from '@/config/colors';
 
 export default class LoadingScreen extends PIXI.Container {
   private bg!: PIXI.Graphics;
@@ -21,7 +22,7 @@ export default class LoadingScreen extends PIXI.Container {
 
   private createBackground(width: number, height: number): void {
     this.bg = new PIXI.Graphics();
-    this.bg.beginFill(0x000000, 0.9);
+    this.bg.beginFill(PALETTE.BLACK, 0.9);
     this.bg.drawRect(0, 0, width, height);
     this.bg.endFill();
     this.addChild(this.bg);
@@ -34,14 +35,14 @@ export default class LoadingScreen extends PIXI.Container {
 
     // Фон прогресс-бара
     this.progressBarBg = new PIXI.Graphics();
-    this.progressBarBg.beginFill(0x333333);
+    this.progressBarBg.beginFill(PALETTE.GRAY_DARK);
     this.progressBarBg.drawRoundedRect(x, y, this.maxBarWidth, barHeight, 10);
     this.progressBarBg.endFill();
     this.addChild(this.progressBarBg);
 
     // Сам прогресс-бар
     this.progressBar = new PIXI.Graphics();
-    this.progressBar.beginFill(0xf5cd79);
+    this.progressBar.beginFill(PALETTE.BUTTON_PRIMARY);
     this.progressBar.drawRoundedRect(x, y, 0, barHeight, 10);
     this.progressBar.endFill();
     this.addChild(this.progressBar);
@@ -50,7 +51,7 @@ export default class LoadingScreen extends PIXI.Container {
   private createText(width: number, height: number): void {
     this.loadingText = new PIXI.Text('💿', {
       fontSize: 32,
-      fill: 0xffffff,
+      fill: PALETTE.TEXT_PRIMARY,
       fontFamily: 'Arial',
       align: 'center',
     });
@@ -69,7 +70,7 @@ export default class LoadingScreen extends PIXI.Container {
     const y = window.innerHeight / 2;
 
     this.progressBar.clear();
-    this.progressBar.beginFill(0xf5cd79);
+    this.progressBar.beginFill(PALETTE.BUTTON_PRIMARY);
     this.progressBar.drawRoundedRect(x, y, targetWidth, barHeight, 10);
     this.progressBar.endFill();
 
@@ -98,7 +99,7 @@ export default class LoadingScreen extends PIXI.Container {
 
   public resize(width: number, height: number): void {
     this.bg.clear();
-    this.bg.beginFill(0x000000, 0.9);
+    this.bg.beginFill(PALETTE.BLACK, 0.9);
     this.bg.drawRect(0, 0, width, height);
     this.bg.endFill();
 

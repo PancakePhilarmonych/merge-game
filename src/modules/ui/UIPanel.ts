@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { getMaxAvailibleSideSize } from '@/utils';
+import { PALETTE } from '@/config/colors';
 
 interface UIPanelOptions {
   height: number;
@@ -27,16 +28,16 @@ export default class UIPanel extends PIXI.Container {
 
   protected createBackground(gameSize: number, height: number): PIXI.Graphics {
     return new PIXI.Graphics()
-      .lineStyle(this.BORDER_WIDTH, 0xffffff)
-      .beginFill(0x1f322f, 1)
+      .lineStyle(this.BORDER_WIDTH, PALETTE.BORDER)
+      .beginFill(PALETTE.BACKGROUND_OVERLAY, 1)
       .drawRoundedRect(0, 10, gameSize, height - 20, this.BORDER_RADIUS)
       .endFill();
   }
 
   protected resizeBackground(gameSize: number, height: number): void {
     this.background.clear();
-    this.background.lineStyle(this.BORDER_WIDTH, '#00b894');
-    this.background.beginFill(0x1f322f, 0.9);
+    this.background.lineStyle(this.BORDER_WIDTH, PALETTE.BORDER);
+    this.background.beginFill(PALETTE.BACKGROUND_OVERLAY, 0.9);
     this.background.drawRoundedRect(2, 10, gameSize - 4, height - 20, this.BORDER_RADIUS);
     this.background.endFill();
   }
@@ -46,7 +47,7 @@ export default class UIPanel extends PIXI.Container {
     const textElement = new PIXI.Text(text, {
       fontFamily: 'Titan One',
       fontSize: fontSize,
-      fill: 0xffffff,
+      fill: PALETTE.TEXT_PRIMARY,
       align: 'center',
     });
 

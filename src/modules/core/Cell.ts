@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Tile } from '@/modules/core/Tile';
 import { createSqareGraphics } from '@/utils/graphics';
+import { PALETTE } from '@/config/colors';
 
 export default class Cell extends PIXI.Container {
   private static readonly AVAILABLE_AREA_PADDING_PERCENT = 20;
@@ -34,7 +35,7 @@ export default class Cell extends PIXI.Container {
     this.availibleArea = createSqareGraphics({
       width: size,
       height: size,
-      color: 0xffffff,
+      color: PALETTE.WHITE,
       offset: size * (Cell.AVAILABLE_AREA_PADDING_PERCENT / 100),
       radius: size * 0.05,
       borderSize: (size / 100) * 4,
@@ -93,7 +94,7 @@ export default class Cell extends PIXI.Container {
     this.availibleArea = createSqareGraphics({
       width: size,
       height: size,
-      color: 0xffffff,
+      color: PALETTE.WHITE,
       offset: size * (Cell.AVAILABLE_AREA_PADDING_PERCENT / 100),
       radius: size * 0.05,
       borderSize: (size / 100) * Cell.BORDER_WIDTH_PERCENT,

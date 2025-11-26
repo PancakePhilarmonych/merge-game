@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { createSqareGraphics, createText } from '@/utils/graphics';
 import { getMaxAvailibleSideSize, getTotalGameHeight } from '@/utils';
+import { PALETTE } from '@/config/colors';
 
 export default class StartView {
   public container: PIXI.Container = new PIXI.Container();
@@ -11,19 +12,23 @@ export default class StartView {
     this.container.width = sideSize;
     this.container.height = sideSize;
 
-    this.container.addChild(
-      createSqareGraphics({
-        width: getMaxAvailibleSideSize(),
-        height: getTotalGameHeight(),
-        color: 0x2ecc71,
-        transparentType: 'low',
-      }),
-    );
-    this.container.addChild(this.createStartButton(sideSize));
-
+    this.createContent(sideSize);
     this.show();
-
     this.centerContainer();
+  }
+
+  private createContent(size: number): void {
+    this.container.addChild(this.createBackground());
+    this.container.addChild(this.createStartButton(size));
+  }
+
+  private createBackground(): PIXI.Graphics {
+    return createSqareGraphics({
+      height: getTotalGameHeight(),
+      width: getMaxAvailibleSideSize(),
+      color: PALETTE.BACKGROUND_DARK,
+      transparentType: 'medium',
+    });
   }
 
   public createStartButton(size: number) {
@@ -34,11 +39,11 @@ export default class StartView {
     const startButton = new PIXI.Container();
 
     const border = new PIXI.Graphics()
-      .lineStyle(size / 100, 0xffffff, 1)
+      .lineStyle(size / 100, PALETTE.BUTTON_BORDER, 1)
       .drawRoundedRect(0, 0, buttonWidth, buttonHeight, radius);
 
     const buttonBackground = new PIXI.Graphics()
-      .beginFill(0xf5cd79)
+      .beginFill(PALETTE.BUTTON_PRIMARY)
       .drawRoundedRect(3, 3, buttonWidth - 6, buttonHeight - 6, radius - 3)
       .endFill();
 
@@ -79,16 +84,7 @@ export default class StartView {
 
   public resize(newSize: number): void {
     this.container.removeChildren();
-    this.container.addChild(
-      createSqareGraphics({
-        width: getMaxAvailibleSideSize(),
-        height: getTotalGameHeight(),
-        color: 0x2ecc71,
-        transparentType: 'low',
-      }),
-    );
-    this.container.addChild(this.createStartButton(newSize));
-
+    this.createContent(newSize);
     this.centerContainer();
   }
 
