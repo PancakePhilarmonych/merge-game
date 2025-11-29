@@ -3,6 +3,7 @@ import Cell from '@/modules/core/Cell';
 import { Colors, getHexColorByColor } from '@/utils';
 import { createSqareGraphics, createText } from '@/utils/graphics';
 import { PALETTE } from '@/config/colors';
+import { gsap } from 'gsap';
 import { ROWS_COUNT } from '@/config/constants';
 
 export class Tile extends PIXI.Container {
@@ -17,12 +18,13 @@ export class Tile extends PIXI.Container {
   private readonly OBJECT_PADDING_PERCENT = 40;
   private readonly SELECTION_PADDING_PERCENT = 20;
 
-  constructor(cell: Cell, color: Colors, size: number = ROWS_COUNT) {
+  constructor(params: { color: Colors; level?: number }, cell: Cell, size: number = ROWS_COUNT) {
     const [x, y] = [cell.x, cell.y];
 
     super();
     this.cell = cell;
-    this.color = color;
+    this.color = params.color;
+    this.level = params.level || 1;
     this.position = { x, y };
 
     this.x = size * x;
@@ -128,6 +130,17 @@ export class Tile extends PIXI.Container {
   levelUp() {
     this.level++;
     this.levelText.text = this.getLevel();
+  }
+
+  public animateScale(scaleTo: number = 1.15, duration: number = 0.25) {
+    gsap.to(this.sprite.scale, {
+      x: scaleTo,
+      y: scaleTo,
+      duration,
+      ease: 'power2.out',
+      yoyo: true,
+      repeat: 1,
+    });
   }
 
   public resize(newSize: number) {

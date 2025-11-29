@@ -5,7 +5,6 @@ import ResourceLoader from './modules/app/ResourceLoader';
 import LoadingScreen from './modules/app/LoadingScreen';
 
 async function init() {
-  // Создаем временное приложение для LoadingScreen с отдельным canvas
   const loadingCanvas = document.createElement('canvas');
   loadingCanvas.style.position = 'absolute';
   loadingCanvas.style.top = '0';
@@ -36,7 +35,6 @@ async function init() {
   console.log('Loading complete, showing 100%');
   loadingScreen.updateProgress(1);
 
-  // Даем браузеру время на применение загруженных шрифтов
   await new Promise(resolve => setTimeout(resolve, 100));
 
   await new Promise(resolve => setTimeout(resolve, 500));

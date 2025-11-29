@@ -18,7 +18,6 @@ export default class App {
 
     this.instance.stage.addChild(this.container);
     this.initAppContainer();
-
     this.centerGameField();
   }
 

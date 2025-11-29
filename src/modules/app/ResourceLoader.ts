@@ -18,17 +18,14 @@ export default class ResourceLoader {
   private async loadFonts(): Promise<void> {
     if ('fonts' in document) {
       try {
-        // Сначала ждем загрузки всех шрифтов на странице
         await document.fonts.ready;
 
-        // Затем явно загружаем Titan One с разными размерами
         await Promise.all([
           document.fonts.load('16px "Titan One"'),
           document.fonts.load('32px "Titan One"'),
           document.fonts.load('50px "Titan One"'),
         ]);
 
-        // Проверяем что шрифт действительно загружен
         const isFontLoaded = document.fonts.check('32px "Titan One"');
         if (!isFontLoaded) {
           console.warn('Titan One font still not available after loading');

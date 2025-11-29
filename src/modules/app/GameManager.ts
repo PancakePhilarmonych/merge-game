@@ -20,7 +20,6 @@ import App from '@/modules/app/App';
 import {
   GAME_DURATION,
   NEW_OBJECT_DELAY,
-  MERGE_OBJECT_DELAY,
   AVAILABLE_CELL_ALPHA,
   SELECTION_ALPHA,
   SELECTION_Z_INDEX,
@@ -167,8 +166,8 @@ export default class GameManager {
     });
   }
 
-  private addNewTile(cell: Cell, color: Colors): void {
-    const newTile = this.tileManager.addTile(cell, color);
+  private addNewTile(cell: Cell, color: Colors, level: number): void {
+    const newTile = this.tileManager.addTile(cell, color, level);
 
     this.app.container.addChild(newTile);
 
@@ -190,6 +189,9 @@ export default class GameManager {
     const cellSize = this.grid.cellSize;
     const cellX = cellSize * cell.x;
     const cellY = cellSize * cell.y;
+
+    const scaleTo = 1.12 + 0.03 * tile.level;
+    tile.animateScale(scaleTo, 0.22);
 
     if (cellTile) {
       if (cellTile === tile) {
@@ -234,12 +236,12 @@ export default class GameManager {
     this.cleanSteps();
   }
 
-  addNewTileToRandomCell(): void {
+  addNewTileToRandomCell(level = 1): void {
     const randomEmptyCell = this.tileManager.getRandomEmptyCell();
 
     if (randomEmptyCell) {
       setTimeout(() => {
-        this.addNewTile(randomEmptyCell, getRandomColor(true));
+        this.addNewTile(randomEmptyCell, getRandomColor(true), level);
       }, NEW_OBJECT_DELAY);
     }
   }
@@ -269,6 +271,11 @@ export default class GameManager {
     const cellX = cellSize * cell.x;
     const cellY = cellSize * cell.y;
 
+    if (cellTile) {
+      const scaleTo = 1.18 + 0.04 * cellTile.level;
+      cellTile.animateScale(scaleTo, 0.28);
+    }
+
     cellTile.x = tile.x;
     cellTile.y = tile.y;
     smoothMoveTo(cellTile!, cellX, cellY, 0.5);
@@ -283,13 +290,7 @@ export default class GameManager {
 
     this.cleanSteps();
 
-    const randomEmptyCell = this.tileManager.getRandomEmptyCell();
-
-    if (randomEmptyCell) {
-      setTimeout(() => {
-        this.addNewTile(randomEmptyCell, getRandomColor(true));
-      }, MERGE_OBJECT_DELAY);
-    }
+    this.addNewTileToRandomCell(2);
 
     this.cleanSteps();
     this.getAvailibleCellsAround(cellTile!);
@@ -341,7 +342,6 @@ export default class GameManager {
 
     this.store.reset();
     this.tileManager.generateTiles();
-    // Убедимся, что вновь созданные тайлы подстроены под текущий размер сетки
     this.tileManager.resize(this.grid.cellSize);
     this.app.addToContainer(this.tileManager.getTiles());
     this.app.container.on('mg-select', (tile: Tile) => this.handleTileSelection(tile));

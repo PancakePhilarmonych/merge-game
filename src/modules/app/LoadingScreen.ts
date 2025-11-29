@@ -33,14 +33,12 @@ export default class LoadingScreen extends PIXI.Container {
     const x = (width - this.maxBarWidth) / 2;
     const y = height / 2;
 
-    // Фон прогресс-бара
     this.progressBarBg = new PIXI.Graphics();
     this.progressBarBg.beginFill(PALETTE.GRAY_DARK);
     this.progressBarBg.drawRoundedRect(x, y, this.maxBarWidth, barHeight, 10);
     this.progressBarBg.endFill();
     this.addChild(this.progressBarBg);
 
-    // Сам прогресс-бар
     this.progressBar = new PIXI.Graphics();
     this.progressBar.beginFill(PALETTE.BUTTON_PRIMARY);
     this.progressBar.drawRoundedRect(x, y, 0, barHeight, 10);

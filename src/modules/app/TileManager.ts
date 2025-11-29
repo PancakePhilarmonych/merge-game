@@ -25,7 +25,7 @@ export default class TileManager {
 
       if (randomColor === Colors.EMPTY) return;
 
-      const newTile = new Tile(cell, randomColor, this.grid.cellSize);
+      const newTile = new Tile({ color: randomColor }, cell, this.grid.cellSize);
 
       this.tiles.push(newTile);
     });
@@ -35,8 +35,9 @@ export default class TileManager {
     }
   }
 
-  public addTile(cell: Cell, color: Colors): Tile {
-    const newTile = new Tile(cell, color, this.grid.cellSize);
+  public addTile(cell: Cell, color: Colors, level: number = 1): Tile {
+    const newTile = new Tile({ color, level }, cell, this.grid.cellSize);
+
     this.tiles.push(newTile);
     return newTile;
   }
