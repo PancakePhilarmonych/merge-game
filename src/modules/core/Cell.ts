@@ -9,7 +9,7 @@ export default class Cell extends PIXI.Container {
 
   public sprite: PIXI.Sprite;
   public availibleArea: PIXI.Graphics;
-  public availible: boolean = false;
+  public isAvailible: boolean = false;
   private row: number;
   private column: number;
   private tile: Tile | null = null;
@@ -64,12 +64,12 @@ export default class Cell extends PIXI.Container {
   }
 
   setAvailible() {
-    this.availible = true;
+    this.isAvailible = true;
     this.availibleArea.alpha = 1;
   }
 
   removeAvailible() {
-    this.availible = false;
+    this.isAvailible = false;
     this.availibleArea.alpha = 0;
   }
 
