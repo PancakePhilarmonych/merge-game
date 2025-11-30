@@ -1,13 +1,13 @@
 import * as PIXI from 'pixi.js';
 import { createSqareGraphics, createText } from '@/utils/graphics';
-import { getMaxAvailibleSideSize, getTotalGameHeight } from '@/utils';
+import { getAvailibleHeight, getTotalGameHeight } from '@/utils';
 import { PALETTE } from '@/config/colors';
 
 export default class StartView {
   public container: PIXI.Container = new PIXI.Container();
 
   constructor() {
-    const sideSize = getMaxAvailibleSideSize();
+    const sideSize = getAvailibleHeight();
     this.container.zIndex = 100;
     this.container.width = sideSize;
     this.container.height = sideSize;
@@ -25,7 +25,7 @@ export default class StartView {
   private createBackground(): PIXI.Graphics {
     return createSqareGraphics({
       height: getTotalGameHeight(),
-      width: getMaxAvailibleSideSize(),
+      width: getAvailibleHeight(),
       color: PALETTE.BACKGROUND_DARK,
       transparentType: 'medium',
     });
@@ -89,7 +89,7 @@ export default class StartView {
   }
 
   private centerContainer(): void {
-    const gameSize = getMaxAvailibleSideSize();
+    const gameSize = getAvailibleHeight();
     const screenWidth = window.innerWidth;
 
     if (screenWidth > gameSize) {

@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { createSqareGraphics, createText } from '@/utils/graphics';
-import { getMaxAvailibleSideSize, getTotalGameHeight } from '@/utils';
+import { getAvailibleHeight, getTotalGameHeight } from '@/utils';
 import { PALETTE } from '@/config/colors';
 
 export default class RestartView extends PIXI.Container {
@@ -8,7 +8,7 @@ export default class RestartView extends PIXI.Container {
 
   constructor() {
     super();
-    const sideSize = getMaxAvailibleSideSize();
+    const sideSize = getAvailibleHeight();
     this.container = new PIXI.Container();
     this.container.zIndex = 100;
     this.container.width = sideSize;
@@ -16,7 +16,7 @@ export default class RestartView extends PIXI.Container {
 
     this.container.addChild(
       createSqareGraphics({
-        width: getMaxAvailibleSideSize(),
+        width: getAvailibleHeight(),
         height: getTotalGameHeight(),
         color: 0x1f322f,
         transparentType: 'medium',
@@ -125,7 +125,7 @@ export default class RestartView extends PIXI.Container {
     this.container.removeChildren();
     this.container.addChild(
       createSqareGraphics({
-        width: getMaxAvailibleSideSize(),
+        width: getAvailibleHeight(),
         height: getTotalGameHeight(),
         color: 0x1f322f,
         transparentType: 'medium',
@@ -145,7 +145,7 @@ export default class RestartView extends PIXI.Container {
   }
 
   private centerContainer(): void {
-    const gameSize = getMaxAvailibleSideSize();
+    const gameSize = getAvailibleHeight();
     const screenWidth = window.innerWidth;
 
     if (screenWidth > gameSize) {

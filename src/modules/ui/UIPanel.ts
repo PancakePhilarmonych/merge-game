@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { getMaxAvailibleSideSize } from '@/utils';
+import { getAvailibleHeight } from '@/utils';
 import { PALETTE } from '@/config/colors';
 
 interface UIPanelOptions {
@@ -16,7 +16,7 @@ export default class UIPanel extends PIXI.Container {
     super();
 
     const width = window.innerWidth;
-    const gameSize = getMaxAvailibleSideSize();
+    const gameSize = getAvailibleHeight();
 
     this.background = this.createBackground(gameSize, options.height);
 
@@ -43,7 +43,7 @@ export default class UIPanel extends PIXI.Container {
   }
 
   protected createCenteredText(text: string, fontSize: number): PIXI.Text {
-    const gameSize = getMaxAvailibleSideSize();
+    const gameSize = getAvailibleHeight();
     const textElement = new PIXI.Text(text, {
       fontFamily: 'Titan One',
       fontSize: fontSize,
@@ -59,7 +59,7 @@ export default class UIPanel extends PIXI.Container {
 
   protected updatePosition(yPosition: number): void {
     const width = window.innerWidth;
-    const gameSize = getMaxAvailibleSideSize();
+    const gameSize = getAvailibleHeight();
 
     this.x = (width - gameSize) / 2;
     this.y = yPosition;

@@ -7,7 +7,7 @@ import {
   Colors,
   smoothMoveTo,
   getRandomColor,
-  getMaxAvailibleSideSize,
+  getAvailibleHeight,
   getTopUIHeight,
   getBottomUIHeight,
 } from '@/utils';
@@ -70,7 +70,7 @@ export default class GameManager {
   }
 
   private resize() {
-    const size = getMaxAvailibleSideSize();
+    const size = getAvailibleHeight();
 
     this.app.resize();
     this.grid.resize(size);

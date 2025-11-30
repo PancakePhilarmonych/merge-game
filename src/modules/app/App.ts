@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { getMaxAvailibleSideSize, getTotalGameHeight } from '@/utils';
+import { getAvailibleHeight, getTotalGameHeight } from '@/utils';
 
 export default class App {
   public instance: PIXI.Application<HTMLCanvasElement>;
@@ -45,7 +45,7 @@ export default class App {
   }
 
   private centerGameField(): void {
-    const gameSize = getMaxAvailibleSideSize();
+    const gameSize = getAvailibleHeight();
 
     this.container.x = (window.innerWidth - gameSize) / 2;
   }

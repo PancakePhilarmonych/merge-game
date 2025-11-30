@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import Cell from '@/modules/core/Cell';
-import { getMaxAvailibleSideSize } from '@/utils';
+import { getAvailibleHeight } from '@/utils';
 import { ROWS_COUNT } from '@/config/constants';
 
 export default class Grid extends PIXI.Container {
@@ -10,7 +10,7 @@ export default class Grid extends PIXI.Container {
   constructor() {
     super();
     this.cells = [];
-    this.cellSize = getMaxAvailibleSideSize() / ROWS_COUNT;
+    this.cellSize = getAvailibleHeight() / ROWS_COUNT;
 
     this.initRows();
   }

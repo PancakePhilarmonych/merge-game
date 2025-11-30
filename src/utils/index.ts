@@ -62,7 +62,7 @@ export const getBottomUIHeight = () => {
   return window.innerHeight * 0.1;
 };
 
-export const getMaxAvailibleSideSize = () => {
+export const getAvailibleHeight = () => {
   const width = window.innerWidth;
   const height = window.innerHeight;
   const availableHeight = height - getTopUIHeight() - getBottomUIHeight();
@@ -71,5 +71,5 @@ export const getMaxAvailibleSideSize = () => {
 };
 
 export const getTotalGameHeight = () => {
-  return getMaxAvailibleSideSize() + getTopUIHeight() + getBottomUIHeight();
+  return getAvailibleHeight() + getTopUIHeight() + getBottomUIHeight();
 };

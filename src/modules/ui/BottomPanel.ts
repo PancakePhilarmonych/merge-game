@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { getBottomUIHeight, getMaxAvailibleSideSize, getTotalGameHeight } from '@/utils';
+import { getBottomUIHeight, getAvailibleHeight, getTotalGameHeight } from '@/utils';
 import UIPanel from './UIPanel';
 
 export default class BottomPanel extends UIPanel {
@@ -10,7 +10,7 @@ export default class BottomPanel extends UIPanel {
     const height = getBottomUIHeight();
     super({ height, yPosition: window.innerHeight - height });
 
-    const gameSize = getMaxAvailibleSideSize();
+    const gameSize = getAvailibleHeight();
     const fontSize = Math.min(height * 0.4, gameSize * 0.05);
 
     this.infoText = this.createCenteredText('Press "R" to restart', fontSize);
@@ -21,7 +21,7 @@ export default class BottomPanel extends UIPanel {
 
   public resize(): void {
     const height = getBottomUIHeight();
-    const gameSize = getMaxAvailibleSideSize();
+    const gameSize = getAvailibleHeight();
 
     this.resizeBackground(gameSize, height);
 

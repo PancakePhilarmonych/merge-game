@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { getTopUIHeight, getMaxAvailibleSideSize } from '@/utils';
+import { getTopUIHeight, getAvailibleHeight } from '@/utils';
 import { PALETTE } from '@/config/colors';
 import UIPanel from './UIPanel';
 
@@ -13,7 +13,7 @@ export default class ScorePanel extends UIPanel {
     const height = getTopUIHeight();
     super({ height, yPosition: 0 });
 
-    const gameSize = getMaxAvailibleSideSize();
+    const gameSize = getAvailibleHeight();
     const fontSize = Math.min(height * 0.5, gameSize * 0.05);
 
     this.scoreText = this.createCenteredText(`Score: ${this.score}`, fontSize);
@@ -48,7 +48,7 @@ export default class ScorePanel extends UIPanel {
 
   public resize() {
     const height = getTopUIHeight();
-    const gameSize = getMaxAvailibleSideSize();
+    const gameSize = getAvailibleHeight();
 
     this.resizeBackground(gameSize, height);
 
