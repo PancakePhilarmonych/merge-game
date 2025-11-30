@@ -54,15 +54,6 @@ export const smoothMoveTo = (
   });
 };
 
-export function addAppListeners(instance: PIXI.Application<HTMLCanvasElement>) {
-  window.addEventListener('resize', () => resizeRoot(instance), false);
-}
-
-export function resizeRoot(app: PIXI.Application<HTMLCanvasElement>) {
-  const screenSize = getMaxAvailibleSideSize();
-  app.renderer.resize(screenSize, screenSize);
-}
-
 export const getTopUIHeight = () => {
   return window.innerHeight * 0.1;
 };
