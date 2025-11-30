@@ -145,11 +145,11 @@ export default class RestartView extends PIXI.Container {
   }
 
   private centerContainer(): void {
-    const gameSize = getAvailibleHeight();
+    const mainHeight = getAvailibleHeight();
     const screenWidth = window.innerWidth;
 
-    if (screenWidth > gameSize) {
-      this.container.x = (screenWidth - gameSize) / 2;
+    if (screenWidth > mainHeight) {
+      this.container.x = (screenWidth - mainHeight) / 2;
     } else {
       this.container.x = 0;
     }

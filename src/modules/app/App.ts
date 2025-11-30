@@ -45,9 +45,9 @@ export default class App {
   }
 
   private centerGameField(): void {
-    const gameSize = getAvailibleHeight();
+    const mainHeight = getAvailibleHeight();
 
-    this.container.x = (window.innerWidth - gameSize) / 2;
+    this.container.x = (window.innerWidth - mainHeight) / 2;
   }
 
   private initAppContainer(): void {
