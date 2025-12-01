@@ -1,4 +1,4 @@
-export const ROWS_COUNT = 5;
+export const ROWS_COUNT = 4;
 export const INITIAL_TILES_COUNT = Math.floor(ROWS_COUNT * ROWS_COUNT * 0.7);
 export const GAME_DURATION = 20;
 export const NEW_OBJECT_DELAY = 300;
