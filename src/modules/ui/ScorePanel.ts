@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { getTopUIHeight, getMaxAvailibleSideSize } from '@/utils';
+import { getTopUIHeight, getAvailibleHeight } from '@/utils';
+import { PALETTE } from '@/config/colors';
 import UIPanel from './UIPanel';
 
 export default class ScorePanel extends UIPanel {
@@ -12,16 +13,16 @@ export default class ScorePanel extends UIPanel {
     const height = getTopUIHeight();
     super({ height, yPosition: 0 });
 
-    const gameSize = getMaxAvailibleSideSize();
-    const fontSize = Math.min(height * 0.5, gameSize * 0.05);
+    const mainHeight = getAvailibleHeight();
+    const fontSize = Math.min(height * 0.5, mainHeight * 0.05);
 
     this.scoreText = this.createCenteredText(`Score: ${this.score}`, fontSize);
     this.scoreText.y = height / 2;
-    this.scoreText.x = gameSize / 4;
+    this.scoreText.x = mainHeight / 4;
 
     this.timerText = this.createCenteredText(`Time: ${this.timeLeft}`, fontSize);
     this.timerText.y = height / 2;
-    this.timerText.x = (gameSize / 4) * 3;
+    this.timerText.x = (mainHeight / 4) * 3;
 
     this.addChild(this.scoreText);
     this.addChild(this.timerText);
@@ -37,32 +38,32 @@ export default class ScorePanel extends UIPanel {
     this.timerText.text = `Time: ${this.timeLeft}`;
 
     if (this.timeLeft <= 5) {
-      this.timerText.style.fill = 0xff6b6b;
+      this.timerText.style.fill = PALETTE.DANGER;
     } else if (this.timeLeft <= 10) {
-      this.timerText.style.fill = 0xffd93d;
+      this.timerText.style.fill = PALETTE.WARNING;
     } else {
-      this.timerText.style.fill = 0xffffff;
+      this.timerText.style.fill = PALETTE.TEXT_PRIMARY;
     }
   }
 
   public resize() {
     const height = getTopUIHeight();
-    const gameSize = getMaxAvailibleSideSize();
+    const mainHeight = getAvailibleHeight();
 
-    this.resizeBackground(gameSize, height);
+    this.resizeBackground(mainHeight, height);
 
-    const fontSize = Math.min(height * 0.5, gameSize * 0.05);
+    const fontSize = Math.min(height * 0.5, mainHeight * 0.05);
 
     this.removeChild(this.scoreText);
     this.removeChild(this.timerText);
 
     this.scoreText = this.createCenteredText(`Score: ${this.score}`, fontSize);
     this.scoreText.y = height / 2;
-    this.scoreText.x = gameSize / 4;
+    this.scoreText.x = mainHeight / 4;
 
     this.timerText = this.createCenteredText(`Time: ${this.timeLeft}`, fontSize);
     this.timerText.y = height / 2;
-    this.timerText.x = (gameSize / 4) * 3;
+    this.timerText.x = (mainHeight / 4) * 3;
 
     this.addChild(this.scoreText);
     this.addChild(this.timerText);

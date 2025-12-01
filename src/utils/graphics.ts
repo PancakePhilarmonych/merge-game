@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { PALETTE } from '@/config/colors';
 
 interface SqareOptions {
   width: number;
@@ -52,7 +53,7 @@ export function createSqareGraphics(options: SqareOptions): PIXI.Graphics {
     const border = new PIXI.Graphics()
       .lineStyle(
         options.borderSize,
-        '0xffffff',
+        PALETTE.BORDER,
         options.transparentType !== undefined ? borderTransparencyMap[options.transparentType] : 1,
       )
       .drawRoundedRect(
@@ -72,7 +73,7 @@ export function createSqareGraphics(options: SqareOptions): PIXI.Graphics {
 export function createText(options: TextOptions): PIXI.Text {
   return new PIXI.Text(options.text, {
     fontSize: options.size,
-    fill: 0xffffff,
+    fill: PALETTE.TEXT_PRIMARY,
     fontFamily: 'Titan One',
     align: options.align || 'center',
   });

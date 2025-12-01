@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { getMaxAvailibleSideSize, getTotalGameHeight } from '@/utils';
+import { getAvailibleHeight, getTotalGameHeight } from '@/utils';
 
 export default class App {
   public instance: PIXI.Application<HTMLCanvasElement>;
@@ -18,7 +18,6 @@ export default class App {
 
     this.instance.stage.addChild(this.container);
     this.initAppContainer();
-
     this.centerGameField();
   }
 
@@ -46,13 +45,14 @@ export default class App {
   }
 
   private centerGameField(): void {
-    const gameSize = getMaxAvailibleSideSize();
+    const mainHeight = getAvailibleHeight();
 
-    this.container.x = (window.innerWidth - gameSize) / 2;
+    this.container.x = (window.innerWidth - mainHeight) / 2;
   }
 
   private initAppContainer(): void {
     this.instance.stage.hitArea = this.instance.screen;
+    this.instance.stage.sortableChildren = true;
     this.container.sortableChildren = true;
     this.container.interactiveChildren = true;
     this.container.eventMode = 'none';

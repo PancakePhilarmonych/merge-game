@@ -23,16 +23,18 @@ export const ColorsTextMap: Record<Colors, string> = {
   [Colors.EMPTY]: 'Empty',
 };
 
+import { PALETTE } from '@/config/colors';
+
 export const getHexColorByColor = (color: Colors): PIXI.ColorSource => {
   switch (color) {
     case Colors.RED:
-      return 0xff7675;
+      return PALETTE.RED;
     case Colors.YELLOW:
-      return 0xf5cd79;
+      return PALETTE.YELLOW;
     case Colors.BLUE:
-      return 0x74b9ff;
+      return PALETTE.BLUE;
     default:
-      return 0x000000;
+      return PALETTE.BLACK;
   }
 };
 
@@ -52,24 +54,15 @@ export const smoothMoveTo = (
   });
 };
 
-export function addAppListeners(instance: PIXI.Application<HTMLCanvasElement>) {
-  window.addEventListener('resize', () => resizeRoot(instance), false);
-}
-
-export function resizeRoot(app: PIXI.Application<HTMLCanvasElement>) {
-  const screenSize = getMaxAvailibleSideSize();
-  app.renderer.resize(screenSize, screenSize);
-}
-
 export const getTopUIHeight = () => {
-  return window.innerHeight * 0.1;
+  return window.innerHeight * 0.05; // 7% для верхней панели
 };
 
 export const getBottomUIHeight = () => {
-  return window.innerHeight * 0.1;
+  return window.innerHeight * 0.15; // 12% для панели целей
 };
 
-export const getMaxAvailibleSideSize = () => {
+export const getAvailibleHeight = () => {
   const width = window.innerWidth;
   const height = window.innerHeight;
   const availableHeight = height - getTopUIHeight() - getBottomUIHeight();
@@ -78,5 +71,5 @@ export const getMaxAvailibleSideSize = () => {
 };
 
 export const getTotalGameHeight = () => {
-  return getMaxAvailibleSideSize() + getTopUIHeight() + getBottomUIHeight();
+  return getAvailibleHeight() + getTopUIHeight() + getBottomUIHeight();
 };

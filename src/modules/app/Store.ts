@@ -1,44 +1,46 @@
 export default class Store {
+  private static readonly BEST_SCORE_KEY = 'best';
+
   private currentScore: number;
   private bestScore: number;
 
   constructor() {
     this.currentScore = 0;
-    const bestFromStorage = localStorage.getItem('best');
-
-    if (bestFromStorage) {
-      this.bestScore = parseInt(bestFromStorage);
-    } else {
-      this.bestScore = 0;
-    }
+    this.bestScore = this.loadBestScore();
   }
 
-  public incrementScore(n?: number) {
-    n ? (this.currentScore += n) : this.currentScore++;
+  private loadBestScore(): number {
+    const bestFromStorage = localStorage.getItem(Store.BEST_SCORE_KEY);
+    return bestFromStorage ? parseInt(bestFromStorage, 10) : 0;
+  }
+
+  public incrementScore(n: number = 1): void {
+    this.currentScore += n;
+
     if (this.currentScore > this.bestScore) {
       this.bestScore = this.currentScore;
-      localStorage.setItem('best', this.currentScore.toString());
+      this.saveBestScore();
     }
   }
 
-  public reset() {
+  private saveBestScore(): void {
+    localStorage.setItem(Store.BEST_SCORE_KEY, this.currentScore.toString());
+  }
+
+  public reset(): void {
     this.currentScore = 0;
-
-    const bestFromStorage = localStorage.getItem('best');
-    if (bestFromStorage) {
-      this.bestScore = parseInt(bestFromStorage);
-    }
+    this.bestScore = this.loadBestScore();
   }
 
-  public getScore() {
+  public getScore(): number {
     return this.currentScore;
   }
 
-  public getBestScore() {
+  public getBestScore(): number {
     return this.bestScore;
   }
 
-  public setBestScore(score: number) {
+  public setBestScore(score: number): void {
     this.bestScore = score;
   }
 }

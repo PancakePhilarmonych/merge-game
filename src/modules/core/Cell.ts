@@ -1,52 +1,51 @@
 import * as PIXI from 'pixi.js';
-import EmptyField from '@/assets/sprites/grass-tile.png';
-import EmptyFieldSecond from '@/assets/sprites/grass-tile-second.png';
-import { GameObject } from '@/modules/core/GameObject';
+import { Tile } from '@/modules/core/Tile';
 import { createSqareGraphics } from '@/utils/graphics';
+import { PALETTE } from '@/config/colors';
 
 export default class Cell extends PIXI.Container {
+  private static readonly AVAILABLE_AREA_PADDING_PERCENT = 20;
+  private static readonly BORDER_WIDTH_PERCENT = 4;
+
   public sprite: PIXI.Sprite;
   public availibleArea: PIXI.Graphics;
-  public availible: boolean = false;
+  public isAvailible: boolean = false;
   private row: number;
   private column: number;
-  private gameObject: GameObject | null = null;
+  private tile: Tile | null = null;
 
-  private readonly AVAILABLE_AREA_PADDING_PERCENT = 20;
-  private readonly CORNER_RADIUS_PERCENT = 5;
-
-  constructor(x: number, y: number, size: number) {
+  constructor(x: number, y: number, cellSize: number) {
     super();
     this.column = x;
     this.row = y;
 
     const cellCount = x + y;
     if (cellCount % 2 === 0) {
-      this.sprite = PIXI.Sprite.from(EmptyField);
+      this.sprite = PIXI.Sprite.from('grass-tile');
     } else {
-      this.sprite = PIXI.Sprite.from(EmptyFieldSecond);
+      this.sprite = PIXI.Sprite.from('grass-tile-second');
     }
 
-    this.sprite.width = size;
-    this.sprite.height = size;
-    this.sprite.x = size * x;
-    this.sprite.y = size * y;
+    this.sprite.width = cellSize;
+    this.sprite.height = cellSize;
+    this.sprite.x = cellSize * x;
+    this.sprite.y = cellSize * y;
     this.sprite.zIndex = 1;
 
     this.availibleArea = createSqareGraphics({
-      width: size,
-      height: size,
-      color: 0xffffff,
-      offset: size * (this.AVAILABLE_AREA_PADDING_PERCENT / 100),
-      radius: size * 0.05,
-      borderSize: (size / 100) * 4,
+      width: cellSize,
+      height: cellSize,
+      color: PALETTE.WHITE,
+      offset: cellSize * (Cell.AVAILABLE_AREA_PADDING_PERCENT / 100),
+      radius: cellSize * 0.05,
+      borderSize: (cellSize / 100) * 4,
       transparentType: 'strong',
     });
 
-    this.availibleArea.x = size * x;
-    this.availibleArea.y = size * y;
+    this.availibleArea.x = cellSize * x;
+    this.availibleArea.y = cellSize * y;
     this.availibleArea.alpha = 0;
-    this.availibleArea.zIndex = 3;
+    this.availibleArea.zIndex = 1;
 
     this.addChild(this.sprite);
     this.addChild(this.availibleArea);
@@ -60,55 +59,55 @@ export default class Cell extends PIXI.Container {
     return this.row;
   }
 
-  getGameObject() {
-    return this.gameObject;
+  getTile() {
+    return this.tile;
   }
 
   setAvailible() {
-    this.availible = true;
+    this.isAvailible = true;
     this.availibleArea.alpha = 1;
   }
 
   removeAvailible() {
-    this.availible = false;
+    this.isAvailible = false;
     this.availibleArea.alpha = 0;
   }
 
-  setGameObject(gameObject: GameObject) {
-    this.gameObject = gameObject;
+  setTile(tile: Tile) {
+    this.tile = tile;
   }
 
-  removeGameObject() {
-    this.gameObject = null;
+  removeTile() {
+    this.tile = null;
   }
 
-  public resize(size: number) {
-    this.sprite.width = size;
-    this.sprite.height = size;
-    this.sprite.x = size * this.column;
-    this.sprite.y = size * this.row;
+  public resize(newSize: number) {
+    this.sprite.width = newSize;
+    this.sprite.height = newSize;
+    this.sprite.x = newSize * this.column;
+    this.sprite.y = newSize * this.row;
 
     const currentAlpha = this.availibleArea.alpha;
 
     this.removeChild(this.availibleArea);
 
     this.availibleArea = createSqareGraphics({
-      width: size,
-      height: size,
-      color: 0xffffff,
-      offset: size * (this.AVAILABLE_AREA_PADDING_PERCENT / 100),
-      radius: size * 0.05,
-      borderSize: (size / 100) * 4,
+      width: newSize,
+      height: newSize,
+      color: PALETTE.WHITE,
+      offset: newSize * (Cell.AVAILABLE_AREA_PADDING_PERCENT / 100),
+      radius: newSize * 0.05,
+      borderSize: (newSize / 100) * Cell.BORDER_WIDTH_PERCENT,
       transparentType: 'strong',
     });
-    this.availibleArea.x = size * this.column;
-    this.availibleArea.y = size * this.row;
+    this.availibleArea.x = newSize * this.column;
+    this.availibleArea.y = newSize * this.row;
 
     this.availibleArea.alpha = currentAlpha;
-    this.availibleArea.zIndex = 3;
+    this.availibleArea.zIndex = 1;
 
     this.addChild(this.availibleArea);
 
-    this.gameObject?.resize(size);
+    this.tile?.resize(newSize);
   }
 }

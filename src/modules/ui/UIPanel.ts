@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { getMaxAvailibleSideSize } from '@/utils';
+import { getAvailibleHeight } from '@/utils';
+import { PALETTE } from '@/config/colors';
 
 interface UIPanelOptions {
   height: number;
@@ -15,52 +16,50 @@ export default class UIPanel extends PIXI.Container {
     super();
 
     const width = window.innerWidth;
-    const gameSize = getMaxAvailibleSideSize();
+    const mainHeight = getAvailibleHeight();
 
-    this.background = this.createBackground(gameSize, options.height);
+    this.background = this.createBackground(mainHeight, options.height);
 
     this.addChild(this.background);
 
-    this.x = (width - gameSize) / 2;
+    this.x = (width - mainHeight) / 2;
     this.y = options.yPosition;
   }
 
-  protected createBackground(gameSize: number, height: number): PIXI.Graphics {
+  protected createBackground(mainHeight: number, height: number): PIXI.Graphics {
     return new PIXI.Graphics()
-      .lineStyle(this.BORDER_WIDTH, 0xffffff)
-      .beginFill(0x1f322f, 1)
-      .drawRoundedRect(0, 10, gameSize, height - 20, this.BORDER_RADIUS)
+      .beginFill(PALETTE.BACKGROUND_OVERLAY, 1)
+      .drawRoundedRect(0, 10, mainHeight, height - 20, this.BORDER_RADIUS)
       .endFill();
   }
 
-  protected resizeBackground(gameSize: number, height: number): void {
+  protected resizeBackground(mainHeight: number, height: number): void {
     this.background.clear();
-    this.background.lineStyle(this.BORDER_WIDTH, '#00b894');
-    this.background.beginFill(0x1f322f, 0.9);
-    this.background.drawRoundedRect(2, 10, gameSize - 4, height - 20, this.BORDER_RADIUS);
+    this.background.beginFill(PALETTE.BACKGROUND_OVERLAY, 0.9);
+    this.background.drawRoundedRect(2, 10, mainHeight - 4, height - 20, this.BORDER_RADIUS);
     this.background.endFill();
   }
 
   protected createCenteredText(text: string, fontSize: number): PIXI.Text {
-    const gameSize = getMaxAvailibleSideSize();
+    const mainHeight = getAvailibleHeight();
     const textElement = new PIXI.Text(text, {
       fontFamily: 'Titan One',
       fontSize: fontSize,
-      fill: 0xffffff,
+      fill: PALETTE.TEXT_PRIMARY,
       align: 'center',
     });
 
     textElement.anchor.set(0.5);
-    textElement.x = gameSize / 2;
+    textElement.x = mainHeight / 2;
 
     return textElement;
   }
 
   protected updatePosition(yPosition: number): void {
     const width = window.innerWidth;
-    const gameSize = getMaxAvailibleSideSize();
+    const mainHeight = getAvailibleHeight();
 
-    this.x = (width - gameSize) / 2;
+    this.x = (width - mainHeight) / 2;
     this.y = yPosition;
   }
 }

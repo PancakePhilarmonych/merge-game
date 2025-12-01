@@ -2,8 +2,11 @@ import * as PIXI from 'pixi.js';
 import Cell from '@/modules/core/Cell';
 import { Colors, getHexColorByColor } from '@/utils';
 import { createSqareGraphics, createText } from '@/utils/graphics';
+import { PALETTE } from '@/config/colors';
+import { gsap } from 'gsap';
+import { ROWS_COUNT } from '@/config/constants';
 
-export class GameObject extends PIXI.Container {
+export class Tile extends PIXI.Container {
   private color: Colors;
   private cell: Cell;
   private sprite: PIXI.Graphics;
@@ -15,17 +18,18 @@ export class GameObject extends PIXI.Container {
   private readonly OBJECT_PADDING_PERCENT = 40;
   private readonly SELECTION_PADDING_PERCENT = 20;
 
-  constructor(cell: Cell, color: Colors, size: number) {
+  constructor(params: { color: Colors; level?: number }, cell: Cell, size: number = ROWS_COUNT) {
     const [x, y] = [cell.x, cell.y];
 
     super();
     this.cell = cell;
-    this.color = color;
+    this.color = params.color;
+    this.level = params.level || 1;
     this.position = { x, y };
 
     this.x = size * x;
     this.y = size * y;
-    this.zIndex = 1;
+    this.zIndex = 2;
 
     const objectOffset = size * (this.OBJECT_PADDING_PERCENT / 100);
     const selectionOffset = size * (this.SELECTION_PADDING_PERCENT / 100);
@@ -43,14 +47,14 @@ export class GameObject extends PIXI.Container {
       width: size,
       height: size,
       offset: selectionOffset,
-      color: 0xffffff,
+      color: PALETTE.WHITE,
       transparentType: 'medium',
       radius: size * 0.05,
       borderSize: (size / 100) * 4,
     });
 
     this.selection.alpha = 0;
-    this.selection.zIndex = 2;
+    this.selection.zIndex = 3;
 
     this.eventMode = 'dynamic';
     this.cursor = 'pointer';
@@ -69,7 +73,7 @@ export class GameObject extends PIXI.Container {
     this.addChild(this.sprite);
 
     this.on('pointerdown', this.onPointedDown, this);
-    cell.setGameObject(this);
+    cell.setTile(this);
   }
 
   private positionLevelText(size: number, offset: number) {
@@ -128,41 +132,52 @@ export class GameObject extends PIXI.Container {
     this.levelText.text = this.getLevel();
   }
 
-  public resize(size: number) {
-    this.x = this.cell.x * size;
-    this.y = this.cell.y * size;
+  public animateScale(scaleTo: number = 1.15, duration: number = 0.25) {
+    gsap.to(this.sprite.scale, {
+      x: scaleTo,
+      y: scaleTo,
+      duration,
+      ease: 'power2.out',
+      yoyo: true,
+      repeat: 1,
+    });
+  }
 
-    const objectOffset = size * (this.OBJECT_PADDING_PERCENT / 100);
-    const selectionOffset = size * (this.SELECTION_PADDING_PERCENT / 100);
+  public resize(newSize: number) {
+    this.x = this.cell.x * newSize;
+    this.y = this.cell.y * newSize;
+
+    const objectOffset = newSize * (this.OBJECT_PADDING_PERCENT / 100);
+    const selectionOffset = newSize * (this.SELECTION_PADDING_PERCENT / 100);
 
     this.removeChild(this.sprite);
     this.removeChild(this.selection);
 
     this.sprite = createSqareGraphics({
-      width: size,
-      height: size,
+      width: newSize,
+      height: newSize,
       offset: objectOffset,
       color: getHexColorByColor(this.color),
-      radius: size * 0.05,
-      borderSize: (size / 100) * 4,
+      radius: newSize * 0.05,
+      borderSize: (newSize / 100) * 4,
     });
 
     this.selection = createSqareGraphics({
-      width: size,
-      height: size,
+      width: newSize,
+      height: newSize,
       offset: selectionOffset,
-      color: 0xffffff,
+      color: PALETTE.WHITE,
       transparentType: 'medium',
-      radius: size * 0.05,
-      borderSize: (size / 100) * 4,
+      radius: newSize * 0.05,
+      borderSize: (newSize / 100) * 4,
     });
 
     this.selection.alpha = 0;
-    this.selection.zIndex = 2;
+    this.selection.zIndex = 3;
 
     this.levelText.style.fontSize = this.sprite.width / 3;
 
-    this.positionLevelText(size, objectOffset);
+    this.positionLevelText(newSize, objectOffset);
 
     this.sprite.addChild(this.levelText);
     this.addChild(this.selection);
