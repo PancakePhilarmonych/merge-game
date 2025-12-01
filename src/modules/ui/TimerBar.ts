@@ -17,7 +17,7 @@ export default class TimerBar extends PIXI.Container {
   constructor() {
     super();
 
-    const availableWidth = getAvailibleHeight();
+    const availableWidth = getAvailibleHeight() * 0.9;
     this.barHeight = getTopUIHeight() * 0.4;
 
     this.background = new PIXI.Graphics();
@@ -162,7 +162,7 @@ export default class TimerBar extends PIXI.Container {
 
   public setTimer(time: number): void {
     this.timeLeft = time;
-    const availableWidth = getAvailibleHeight();
+    const availableWidth = getAvailibleHeight() * 0.9;
     const buttonSize = this.barHeight * 0.8;
     const gap = this.barHeight * 2;
     const timerWidth = availableWidth - buttonSize - gap;
@@ -172,7 +172,7 @@ export default class TimerBar extends PIXI.Container {
   }
 
   public resize(): void {
-    const availableWidth = getAvailibleHeight();
+    const availableWidth = getAvailibleHeight() * 0.9;
     const screenWidth = window.innerWidth;
     this.barHeight = getTopUIHeight() * 0.4;
 
@@ -199,7 +199,7 @@ export default class TimerBar extends PIXI.Container {
 
   public reset(): void {
     this.timeLeft = this.maxTime;
-    const availableWidth = getAvailibleHeight();
+    const availableWidth = getAvailibleHeight() * 0.9;
     const buttonSize = this.barHeight * 0.8;
     const gap = this.barHeight * 2;
     const timerWidth = availableWidth - buttonSize - gap;
