@@ -53,8 +53,8 @@ export default class GameManager {
 
     this.app.addToStage(this.timerBar);
     this.app.addToStage(this.goalPanel);
-    this.app.addToStage(this.startView.container);
-    this.app.addToStage(this.restartView.container);
+    this.app.addToStage(this.startView);
+    this.app.addToStage(this.restartView);
 
     this.goalPanel.updateGoals(this.goal.getGoals());
 
@@ -75,15 +75,15 @@ export default class GameManager {
     this.timerBar.resize();
     this.goalPanel.resize();
 
-    this.startView.resize(size);
-    this.restartView.resize(size);
+    this.startView.resize();
+    this.restartView.resize();
   }
 
   private setListeners(): void {
     this.app.container.on('mg-select', (tile: Tile) => this.handleTileSelection(tile));
 
-    this.restartView.container.on('mg-restart', () => this.restartGame());
-    this.startView.container.on('mg-start', () => {
+    this.restartView.panelContainer.on('mg-restart', () => this.restartGame());
+    this.startView.panelContainer.on('mg-start', () => {
       this.startView.hide();
       this.startGame();
     });
@@ -404,7 +404,8 @@ export default class GameManager {
       tile.eventMode = 'none';
     });
 
-    this.restartView.setScoreText(this.store.getScore(), this.store.getBestScore());
+    const isVictory = this.goal.isAllCompleted();
+    this.restartView.setGameResult(isVictory, this.goal.getGoals());
     this.restartView.show();
   }
 

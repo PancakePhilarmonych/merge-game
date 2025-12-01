@@ -1,157 +1,106 @@
 import * as PIXI from 'pixi.js';
 import { createSqareGraphics, createText } from '@/utils/graphics';
-import { getAvailibleHeight, getTotalGameHeight } from '@/utils';
-import { PALETTE } from '@/config/colors';
+import { getAvailibleHeight, getTotalGameHeight, getHexColorByColor } from '@/utils';
+import MenuPanel from './MenuPanel';
+import { GoalItem } from '@/modules/core/Goal';
 
-export default class RestartView extends PIXI.Container {
-  public container: PIXI.Container;
+export default class RestartView extends MenuPanel {
+  private isVictory = false;
+  private goals: GoalItem[] = [];
 
   constructor() {
     super();
-    const sideSize = getAvailibleHeight();
-    this.container = new PIXI.Container();
-    this.container.zIndex = 100;
-    this.container.width = sideSize;
-    this.container.height = getTotalGameHeight();
-
-    this.container.addChild(
-      createSqareGraphics({
-        width: getAvailibleHeight(),
-        height: getTotalGameHeight(),
-        color: 0x1f322f,
-        transparentType: 'medium',
-      }),
-    );
-    this.container.addChild(this.createRestartButton(sideSize));
-    this.container.addChild(this.createRestartText());
-    this.container.visible = false;
-
-    this.centerContainer();
   }
 
-  private createRestartButton(size: number) {
-    const buttonWidth = size / 2;
-    const buttonHeight = size / 6;
-    const radius = 15;
+  public setGameResult(isVictory: boolean, goals: GoalItem[]): void {
+    this.isVictory = isVictory;
+    this.goals = goals;
+    this.updateContent();
+  }
 
-    const restartButton = new PIXI.Container();
+  private updateContent(): void {
+    this.panelContainer.removeChildren();
 
-    const border = new PIXI.Graphics()
-      .lineStyle(size / 100, PALETTE.BUTTON_BORDER, 1)
-      .drawRoundedRect(0, 0, buttonWidth, buttonHeight, radius);
+    const background = new PIXI.Graphics();
+    background.beginFill(this.isVictory ? 0x1b4d3e : 0x4a1c1c);
+    background.drawRect(0, 0, getAvailibleHeight(), getTotalGameHeight());
+    background.endFill();
+    this.panelContainer.addChild(background);
 
-    restartButton.addChild(border);
+    const title = this.isVictory ? 'Victory!' : 'Game Over';
+    const titleColor = this.isVictory ? '#2ecc71' : '#e74c3c';
+    const titleText = this.createTitle(title);
+    titleText.style.fill = titleColor;
+    this.panelContainer.addChild(titleText);
 
-    const buttonBackground = new PIXI.Graphics();
-    buttonBackground.beginFill(PALETTE.BUTTON_SUCCESS);
-    buttonBackground.drawRoundedRect(0, 0, buttonWidth, buttonHeight, radius);
-    buttonBackground.endFill();
+    this.panelContainer.addChild(this.createGoalsDisplay());
+    this.panelContainer.addChild(this.createRestartButton());
+  }
 
-    restartButton.addChild(buttonBackground);
+  private createGoalsDisplay(): PIXI.Container {
+    const container = new PIXI.Container();
+    const size = getAvailibleHeight();
+    const itemSize = size * 0.12;
+    const spacing = size * 0.02;
+    const totalWidth = this.goals.length * itemSize + (this.goals.length - 1) * spacing;
 
-    restartButton.x = size / 2 - buttonWidth / 2;
-    restartButton.y = getTotalGameHeight() / 2 - buttonHeight / 2;
-    restartButton.eventMode = 'dynamic';
-    restartButton.cursor = 'pointer';
-
-    restartButton.on('pointerdown', () => {
-      this.container.emit('mg-restart', this);
+    this.goals.forEach((goal, index) => {
+      const goalItem = this.createGoalItem(goal, itemSize);
+      goalItem.x = (size - totalWidth) / 2 + index * (itemSize + spacing);
+      container.addChild(goalItem);
     });
 
-    return restartButton;
+    container.y = getTotalGameHeight() * 0.4;
+    return container;
   }
 
-  private createRestartText() {
-    const restartText = createText({
-      text: 'Restart',
-      size: 50,
+  private createGoalItem(goal: GoalItem, size: number): PIXI.Container {
+    const container = new PIXI.Container();
+
+    const offset = size * 0.4;
+    const radius = size * 0.05;
+    const borderSize = size * 0.04;
+
+    const color = goal.completed ? 0x4caf50 : getHexColorByColor(goal.color);
+
+    const background = createSqareGraphics({
+      width: size,
+      height: size,
+      color,
+      offset,
+      radius,
+      borderSize,
     });
 
-    restartText.zIndex = 102;
-    restartText.anchor.set(0.5);
-    restartText.x = this.container.width / 2;
-    restartText.y = this.container.height / 2;
-    return restartText;
+    container.addChild(background);
+
+    const text = createText({
+      text: goal.completed ? '✓' : String(Math.pow(2, goal.level - 1)),
+      size: size * 0.35,
+    });
+    text.anchor.set(0.5);
+    text.x = size / 2;
+    text.y = size / 2;
+
+    container.addChild(text);
+
+    return container;
   }
 
-  private createScoreText(score: number) {
-    const scoreText = createText({
-      text: `Score: ${score}`,
-      size: 50,
+  private createRestartButton(): PIXI.Container {
+    const button = this.createButton('Restart', getTotalGameHeight() * 0.65, 0x3498db);
+
+    button.on('pointerdown', () => {
+      this.panelContainer.emit('mg-restart', this);
     });
 
-    scoreText.anchor.set(0.5);
-    scoreText.x = this.container.width / 2;
-    scoreText.y = this.container.height / 3;
-
-    return scoreText;
+    return button;
   }
 
-  private createBestScoreText(bestScore: number) {
-    const bestScoreText = createText({
-      text: `Best score: ${bestScore}`,
-      size: 30,
-    });
-
-    bestScoreText.anchor.set(0.5);
-    bestScoreText.x = this.container.width / 2;
-    bestScoreText.y = this.container.height / 4;
-
-    return bestScoreText;
-  }
-
-  public setScoreText(score: number, bestScoreText: number) {
-    while (this.container.children.length > 3) {
-      this.container.removeChildAt(3);
-    }
-
-    this.container.addChild(this.createBestScoreText(bestScoreText));
-    this.container.addChild(this.createScoreText(score));
-  }
-
-  public show() {
-    this.container.visible = true;
-  }
-
-  public hide() {
-    this.container.visible = false;
-  }
-
-  public resize(newSize: number): void {
-    const bestScoreText = this.container.children[3] as PIXI.Text;
-    const scoreText = this.container.children[4] as PIXI.Text;
-    const hasBestScore = this.container.children.length > 3;
-
-    this.container.removeChildren();
-    this.container.addChild(
-      createSqareGraphics({
-        width: getAvailibleHeight(),
-        height: getTotalGameHeight(),
-        color: 0x1f322f,
-        transparentType: 'medium',
-      }),
-    );
-    this.container.addChild(this.createRestartButton(newSize));
-    this.container.addChild(this.createRestartText());
-
-    if (hasBestScore) {
-      this.container.addChild(
-        this.createBestScoreText(parseInt(bestScoreText.text.split(' ')[2], 10)),
-      );
-      this.container.addChild(this.createScoreText(parseInt(scoreText.text.split(' ')[1], 10)));
-    }
-
-    this.centerContainer();
-  }
-
-  private centerContainer(): void {
-    const mainHeight = getAvailibleHeight();
-    const screenWidth = window.innerWidth;
-
-    if (screenWidth > mainHeight) {
-      this.container.x = (screenWidth - mainHeight) / 2;
-    } else {
-      this.container.x = 0;
+  public override resize(): void {
+    super.resize();
+    if (this.goals.length > 0) {
+      this.updateContent();
     }
   }
 }
