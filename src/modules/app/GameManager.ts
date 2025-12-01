@@ -11,7 +11,7 @@ import {
   getTopUIHeight,
   getBottomUIHeight,
 } from '@/utils';
-import ScorePanel from '../ui/ScorePanel';
+import TimerBar from '../ui/TimerBar';
 import BottomPanel from '../ui/BottomPanel';
 import RestartView from '@/modules/ui/RestartView';
 import StartView from '@/modules/ui/StartView';
@@ -28,7 +28,7 @@ import {
 export default class GameManager {
   private app: App = new App();
   private store: Store = new Store();
-  private scorePanel: ScorePanel = new ScorePanel();
+  private timerBar: TimerBar = new TimerBar();
   private bottomPanel: BottomPanel = new BottomPanel();
   private grid: Grid;
   private tileManager: TileManager;
@@ -56,7 +56,7 @@ export default class GameManager {
     this.app.addToContainer(this.tileManager.getTiles());
     this.app.addToContainer(this.grid.cellsContainers);
 
-    this.app.addToStage(this.scorePanel);
+    this.app.addToStage(this.timerBar);
     this.app.addToStage(this.bottomPanel);
     this.app.addToStage(this.startView.container);
     this.app.addToStage(this.restartView.container);
@@ -78,7 +78,7 @@ export default class GameManager {
 
     this.app.container.y = getTopUIHeight();
 
-    this.scorePanel.resize();
+    this.timerBar.resize();
     this.bottomPanel.resize();
 
     this.startView.resize(size);
@@ -336,7 +336,6 @@ export default class GameManager {
       this.tickerCallback = null;
     }
 
-    this.scorePanel.setScore(0);
     this.bottomPanel.updateInfoText('New game is started!');
     this.bottomPanel.updateInfoText('Merge them all!', 2000);
 
@@ -356,7 +355,7 @@ export default class GameManager {
 
   private resetTimer(): void {
     this.timeLeft = GAME_DURATION;
-    this.scorePanel.setTimer(this.timeLeft);
+    this.timerBar.reset();
   }
 
   private startTimer(): void {
@@ -375,7 +374,7 @@ export default class GameManager {
       }
 
       this.timeLeft--;
-      this.scorePanel.setTimer(this.timeLeft);
+      this.timerBar.setTimer(this.timeLeft);
 
       if (this.timeLeft <= 0) {
         this.handleGameOver(`TIME'S UP!`);
@@ -419,7 +418,6 @@ export default class GameManager {
   private levelUpTile(tile: Tile): void {
     tile.levelUp();
     this.store.incrementScore(tile.getLevel());
-    this.scorePanel.setScore(this.store.getScore());
 
     const level = tile.getLevel();
     if (level >= 8) {

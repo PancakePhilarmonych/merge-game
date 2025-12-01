@@ -28,7 +28,6 @@ export default class UIPanel extends PIXI.Container {
 
   protected createBackground(mainHeight: number, height: number): PIXI.Graphics {
     return new PIXI.Graphics()
-      .lineStyle(this.BORDER_WIDTH, PALETTE.BORDER)
       .beginFill(PALETTE.BACKGROUND_OVERLAY, 1)
       .drawRoundedRect(0, 10, mainHeight, height - 20, this.BORDER_RADIUS)
       .endFill();
@@ -36,7 +35,6 @@ export default class UIPanel extends PIXI.Container {
 
   protected resizeBackground(mainHeight: number, height: number): void {
     this.background.clear();
-    this.background.lineStyle(this.BORDER_WIDTH, PALETTE.BORDER);
     this.background.beginFill(PALETTE.BACKGROUND_OVERLAY, 0.9);
     this.background.drawRoundedRect(2, 10, mainHeight - 4, height - 20, this.BORDER_RADIUS);
     this.background.endFill();
