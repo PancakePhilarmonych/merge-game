@@ -83,6 +83,7 @@ export default class GameManager {
     this.app.container.on('mg-select', (tile: Tile) => this.handleTileSelection(tile));
 
     this.restartView.panelContainer.on('mg-restart', () => this.restartGame());
+    this.timerBar.on('mg-restart', () => this.restartGame());
     this.startView.panelContainer.on('mg-start', () => {
       this.startView.hide();
       this.startGame();
@@ -337,13 +338,13 @@ export default class GameManager {
     this.tileManager.generateTiles();
     this.tileManager.resize(this.grid.cellSize);
     this.app.addToContainer(this.tileManager.getTiles());
+
+    this.app.container.off('mg-select');
     this.app.container.on('mg-select', (tile: Tile) => this.handleTileSelection(tile));
-    this.app.container.eventMode = 'dynamic';
+
     this.restartView.hide();
     this.pause = false;
 
-    this.resetTimer();
-    this.app.instance.ticker.start();
     this.startGame();
   }
 
@@ -398,7 +399,7 @@ export default class GameManager {
       this.cleanSteps();
     }
 
-    this.app.container.removeAllListeners();
+    this.app.container.off('mg-select');
 
     this.tileManager.getTiles().forEach((tile: Tile) => {
       tile.eventMode = 'none';

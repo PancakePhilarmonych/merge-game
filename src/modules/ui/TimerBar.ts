@@ -9,6 +9,7 @@ export default class TimerBar extends PIXI.Container {
   private border: PIXI.Graphics;
   private glow: PIXI.Graphics;
   private timeText: PIXI.Text;
+  private restartButton: PIXI.Container;
   private barHeight: number;
   private timeLeft: number = GAME_DURATION;
   private maxTime: number = GAME_DURATION;
@@ -16,32 +17,38 @@ export default class TimerBar extends PIXI.Container {
   constructor() {
     super();
 
-    const width = getAvailibleHeight();
-    this.barHeight = getTopUIHeight() * 0.4; // 40% от высоты верхней панели - тоньше
+    const availableWidth = getAvailibleHeight();
+    this.barHeight = getTopUIHeight() * 0.4;
 
     this.background = new PIXI.Graphics();
     this.glow = new PIXI.Graphics();
     this.progressBar = new PIXI.Graphics();
     this.border = new PIXI.Graphics();
 
-    this.drawBackground(width);
-    this.drawGlow(width);
-    this.drawProgressBar(width, 1);
+    const buttonSize = this.barHeight * 0.8;
+    const gap = this.barHeight * 2;
+    const timerWidth = availableWidth - buttonSize - gap;
 
-    this.timeText = this.createTimeText();
+    this.drawBackground(timerWidth);
+    this.drawGlow(timerWidth);
+    this.drawProgressBar(timerWidth, 1);
+
+    this.timeText = this.createTimeText(timerWidth);
+    this.restartButton = this.createRestartButton(buttonSize, timerWidth + gap);
 
     this.addChild(this.background);
     this.addChild(this.glow);
     this.addChild(this.progressBar);
     this.addChild(this.border);
     this.addChild(this.timeText);
+    this.addChild(this.restartButton);
 
     const screenWidth = window.innerWidth;
-    this.x = (screenWidth - width) / 2;
+    this.x = (screenWidth - availableWidth) / 2;
     this.y = getTopUIHeight() / 2 - this.barHeight / 2;
   }
 
-  private createTimeText(): PIXI.Text {
+  private createTimeText(timerWidth: number): PIXI.Text {
     const fontSize = Math.min(this.barHeight * 0.6, window.innerHeight * 0.025);
     const text = new PIXI.Text(`Time: ${this.timeLeft}s`, {
       fontFamily: 'Titan One',
@@ -50,9 +57,61 @@ export default class TimerBar extends PIXI.Container {
       align: 'center',
     });
     text.anchor.set(0.5);
-    text.x = getAvailibleHeight() / 2;
+    text.x = timerWidth / 2;
     text.y = this.barHeight / 2;
     return text;
+  }
+
+  private createRestartButton(buttonSize: number, xPosition: number): PIXI.Container {
+    const buttonContainer = new PIXI.Container();
+
+    const background = new PIXI.Graphics();
+    background.beginFill(PALETTE.BUTTON_PRIMARY, 0.9);
+    background.drawRoundedRect(0, 0, buttonSize, buttonSize, buttonSize / 4);
+    background.endFill();
+
+    const border = new PIXI.Graphics();
+    border.lineStyle(2, PALETTE.WHITE, 0.8);
+    border.drawRoundedRect(0, 0, buttonSize, buttonSize, buttonSize / 4);
+
+    const iconSize = buttonSize * 0.5;
+    const icon = new PIXI.Graphics();
+    icon.beginFill(PALETTE.WHITE);
+    icon.drawCircle(0, 0, iconSize * 0.15);
+    icon.endFill();
+    icon.lineStyle(iconSize * 0.12, PALETTE.WHITE);
+    icon.arc(0, 0, iconSize * 0.3, -Math.PI * 0.7, Math.PI * 0.7);
+
+    icon.beginFill(PALETTE.WHITE);
+    icon.moveTo(iconSize * 0.1, -iconSize * 0.3);
+    icon.lineTo(iconSize * 0.35, -iconSize * 0.3);
+    icon.lineTo(iconSize * 0.1, -iconSize * 0.55);
+    icon.closePath();
+    icon.endFill();
+
+    icon.x = buttonSize / 2;
+    icon.y = buttonSize / 2;
+
+    buttonContainer.addChild(background, border, icon);
+    buttonContainer.x = xPosition;
+    buttonContainer.y = (this.barHeight - buttonSize) / 2;
+
+    buttonContainer.eventMode = 'dynamic';
+    buttonContainer.cursor = 'pointer';
+
+    buttonContainer.on('pointerdown', () => {
+      this.emit('mg-restart', this);
+    });
+
+    buttonContainer.on('pointerover', () => {
+      background.tint = 0xdddddd;
+    });
+
+    buttonContainer.on('pointerout', () => {
+      background.tint = 0xffffff;
+    });
+
+    return buttonContainer;
   }
 
   private drawBackground(width: number): void {
@@ -103,34 +162,48 @@ export default class TimerBar extends PIXI.Container {
 
   public setTimer(time: number): void {
     this.timeLeft = time;
-    const width = getAvailibleHeight();
+    const availableWidth = getAvailibleHeight();
+    const buttonSize = this.barHeight * 0.8;
+    const gap = this.barHeight * 2;
+    const timerWidth = availableWidth - buttonSize - gap;
     const progress = Math.max(0, this.timeLeft / this.maxTime);
-    this.drawProgressBar(width, progress);
+    this.drawProgressBar(timerWidth, progress);
     this.timeText.text = `Time: ${this.timeLeft}s`;
   }
 
   public resize(): void {
-    const width = getAvailibleHeight();
+    const availableWidth = getAvailibleHeight();
     const screenWidth = window.innerWidth;
-    this.barHeight = getTopUIHeight() * 0.4; // 40% от высоты верхней панели - тоньше
+    this.barHeight = getTopUIHeight() * 0.4;
 
-    this.drawBackground(width);
-    this.drawGlow(width);
+    const buttonSize = this.barHeight * 0.8;
+    const gap = this.barHeight * 2;
+    const timerWidth = availableWidth - buttonSize - gap;
+
+    this.drawBackground(timerWidth);
+    this.drawGlow(timerWidth);
     const progress = Math.max(0, this.timeLeft / this.maxTime);
-    this.drawProgressBar(width, progress);
+    this.drawProgressBar(timerWidth, progress);
 
     this.removeChild(this.timeText);
-    this.timeText = this.createTimeText();
+    this.timeText = this.createTimeText(timerWidth);
     this.addChild(this.timeText);
 
-    this.x = (screenWidth - width) / 2;
+    this.removeChild(this.restartButton);
+    this.restartButton = this.createRestartButton(buttonSize, timerWidth + gap);
+    this.addChild(this.restartButton);
+
+    this.x = (screenWidth - availableWidth) / 2;
     this.y = getTopUIHeight() / 2 - this.barHeight / 2;
   }
 
   public reset(): void {
     this.timeLeft = this.maxTime;
-    const width = getAvailibleHeight();
-    this.drawProgressBar(width, 1);
+    const availableWidth = getAvailibleHeight();
+    const buttonSize = this.barHeight * 0.8;
+    const gap = this.barHeight * 2;
+    const timerWidth = availableWidth - buttonSize - gap;
+    this.drawProgressBar(timerWidth, 1);
     this.timeText.text = `Time: ${this.timeLeft}s`;
   }
 }
