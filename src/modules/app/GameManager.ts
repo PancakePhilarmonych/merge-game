@@ -3,18 +3,12 @@ import Grid from '@/modules/core/Grid';
 import TileManager from '@/modules/app/TileManager';
 import Store from '@/modules/app/Store';
 import Cell from '@/modules/core/Cell';
-import {
-  Colors,
-  smoothMoveTo,
-  getRandomColor,
-  getAvailibleHeight,
-  getTopUIHeight,
-  getBottomUIHeight,
-} from '@/utils';
+import { Colors, smoothMoveTo, getRandomColor, getAvailibleHeight, getTopUIHeight } from '@/utils';
 import TimerBar from '../ui/TimerBar';
-import BottomPanel from '../ui/BottomPanel';
+import GoalPanel from '../ui/GoalPanel';
 import RestartView from '@/modules/ui/RestartView';
 import StartView from '@/modules/ui/StartView';
+import Goal from '@/modules/core/Goal';
 import { gsap } from 'gsap';
 import App from '@/modules/app/App';
 import {
@@ -29,9 +23,10 @@ export default class GameManager {
   private app: App = new App();
   private store: Store = new Store();
   private timerBar: TimerBar = new TimerBar();
-  private bottomPanel: BottomPanel = new BottomPanel();
+  private goalPanel: GoalPanel = new GoalPanel();
   private grid: Grid;
   private tileManager: TileManager;
+  private goal: Goal = new Goal();
 
   private availibleCells: Cell[] = [];
   private availibleForMerge: Tile[] = [];
@@ -57,12 +52,11 @@ export default class GameManager {
     this.app.addToContainer(this.grid.cellsContainers);
 
     this.app.addToStage(this.timerBar);
-    this.app.addToStage(this.bottomPanel);
+    this.app.addToStage(this.goalPanel);
     this.app.addToStage(this.startView.container);
     this.app.addToStage(this.restartView.container);
 
-    this.bottomPanel.updateInfoText('WELCOME!');
-    this.bottomPanel.y = window.innerHeight - getBottomUIHeight();
+    this.goalPanel.updateGoals(this.goal.getGoals());
 
     this.setListeners();
 
@@ -79,7 +73,7 @@ export default class GameManager {
     this.app.container.y = getTopUIHeight();
 
     this.timerBar.resize();
-    this.bottomPanel.resize();
+    this.goalPanel.resize();
 
     this.startView.resize(size);
     this.restartView.resize(size);
@@ -336,10 +330,10 @@ export default class GameManager {
       this.tickerCallback = null;
     }
 
-    this.bottomPanel.updateInfoText('New game is started!');
-    this.bottomPanel.updateInfoText('Merge them all!', 2000);
-
     this.store.reset();
+    this.goal.reset();
+    this.goalPanel.updateGoals(this.goal.getGoals());
+
     this.tileManager.generateTiles();
     this.tileManager.resize(this.grid.cellSize);
     this.app.addToContainer(this.tileManager.getTiles());
@@ -377,12 +371,12 @@ export default class GameManager {
       this.timerBar.setTimer(this.timeLeft);
 
       if (this.timeLeft <= 0) {
-        this.handleGameOver(`TIME'S UP!`);
+        this.handleGameOver();
       }
     }, 1000);
   }
 
-  private handleGameOver(message: string): void {
+  private handleGameOver(): void {
     if (this.pause) return;
 
     this.pause = true;
@@ -411,7 +405,6 @@ export default class GameManager {
     });
 
     this.restartView.setScoreText(this.store.getScore(), this.store.getBestScore());
-    this.bottomPanel.updateInfoText(message);
     this.restartView.show();
   }
 
@@ -419,13 +412,18 @@ export default class GameManager {
     tile.levelUp();
     this.store.incrementScore(tile.getLevel());
 
-    const level = tile.getLevel();
-    if (level >= 8) {
-      this.bottomPanel.updateInfoText(`You are a genius!`);
-      this.bottomPanel.updateInfoText(`Merge them all!`, 2000);
-    } else if (level >= 4) {
-      this.bottomPanel.updateInfoText(`WOW!`);
-      this.bottomPanel.updateInfoText(`Merge them all!`, 2000);
+    const level = tile.level;
+    const color = tile.getColor();
+
+    const goalCompleted = this.goal.checkAndMarkCompleted(color, level);
+
+    if (goalCompleted) {
+      this.goalPanel.updateGoals(this.goal.getGoals());
+
+      if (this.goal.isAllCompleted()) {
+        this.handleGameOver();
+        return;
+      }
     }
   }
 
@@ -440,7 +438,7 @@ export default class GameManager {
       if (this.pause) return;
 
       if (this.tileManager.isFull()) {
-        this.handleGameOver('GAME OVER!');
+        this.handleGameOver();
         return;
       }
 
@@ -451,7 +449,6 @@ export default class GameManager {
     };
 
     this.app.container.eventMode = 'dynamic';
-    this.bottomPanel.updateInfoText('Merge them all!');
 
     this.resetTimer();
     this.startTimer();

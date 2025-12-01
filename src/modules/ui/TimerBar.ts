@@ -17,7 +17,7 @@ export default class TimerBar extends PIXI.Container {
     super();
 
     const width = getAvailibleHeight();
-    this.barHeight = getTopUIHeight() / 2;
+    this.barHeight = getTopUIHeight() * 0.4; // 40% от высоты верхней панели - тоньше
 
     this.background = new PIXI.Graphics();
     this.glow = new PIXI.Graphics();
@@ -112,7 +112,7 @@ export default class TimerBar extends PIXI.Container {
   public resize(): void {
     const width = getAvailibleHeight();
     const screenWidth = window.innerWidth;
-    this.barHeight = getTopUIHeight() / 2;
+    this.barHeight = getTopUIHeight() * 0.4; // 40% от высоты верхней панели - тоньше
 
     this.drawBackground(width);
     this.drawGlow(width);
@@ -124,7 +124,7 @@ export default class TimerBar extends PIXI.Container {
     this.addChild(this.timeText);
 
     this.x = (screenWidth - width) / 2;
-    this.y = window.innerHeight / 20 - this.barHeight / 2;
+    this.y = getTopUIHeight() / 2 - this.barHeight / 2;
   }
 
   public reset(): void {

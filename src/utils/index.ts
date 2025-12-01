@@ -55,11 +55,11 @@ export const smoothMoveTo = (
 };
 
 export const getTopUIHeight = () => {
-  return window.innerHeight * 0.1;
+  return window.innerHeight * 0.07; // 7% для верхней панели
 };
 
 export const getBottomUIHeight = () => {
-  return window.innerHeight * 0.1;
+  return window.innerHeight * 0.13; // 12% для панели целей
 };
 
 export const getAvailibleHeight = () => {
