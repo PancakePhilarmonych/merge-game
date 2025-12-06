@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { createSqareGraphics, createText } from '@/utils/graphics';
-import { getMaxAvailibleSideSize, getTotalGameHeight } from '@/utils';
+import { getMaxAvailibleSideSize } from '@/utils';
 
 export default class RestartView extends PIXI.Container {
   public container: PIXI.Container;
@@ -11,21 +11,18 @@ export default class RestartView extends PIXI.Container {
     this.container = new PIXI.Container();
     this.container.zIndex = 100;
     this.container.width = sideSize;
-    this.container.height = getTotalGameHeight();
+    this.container.height = sideSize;
 
     this.container.addChild(
       createSqareGraphics({
-        width: getMaxAvailibleSideSize(),
-        height: getTotalGameHeight(),
-        color: 0x1f322f,
-        transparentType: 'medium',
+        size: sideSize,
+        color: 0xff7675,
+        transparentType: 'low',
       }),
     );
     this.container.addChild(this.createRestartButton(sideSize));
     this.container.addChild(this.createRestartText());
     this.container.visible = false;
-
-    this.centerContainer();
   }
 
   private createRestartButton(size: number) {
@@ -49,7 +46,7 @@ export default class RestartView extends PIXI.Container {
     restartButton.addChild(buttonBackground);
 
     restartButton.x = size / 2 - buttonWidth / 2;
-    restartButton.y = getTotalGameHeight() / 2 - buttonHeight / 2;
+    restartButton.y = size / 2 - buttonHeight / 2;
     restartButton.eventMode = 'dynamic';
     restartButton.cursor = 'pointer';
 
@@ -100,8 +97,8 @@ export default class RestartView extends PIXI.Container {
   }
 
   public setScoreText(score: number, bestScoreText: number) {
+    this.container.removeChild(this.container.children[3]);
     this.container.removeChild(this.container.children[4]);
-    this.container.removeChild(this.container.children[5]);
     this.container.addChild(this.createBestScoreText(bestScoreText));
     this.container.addChild(this.createScoreText(score));
   }
@@ -122,10 +119,9 @@ export default class RestartView extends PIXI.Container {
     this.container.removeChildren();
     this.container.addChild(
       createSqareGraphics({
-        width: getMaxAvailibleSideSize(),
-        height: getTotalGameHeight(),
-        color: 0x1f322f,
-        transparentType: 'medium',
+        size: newSize,
+        color: 0xff7675,
+        transparentType: 'low',
       }),
     );
     this.container.addChild(this.createRestartButton(newSize));
@@ -136,19 +132,6 @@ export default class RestartView extends PIXI.Container {
         this.createBestScoreText(parseInt(bestScoreText.text.split(' ')[2], 10)),
       );
       this.container.addChild(this.createScoreText(parseInt(scoreText.text.split(' ')[1], 10)));
-    }
-
-    this.centerContainer();
-  }
-
-  private centerContainer(): void {
-    const gameSize = getMaxAvailibleSideSize();
-    const screenWidth = window.innerWidth;
-
-    if (screenWidth > gameSize) {
-      this.container.x = (screenWidth - gameSize) / 2;
-    } else {
-      this.container.x = 0;
     }
   }
 }
